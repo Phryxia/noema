@@ -14,12 +14,13 @@ interface WordSuggestionProps {
   n: number
 }
 
-export function WordSuggestion({ keyword, n }: WordSuggestionProps): ReactElement {
+export function WordSuggestion({ keyword, n }: WordSuggestionProps): ReactElement | null {
   const throttledKeyword = useThrottledValue(keyword, 100)
   const queryClient = useQueryClient()
-  const { data: lexes } = useQuery({
+  const { data: lexes, isLoading } = useQuery({
     queryKey: [WORD_SUGGESTION_QUERY_KEY, throttledKeyword, n],
     queryFn: () => getWordsByPrefix(throttledKeyword, n),
+    enabled: !!throttledKeyword,
   })
   const { mutate: removeWord } = useMutation({
     mutationFn: deleteWord,
@@ -28,6 +29,10 @@ export function WordSuggestion({ keyword, n }: WordSuggestionProps): ReactElemen
       queryClient.invalidateQueries({ queryKey: [RECENT_WORDS_QUERY_KEY] })
     },
   })
+
+  if (!throttledKeyword || isLoading || !lexes?.length) {
+    return null
+  }
 
   return (
     <article className={cx('root')}>

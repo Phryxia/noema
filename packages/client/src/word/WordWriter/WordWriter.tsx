@@ -56,7 +56,7 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
           )}
         </fieldset>
       </form>
-      {value && <WordSuggestion keyword={value} n={16} />}
+      <WordSuggestion keyword={value} n={16} />
     </div>
   )
 }

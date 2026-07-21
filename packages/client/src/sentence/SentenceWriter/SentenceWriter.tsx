@@ -1,8 +1,10 @@
 import type { FormEvent, KeyboardEvent, ReactElement } from 'react'
 import { useState } from 'react'
-import { useSentenceWriterForm } from './useSentenceWriterForm'
+import { useWriterForm } from '../../writer/useWriterForm'
 import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import { insertTabIfPressed } from '../../writer/insertTabIfPressed'
+import { createSentence, deleteSentence, updateSentence } from '../sentence.service'
+import { invalidateSentenceQueries } from '../utils'
 import type { Sentence } from '../types'
 import classnames from 'classnames/bind'
 import styles from './SentenceWriter.module.css'
@@ -21,10 +23,14 @@ export function SentenceWriter({
   onDelete,
 }: SentenceWriterProps): ReactElement {
   const [scrollTop, setScrollTop] = useState(0)
-  const { value, setValue, canSave, save, remove } = useSentenceWriterForm({
+  const { draft, setDraft, canSave, save, remove } = useWriterForm({
     isEditable,
-    sentence,
-    onDelete,
+    isEditing: !!sentence,
+    initialDraft: { value: sentence?.value ?? '' },
+    saveDraft: ({ value }): Promise<void> => submitSentence(sentence, value),
+    deleteItem: sentence ? (): Promise<void> => deleteSentence(sentence.sentenceId) : undefined,
+    invalidateQueries: invalidateSentenceQueries,
+    onDeleted: onDelete,
   })
 
   function handleSubmit(event: FormEvent): void {
@@ -48,13 +54,13 @@ export function SentenceWriter({
       <div className={cx('textareaWrapper')}>
         <textarea
           className={cx('textarea')}
-          value={value}
+          value={draft.value}
           readOnly={!isEditable}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(event) => setDraft({ value: event.target.value })}
           onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
           onKeyDown={handleKeyDown}
         />
-        <WhitespaceEcho value={value} isMultiline scrollLeft={0} scrollTop={scrollTop} />
+        <WhitespaceEcho value={draft.value} isMultiline scrollLeft={0} scrollTop={scrollTop} />
       </div>
       {isEditable && (
         <div className={cx('actions')}>
@@ -70,4 +76,12 @@ export function SentenceWriter({
       )}
     </form>
   )
+}
+
+async function submitSentence(sentence: Sentence | undefined, value: string): Promise<void> {
+  if (sentence) {
+    await updateSentence(sentence.sentenceId, value)
+    return
+  }
+  await createSentence(value)
 }

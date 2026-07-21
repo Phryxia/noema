@@ -5,6 +5,7 @@ import { WORD_NODE_ID_QUERY_KEY } from '../consts'
 import { createWord, getWordNodeId } from '../word.service'
 import { invalidateWordQueries } from '../utils'
 import { WordSuggestion } from '../WordSuggestion/WordSuggestion'
+import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import { useThrottledValue } from '../../utils/useThrottledValue'
 import classNames from 'classnames/bind'
 import styles from './WordWriter.module.css'
@@ -56,7 +57,12 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
               onChange={(event) => setValue(event.target.value)}
               onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
             />
-            <SpaceEcho value={value} scrollLeft={scrollLeft} />
+            <WhitespaceEcho
+              value={value}
+              isMultiline={false}
+              scrollLeft={scrollLeft}
+              scrollTop={0}
+            />
           </div>
           {isEditable && (
             <button type="submit" disabled={!value || isPending || isExisting}>
@@ -66,31 +72,6 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
         </fieldset>
       </form>
       <WordSuggestion keyword={value} n={16} />
-    </div>
-  )
-}
-
-interface SpaceEchoProps {
-  value: string
-  scrollLeft: number
-}
-
-function SpaceEcho({ value, scrollLeft }: SpaceEchoProps): ReactElement {
-  return (
-    <div className={cx('echo')}>
-      <span style={{ transform: `translateX(${-scrollLeft}px)` }}>
-        {value.split('').map((char, index) =>
-          char === ' ' ? (
-            <span key={index} className={cx('echoSpace')}>
-              {' '}
-            </span>
-          ) : (
-            <span key={index} className={cx('echoHidden')}>
-              {char}
-            </span>
-          ),
-        )}
-      </span>
     </div>
   )
 }

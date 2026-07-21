@@ -3,11 +3,18 @@
     "allow": [
       "Skill(run)",
       "Skill(run:*)",
+      "Bash(npx prettier)",
       "Bash(npx prettier *)",
+      "Bash(npx eslint)",
       "Bash(npx eslint *)",
       "Bash(npx tsc *)",
       "Bash(source ~/.nvm/nvm.sh)",
-      "Bash(rg *)"
+      "Bash(source \"$HOME/.nvm/nvm.sh\")",
+      "Bash(nvm use)",
+      "Bash(nvm use *)",
+      "Bash(rg *)",
+      "Bash(head *)",
+      "Bash(tail *)"
     ]
   },
   "hooks": {

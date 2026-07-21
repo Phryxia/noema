@@ -13,12 +13,3 @@
     tab-size: 4;
   }
 }
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-
-  .action {
-    white-space: nowrap;
-  }
-}

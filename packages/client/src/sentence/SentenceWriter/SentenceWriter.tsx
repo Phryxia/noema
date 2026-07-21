@@ -1,6 +1,7 @@
 import type { FormEvent, KeyboardEvent, ReactElement } from 'react'
 import { useState } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
+import { WriterActions } from '../../writer/WriterActions/WriterActions'
 import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import { insertTabIfPressed } from '../../writer/insertTabIfPressed'
 import { createSentence, deleteSentence, updateSentence } from '../sentence.service'
@@ -63,16 +64,7 @@ export function SentenceWriter({
         <WhitespaceEcho value={draft.value} isMultiline scrollLeft={0} scrollTop={scrollTop} />
       </div>
       {isEditable && (
-        <div className={cx('actions')}>
-          <button type="submit" className={cx('action')} disabled={!canSave}>
-            {sentence ? '수정' : '저장'}
-          </button>
-          {sentence && (
-            <button type="button" className={cx('action', 'secondary')} onClick={remove}>
-              삭제
-            </button>
-          )}
-        </div>
+        <WriterActions isEditing={!!sentence} canSave={canSave} onDelete={remove} />
       )}
     </form>
   )

@@ -1,47 +1,50 @@
-.group button {
-  white-space: nowrap;
-}
+.group {
+  button {
+    white-space: nowrap;
+  }
 
-.inputWrapper {
-  display: flex;
-  position: relative;
-  width: 100%;
-}
+  .inputWrapper {
+    display: flex;
+    position: relative;
+    width: 100%;
 
-.inputWrapper .input {
-  font-family: var(--font-mono);
-}
+    .input {
+      font-family: var(--font-mono);
+    }
 
-.echo {
-  position: absolute;
-  z-index: 3;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  padding: var(--pico-form-element-spacing-vertical) var(--pico-form-element-spacing-horizontal);
-  border: var(--pico-border-width) solid transparent;
-  overflow: hidden;
-  pointer-events: none;
-  font-family: var(--font-mono);
-  white-space: pre;
-}
+    .echo {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      padding: var(--pico-form-element-spacing-vertical)
+        var(--pico-form-element-spacing-horizontal);
+      border: var(--pico-border-width) solid transparent;
+      overflow: hidden;
+      pointer-events: none;
+      font-family: var(--font-mono);
+      white-space: pre;
 
-.echoSpace {
-  display: inline-block;
-  position: relative;
-}
+      .echoSpace {
+        display: inline-block;
+        position: relative;
 
-.echoSpace::before {
-  content: '';
-  position: absolute;
-  right: 15%;
-  bottom: 0.3em;
-  left: 15%;
-  height: 0.35em;
-  border: 1px solid var(--pico-muted-color);
-  border-top: none;
-}
+        &::before {
+          content: '';
+          position: absolute;
+          right: 15%;
+          bottom: 0.3em;
+          left: 15%;
+          height: 0.35em;
+          border: 1px solid var(--pico-muted-color);
+          border-top: none;
+        }
+      }
 
-.echoHidden {
-  color: transparent;
+      .echoHidden {
+        color: transparent;
+      }
+    }
+  }
 }

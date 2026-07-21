@@ -6,7 +6,12 @@ function RootLayout(): ReactElement {
   return (
     <>
       <header className="pico container">
-        <h1>Hello World!</h1>
+        <section>
+          <article>
+            <h1>NOEMA System</h1>
+            <p>나만의 말뭉치를 만들자!</p>
+          </article>
+        </section>
       </header>
       <main className="pico container">
         <Outlet />

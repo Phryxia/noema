@@ -5,6 +5,8 @@ import { WordWriter } from '../word/WordWriter/WordWriter'
 import { RecentWords } from '../word/RecentWords/RecentWords'
 import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
 import { RecentSentences } from '../sentence/RecentSentences/RecentSentences'
+import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
+import { RecentDocuments } from '../document/RecentDocuments/RecentDocuments'
 
 export const Route = createFileRoute('/')({
   component: MainPage,
@@ -20,6 +22,7 @@ function MainPage(): ReactElement {
       <WriterSection />
       <RecentWords />
       <RecentSentences />
+      <RecentDocuments />
     </article>
   )
 }
@@ -32,6 +35,7 @@ function WriterSection(): ReactElement {
       <WriterModeSelector mode={mode} onChange={setMode} />
       {mode === '단어' && <WordWriter isEditable />}
       {mode === '문장' && <SentenceWriter isEditable />}
+      {mode === '문서' && <DocumentWriter isEditable />}
     </section>
   )
 }
@@ -50,7 +54,6 @@ function WriterModeSelector({ mode, onChange }: WriterModeSelectorProps): ReactE
             type="radio"
             name="writerMode"
             checked={mode === writerMode}
-            disabled={writerMode === '문서'}
             onChange={() => onChange(writerMode)}
           />
           {writerMode}

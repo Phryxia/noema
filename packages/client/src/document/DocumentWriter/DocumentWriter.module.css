@@ -1,0 +1,12 @@
+.root {
+  .source {
+    font-family: var(--font-mono);
+  }
+
+  .textarea {
+    min-height: 256px;
+    resize: vertical;
+    font-family: var(--font-mono);
+    tab-size: 4;
+  }
+}

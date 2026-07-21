@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { WordWriter } from '../word/WordWriter/WordWriter'
 import { RecentWords } from '../word/RecentWords/RecentWords'
+import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
+import { RecentSentences } from '../sentence/RecentSentences/RecentSentences'
 
 export const Route = createFileRoute('/')({
   component: MainPage,
@@ -17,6 +19,7 @@ function MainPage(): ReactElement {
     <article>
       <WriterSection />
       <RecentWords />
+      <RecentSentences />
     </article>
   )
 }
@@ -28,6 +31,7 @@ function WriterSection(): ReactElement {
     <section>
       <WriterModeSelector mode={mode} onChange={setMode} />
       {mode === '단어' && <WordWriter isEditable />}
+      {mode === '문장' && <SentenceWriter isEditable />}
     </section>
   )
 }
@@ -46,7 +50,7 @@ function WriterModeSelector({ mode, onChange }: WriterModeSelectorProps): ReactE
             type="radio"
             name="writerMode"
             checked={mode === writerMode}
-            disabled={writerMode !== '단어'}
+            disabled={writerMode === '문서'}
             onChange={() => onChange(writerMode)}
           />
           {writerMode}

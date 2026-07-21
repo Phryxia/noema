@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SentenceSentenceIdRouteImport } from './routes/sentence.$sentenceId'
 import { Route as WordWordRouteImport } from './routes/word.$word'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SentenceSentenceIdRoute = SentenceSentenceIdRouteImport.update({
+  id: '/sentence/$sentenceId',
+  path: '/sentence/$sentenceId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WordWordRoute = WordWordRouteImport.update({
@@ -25,27 +31,31 @@ const WordWordRoute = WordWordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/word/$word'
+  fullPaths: '/' | '/sentence/$sentenceId' | '/word/$word'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/word/$word'
-  id: '__root__' | '/' | '/word/$word'
+  to: '/' | '/sentence/$sentenceId' | '/word/$word'
+  id: '__root__' | '/' | '/sentence/$sentenceId' | '/word/$word'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SentenceSentenceIdRoute: typeof SentenceSentenceIdRoute
   WordWordRoute: typeof WordWordRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sentence/$sentenceId': {
+      id: '/sentence/$sentenceId'
+      path: '/sentence/$sentenceId'
+      fullPath: '/sentence/$sentenceId'
+      preLoaderRoute: typeof SentenceSentenceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/word/$word': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SentenceSentenceIdRoute: SentenceSentenceIdRoute,
   WordWordRoute: WordWordRoute,
 }
 export const routeTree = rootRouteImport

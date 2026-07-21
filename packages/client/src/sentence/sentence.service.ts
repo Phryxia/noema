@@ -1,0 +1,109 @@
+import { RECENT_SENTENCES_STORE, SENTENCES_STORE } from '../db/consts'
+import { openNoemaDB } from '../db/openNoemaDB'
+import { awaitRequest, awaitTransaction } from '../db/utils'
+import { deleteRelationsReferencing } from '../relation/relation.service'
+import type { RecentSentence, Sentence } from './types'
+
+const RECENT_SENTENCES_SIZE = 4
+
+export async function createSentence(value: string): Promise<number> {
+  if (!value) {
+    throw new Error('빈 문자열은 문장이 될 수 없다')
+  }
+  const db = await openNoemaDB()
+  const transaction = db.transaction([SENTENCES_STORE, RECENT_SENTENCES_STORE], 'readwrite')
+  const sentenceStore = transaction.objectStore(SENTENCES_STORE)
+
+  const createdAt = new Date()
+  const sentenceId = (await awaitRequest<IDBValidKey>(
+    sentenceStore.add({ value, createdAt }),
+  )) as number
+
+  const recentStore = transaction.objectStore(RECENT_SENTENCES_STORE)
+  const next = await awaitRequest<number>(recentStore.get('next'))
+  const recentSentence: RecentSentence = { sentenceId, value, createdAt }
+  recentStore.put(recentSentence, next)
+  recentStore.put((next + 1) % RECENT_SENTENCES_SIZE, 'next')
+
+  await awaitTransaction(transaction)
+  return sentenceId
+}
+
+export async function updateSentence(sentenceId: number, value: string): Promise<void> {
+  if (!value) {
+    throw new Error('빈 문자열은 문장이 될 수 없다')
+  }
+  const db = await openNoemaDB()
+  const transaction = db.transaction([SENTENCES_STORE, RECENT_SENTENCES_STORE], 'readwrite')
+  const sentenceStore = transaction.objectStore(SENTENCES_STORE)
+
+  const sentence = await awaitRequest<Sentence | undefined>(sentenceStore.get(sentenceId))
+  if (!sentence) {
+    await awaitTransaction(transaction)
+    return
+  }
+  sentence.value = value
+  sentence.modifiedAt = new Date()
+  sentenceStore.put(sentence)
+
+  const recentStore = transaction.objectStore(RECENT_SENTENCES_STORE)
+  await forEachRecentSlot(recentStore, sentenceId, (slot, index) =>
+    recentStore.put({ sentenceId, value, createdAt: slot.createdAt }, index),
+  )
+
+  await awaitTransaction(transaction)
+}
+
+export async function deleteSentence(sentenceId: number): Promise<void> {
+  const db = await openNoemaDB()
+  const transaction = db.transaction([SENTENCES_STORE, RECENT_SENTENCES_STORE], 'readwrite')
+  transaction.objectStore(SENTENCES_STORE).delete(sentenceId)
+
+  const recentStore = transaction.objectStore(RECENT_SENTENCES_STORE)
+  await forEachRecentSlot(recentStore, sentenceId, (_slot, index) =>
+    recentStore.put(null, index),
+  )
+
+  await awaitTransaction(transaction)
+  void deleteRelationsReferencing({ type: 'sentence', id: sentenceId })
+}
+
+export async function getSentence(sentenceId: number): Promise<Sentence | null> {
+  if (!Number.isInteger(sentenceId)) {
+    return null
+  }
+  const db = await openNoemaDB()
+  const sentenceStore = db.transaction(SENTENCES_STORE).objectStore(SENTENCES_STORE)
+  const sentence = await awaitRequest<Sentence | undefined>(sentenceStore.get(sentenceId))
+  return sentence ?? null
+}
+
+export async function getRecentSentences(): Promise<RecentSentence[]> {
+  const db = await openNoemaDB()
+  const recentStore = db.transaction(RECENT_SENTENCES_STORE).objectStore(RECENT_SENTENCES_STORE)
+  const next = await awaitRequest<number>(recentStore.get('next'))
+
+  const result: RecentSentence[] = []
+  for (let offset = 1; offset <= RECENT_SENTENCES_SIZE; offset += 1) {
+    const slot = await awaitRequest<RecentSentence | null | undefined>(
+      recentStore.get((next - offset + RECENT_SENTENCES_SIZE) % RECENT_SENTENCES_SIZE),
+    )
+    if (slot) {
+      result.push(slot)
+    }
+  }
+  return result
+}
+
+async function forEachRecentSlot(
+  recentStore: IDBObjectStore,
+  sentenceId: number,
+  handle: (slot: RecentSentence, index: number) => void,
+): Promise<void> {
+  for (let index = 0; index < RECENT_SENTENCES_SIZE; index += 1) {
+    const slot = await awaitRequest<RecentSentence | null | undefined>(recentStore.get(index))
+    if (slot?.sentenceId === sentenceId) {
+      handle(slot, index)
+    }
+  }
+}

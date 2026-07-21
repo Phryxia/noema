@@ -1,9 +1,11 @@
 import type { FormEvent, ReactElement } from 'react'
 import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { RECENT_WORDS_QUERY_KEY, WORD_SUGGESTION_QUERY_KEY } from '../consts'
-import { createWord } from '../word.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { WORD_NODE_ID_QUERY_KEY } from '../consts'
+import { createWord, getWordNodeId } from '../word.service'
+import { invalidateWordQueries } from '../utils'
 import { WordSuggestion } from '../WordSuggestion/WordSuggestion'
+import { useThrottledValue } from '../../utils/useThrottledValue'
 import classNames from 'classnames/bind'
 import styles from './WordWriter.module.css'
 
@@ -21,14 +23,21 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
     mutationFn: createWord,
     onSuccess: () => {
       setValue('')
-      queryClient.invalidateQueries({ queryKey: [WORD_SUGGESTION_QUERY_KEY] })
-      queryClient.invalidateQueries({ queryKey: [RECENT_WORDS_QUERY_KEY] })
+      invalidateWordQueries(queryClient)
     },
   })
 
+  const throttledValue = useThrottledValue(value, 100)
+  const { data: existingNodeId } = useQuery({
+    queryKey: [WORD_NODE_ID_QUERY_KEY, throttledValue],
+    queryFn: () => getWordNodeId(throttledValue),
+    enabled: !!throttledValue,
+  })
+  const isExisting = throttledValue === value && typeof existingNodeId === 'number'
+
   function handleSubmit(event: FormEvent): void {
     event.preventDefault()
-    if (!value || !isEditable || isPending) {
+    if (!value || !isEditable || isPending || isExisting) {
       return
     }
     saveWord(value)
@@ -50,7 +59,7 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
             <SpaceEcho value={value} scrollLeft={scrollLeft} />
           </div>
           {isEditable && (
-            <button type="submit" disabled={!value || isPending}>
+            <button type="submit" disabled={!value || isPending || isExisting}>
               저장
             </button>
           )}

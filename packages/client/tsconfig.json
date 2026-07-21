@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "paths": {
+      "@rayelxia/shared/*": ["../shared/*"],
+      "@rayelxia/shared": ["../shared/index.ts"]
+    }
+  },
+  "include": ["src", "../shared"]
+}

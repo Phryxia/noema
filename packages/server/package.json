@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "tsx --tsconfig ./tsconfig.json ./src/index.ts",
+    "dev": "tsx watch --tsconfig ./tsconfig.json ./src/index.ts",
+    "build": "tsc -b ./tsconfig.build.json",
+    "test": "vitest run",
+    "test-dev": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.6"
+  },
+  "dependencies": {
+    "@rayelxia/shared": "file:../shared",
+    "@fastify/cors": "^11.1.0",
+    "fastify": "^5.6.1",
+    "uuid": "^14.0.1"
+  }
+}

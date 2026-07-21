@@ -1,0 +1,19 @@
+.root {
+  .list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+
+    li {
+      padding: 0;
+    }
+
+    a {
+      white-space: pre;
+    }
+  }
+}

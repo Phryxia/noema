@@ -25,9 +25,9 @@ export function RecentTable({ entries, EntryLink }: RecentTableProps): ReactElem
     <table className={cx('root')}>
       <thead>
         <tr>
-          <th>내용</th>
-          <th>출처</th>
-          <th>날짜</th>
+          <th className={cx('value')}>내용</th>
+          <th className={cx('source')}>출처</th>
+          <th className={cx('date')}>날짜</th>
         </tr>
       </thead>
       <tbody>
@@ -47,10 +47,12 @@ interface RecentRowProps {
 function RecentRow({ entry, EntryLink }: RecentRowProps): ReactElement {
   return (
     <tr>
-      <td>
+      <td className={cx('value')}>
         <EntryLink entry={entry}>{createPreview(entry.value, VALUE_PREVIEW_LENGTH)}</EntryLink>
       </td>
-      <td>{entry.source ? createPreview(entry.source, SOURCE_PREVIEW_LENGTH) : ''}</td>
+      <td className={cx('source')}>
+        {entry.source ? createPreview(entry.source, SOURCE_PREVIEW_LENGTH) : ''}
+      </td>
       <td className={cx('date')}>{formatMinute(entry.createdAt)}</td>
     </tr>
   )

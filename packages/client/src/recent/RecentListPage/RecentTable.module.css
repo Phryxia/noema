@@ -1,8 +1,33 @@
 .root {
   font-family: var(--font-mono);
-  white-space: nowrap;
+
+  th,
+  td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .value,
+  .source {
+    max-width: 0;
+  }
+
+  .source {
+    width: 20%;
+  }
 
   .date {
+    width: 1%;
     text-align: right;
+  }
+
+  @media (max-width: 576px) {
+    font-size: 0.875em;
+
+    th,
+    td {
+      padding-inline: calc(var(--pico-spacing) / 4);
+    }
   }
 }

@@ -22,7 +22,6 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    open: true,
     port: Number(process.env.CLIENT_PORT),
     fs: {
       allow: ['..'],

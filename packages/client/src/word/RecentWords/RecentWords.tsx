@@ -15,7 +15,7 @@ export function RecentWords(): ReactElement {
   })
 
   return (
-    <article className={cx('root')}>
+    <section className={cx('root')}>
       <h2>최근에 추가된 단어</h2>
       <ul className={cx('list')}>
         {recentWords?.map((word) => (
@@ -26,6 +26,6 @@ export function RecentWords(): ReactElement {
           </li>
         ))}
       </ul>
-    </article>
+    </section>
   )
 }

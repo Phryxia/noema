@@ -11,9 +11,9 @@ interface RecentLinesProps {
 
 export function RecentLines({ title, children }: RecentLinesProps): ReactElement {
   return (
-    <article className={cx('root')}>
+    <section className={cx('root')}>
       <h2>{title}</h2>
       <ul className={cx('list')}>{children}</ul>
-    </article>
+    </section>
   )
 }

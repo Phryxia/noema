@@ -2,11 +2,9 @@ import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { WordWriter } from '../word/WordWriter/WordWriter'
-import { RecentWords } from '../word/RecentWords/RecentWords'
 import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
-import { RecentSentences } from '../sentence/RecentSentences/RecentSentences'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
-import { RecentDocuments } from '../document/RecentDocuments/RecentDocuments'
+import { RecentCreations } from '../recent/RecentCreations'
 
 export const Route = createFileRoute('/')({
   component: MainPage,
@@ -20,9 +18,7 @@ function MainPage(): ReactElement {
   return (
     <article>
       <WriterSection />
-      <RecentWords />
-      <RecentSentences />
-      <RecentDocuments />
+      <RecentCreations />
     </article>
   )
 }
@@ -31,12 +27,12 @@ function WriterSection(): ReactElement {
   const [mode, setMode] = useState<WriterMode>('단어')
 
   return (
-    <section>
+    <article>
       <WriterModeSelector mode={mode} onChange={setMode} />
       {mode === '단어' && <WordWriter isEditable />}
       {mode === '문장' && <SentenceWriter isEditable />}
       {mode === '문서' && <DocumentWriter isEditable />}
-    </section>
+    </article>
   )
 }
 

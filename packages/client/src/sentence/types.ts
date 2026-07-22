@@ -3,6 +3,7 @@ export interface Sentence {
   value: string
   createdAt: Date
   modifiedAt?: Date
+  source?: string
 }
 
-export type RecentSentence = Omit<Sentence, 'modifiedAt'>
+export type RecentSentence = Omit<Sentence, 'modifiedAt' | 'source'>

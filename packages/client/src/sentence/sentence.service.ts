@@ -7,7 +7,7 @@ import type { RecentSentence, Sentence } from './types'
 
 const RECENT_SENTENCES_SIZE = 4
 
-export async function createSentence(value: string): Promise<number> {
+export async function createSentence(value: string, source: string): Promise<number> {
   if (!value) {
     throw new Error('빈 문자열은 문장이 될 수 없다')
   }
@@ -17,7 +17,7 @@ export async function createSentence(value: string): Promise<number> {
 
   const createdAt = new Date()
   const sentenceId = (await awaitRequest<IDBValidKey>(
-    sentenceStore.add({ value, createdAt }),
+    sentenceStore.add(source ? { value, createdAt, source } : { value, createdAt }),
   )) as number
 
   const recentStore = transaction.objectStore(RECENT_SENTENCES_STORE)
@@ -31,7 +31,11 @@ export async function createSentence(value: string): Promise<number> {
   return sentenceId
 }
 
-export async function updateSentence(sentenceId: number, value: string): Promise<void> {
+export async function updateSentence(
+  sentenceId: number,
+  value: string,
+  source: string,
+): Promise<void> {
   if (!value) {
     throw new Error('빈 문자열은 문장이 될 수 없다')
   }
@@ -46,6 +50,11 @@ export async function updateSentence(sentenceId: number, value: string): Promise
   }
   sentence.value = value
   sentence.modifiedAt = new Date()
+  if (source) {
+    sentence.source = source
+  } else {
+    delete sentence.source
+  }
   sentenceStore.put(sentence)
 
   const recentStore = transaction.objectStore(RECENT_SENTENCES_STORE)

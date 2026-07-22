@@ -1,6 +1,7 @@
 import type { DragEvent, FormEvent, KeyboardEvent, ReactElement } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
+import { SourceField } from '../../writer/SourceField/SourceField'
 import { insertTabIfPressed } from '../../writer/insertTabIfPressed'
 import { createDocument, deleteDocument, updateDocument } from '../document.service'
 import { invalidateDocumentQueries } from '../utils'
@@ -58,17 +59,11 @@ export function DocumentWriter({
 
   return (
     <form className={cx('root')} onSubmit={handleSubmit}>
-      <label>
-        출처
-        <input
-          className={cx('source')}
-          type="text"
-          placeholder="출처"
-          value={draft.source}
-          readOnly={!isEditable}
-          onChange={(event) => setDraft({ ...draft, source: event.target.value })}
-        />
-      </label>
+      <SourceField
+        value={draft.source}
+        isEditable={isEditable}
+        onChange={(source) => setDraft({ ...draft, source })}
+      />
       <textarea
         className={cx('textarea')}
         value={draft.value}

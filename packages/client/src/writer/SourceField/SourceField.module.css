@@ -1,0 +1,5 @@
+.root {
+  .source {
+    font-family: var(--font-mono);
+  }
+}

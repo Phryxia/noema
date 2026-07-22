@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
 import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
+import { SourceField } from '../../writer/SourceField/SourceField'
 import { insertTabIfPressed } from '../../writer/insertTabIfPressed'
 import { createSentence, deleteSentence, updateSentence } from '../sentence.service'
 import { invalidateSentenceQueries } from '../utils'
@@ -27,8 +28,8 @@ export function SentenceWriter({
   const { draft, setDraft, canSave, save, remove } = useWriterForm({
     isEditable,
     isEditing: !!sentence,
-    initialDraft: { value: sentence?.value ?? '' },
-    saveDraft: ({ value }): Promise<void> => submitSentence(sentence, value),
+    initialDraft: { value: sentence?.value ?? '', source: sentence?.source ?? '' },
+    saveDraft: ({ value, source }): Promise<void> => submitSentence(sentence, value, source),
     deleteItem: sentence ? (): Promise<void> => deleteSentence(sentence.sentenceId) : undefined,
     invalidateQueries: invalidateSentenceQueries,
     onDeleted: onDelete,
@@ -52,12 +53,17 @@ export function SentenceWriter({
 
   return (
     <form onSubmit={handleSubmit}>
+      <SourceField
+        value={draft.source}
+        isEditable={isEditable}
+        onChange={(source) => setDraft({ ...draft, source })}
+      />
       <div className={cx('textareaWrapper')}>
         <textarea
           className={cx('textarea')}
           value={draft.value}
           readOnly={!isEditable}
-          onChange={(event) => setDraft({ value: event.target.value })}
+          onChange={(event) => setDraft({ ...draft, value: event.target.value })}
           onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
           onKeyDown={handleKeyDown}
         />
@@ -70,10 +76,14 @@ export function SentenceWriter({
   )
 }
 
-async function submitSentence(sentence: Sentence | undefined, value: string): Promise<void> {
+async function submitSentence(
+  sentence: Sentence | undefined,
+  value: string,
+  source: string,
+): Promise<void> {
   if (sentence) {
-    await updateSentence(sentence.sentenceId, value)
+    await updateSentence(sentence.sentenceId, value, source)
     return
   }
-  await createSentence(value)
+  await createSentence(value, source)
 }

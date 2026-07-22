@@ -1,8 +1,4 @@
 .root {
-  .source {
-    font-family: var(--font-mono);
-  }
-
   .textarea {
     min-height: 256px;
     resize: vertical;

@@ -1,3 +1,8 @@
+export interface RecentSource {
+  storeName: string
+  hydrate?: (entries: RecentEntry[]) => Promise<RecentEntry[]>
+}
+
 export interface RecentEntry {
   id: number
   value: string

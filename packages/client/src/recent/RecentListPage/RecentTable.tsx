@@ -14,10 +14,11 @@ export interface EntryLinkProps {
 
 interface RecentTableProps {
   entries: RecentEntry[]
+  hasSource: boolean
   EntryLink: ComponentType<EntryLinkProps>
 }
 
-export function RecentTable({ entries, EntryLink }: RecentTableProps): ReactElement {
+export function RecentTable({ entries, hasSource, EntryLink }: RecentTableProps): ReactElement {
   if (!entries.length) {
     return <p>해당 범위에 아무것도 없습니다</p>
   }
@@ -26,13 +27,13 @@ export function RecentTable({ entries, EntryLink }: RecentTableProps): ReactElem
       <thead>
         <tr>
           <th className={cx('value')}>내용</th>
-          <th className={cx('source')}>출처</th>
+          {hasSource && <th className={cx('source')}>출처</th>}
           <th className={cx('date')}>날짜</th>
         </tr>
       </thead>
       <tbody>
         {entries.map((entry) => (
-          <RecentRow key={entry.id} entry={entry} EntryLink={EntryLink} />
+          <RecentRow key={entry.id} entry={entry} hasSource={hasSource} EntryLink={EntryLink} />
         ))}
       </tbody>
     </table>
@@ -41,18 +42,21 @@ export function RecentTable({ entries, EntryLink }: RecentTableProps): ReactElem
 
 interface RecentRowProps {
   entry: RecentEntry
+  hasSource: boolean
   EntryLink: ComponentType<EntryLinkProps>
 }
 
-function RecentRow({ entry, EntryLink }: RecentRowProps): ReactElement {
+function RecentRow({ entry, hasSource, EntryLink }: RecentRowProps): ReactElement {
   return (
     <tr>
       <td className={cx('value')}>
         <EntryLink entry={entry}>{createPreview(entry.value, VALUE_PREVIEW_LENGTH)}</EntryLink>
       </td>
-      <td className={cx('source')}>
-        {entry.source ? createPreview(entry.source, SOURCE_PREVIEW_LENGTH) : ''}
-      </td>
+      {hasSource && (
+        <td className={cx('source')}>
+          {entry.source ? createPreview(entry.source, SOURCE_PREVIEW_LENGTH) : ''}
+        </td>
+      )}
       <td className={cx('date')}>{formatMinute(entry.createdAt)}</td>
     </tr>
   )

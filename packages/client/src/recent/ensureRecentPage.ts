@@ -1,10 +1,10 @@
 import type { QueryClient, QueryKey } from '@tanstack/react-query'
 import { getRecentPage } from './recent.service'
-import type { RecentPage, RecentRange } from './types'
+import type { RecentPage, RecentRange, RecentSource } from './types'
 
 export interface RecentPageQuery {
   queryClient: QueryClient
-  storeName: string
+  source: RecentSource
   queryKeyPrefix: string
   range: RecentRange
 }
@@ -21,9 +21,9 @@ export async function ensureRecentPage(
   query: RecentPageQuery,
   page: number,
 ): Promise<RecentPage> {
-  const { queryClient, storeName, queryKeyPrefix, range } = query
+  const { queryClient, source, queryKeyPrefix, range } = query
   if (page <= 1) {
-    return getRecentPage(storeName, range, null)
+    return getRecentPage(source, range, null)
   }
 
   const previous = await queryClient.ensureQueryData({
@@ -35,5 +35,5 @@ export async function ensureRecentPage(
   if (!previous.nextCursor) {
     return { entries: [], nextCursor: null }
   }
-  return getRecentPage(storeName, range, previous.nextCursor)
+  return getRecentPage(source, range, previous.nextCursor)
 }

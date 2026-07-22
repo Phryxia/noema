@@ -16,7 +16,9 @@ export function RecentWords(): ReactElement {
 
   return (
     <section className={cx('root')}>
-      <h2>최근에 추가된 단어</h2>
+      <h2>
+        <Link to="/recent/words">최근에 추가된 단어</Link>
+      </h2>
       <ul className={cx('list')}>
         {recentWords?.map((word) => (
           <li key={word.nodeId}>

@@ -92,7 +92,7 @@ function createInitialSchema(db: IDBDatabase, transaction: IDBTransaction): void
 }
 
 function ensureCreatedAtIndexes(transaction: IDBTransaction): void {
-  const storeNames = [SENTENCES_STORE, DOCUMENTS_STORE]
+  const storeNames = [SENTENCES_STORE, DOCUMENTS_STORE, WORD_NODES_STORE]
   storeNames.forEach((storeName) => {
     const store = transaction.objectStore(storeName)
     if (store.indexNames.contains(CREATED_AT_INDEX)) {

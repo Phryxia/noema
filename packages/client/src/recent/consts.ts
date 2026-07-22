@@ -1,3 +1,4 @@
+export const RECENT_WORD_PAGES_QUERY_KEY = 'recentWordPages'
 export const RECENT_SENTENCE_PAGES_QUERY_KEY = 'recentSentencePages'
 export const RECENT_DOCUMENT_PAGES_QUERY_KEY = 'recentDocumentPages'
 

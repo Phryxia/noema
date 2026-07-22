@@ -1,7 +1,7 @@
 import { CREATED_AT_INDEX } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { RECENT_PAGE_SIZE } from './consts'
-import type { RecentCursor, RecentEntry, RecentPage, RecentRange } from './types'
+import type { RecentCursor, RecentEntry, RecentPage, RecentRange, RecentSource } from './types'
 
 interface StoredEntry {
   value: string
@@ -10,7 +10,7 @@ interface StoredEntry {
 }
 
 export async function getRecentPage(
-  storeName: string,
+  { storeName, hydrate }: RecentSource,
   range: RecentRange,
   from: RecentCursor | null,
 ): Promise<RecentPage> {
@@ -25,7 +25,11 @@ export async function getRecentPage(
       `${storeName}에 ${CREATED_AT_INDEX} 인덱스가 없습니다. 열려 있는 DB가 버전 ${db.version}입니다. 이 앱을 띄운 다른 탭을 모두 닫고 새로고침해주세요`,
     )
   }
-  return readPage(store.index(CREATED_AT_INDEX).openCursor(keyRange, 'prev'), from)
+  const page = await readPage(store.index(CREATED_AT_INDEX).openCursor(keyRange, 'prev'), from)
+  if (!hydrate) {
+    return page
+  }
+  return { entries: await hydrate(page.entries), nextCursor: page.nextCursor }
 }
 
 function createKeyRange({ since, until }: RecentRange): IDBKeyRange | null {

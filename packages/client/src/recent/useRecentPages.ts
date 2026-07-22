@@ -3,11 +3,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { computePagination } from './computePagination'
 import type { Pagination } from './computePagination'
 import { createPageQueryKey, ensureRecentPage } from './ensureRecentPage'
-import type { RecentEntry, RecentRange } from './types'
+import type { RecentEntry, RecentRange, RecentSource } from './types'
 import { toInclusiveMinuteEnd } from './utils'
 
 interface UseRecentPagesParams {
-  storeName: string
+  source: RecentSource
   queryKeyPrefix: string
 }
 
@@ -22,10 +22,7 @@ interface RecentPages {
   search: (range: RecentRange) => void
 }
 
-export function useRecentPages({
-  storeName,
-  queryKeyPrefix,
-}: UseRecentPagesParams): RecentPages {
+export function useRecentPages({ source, queryKeyPrefix }: UseRecentPagesParams): RecentPages {
   const queryClient = useQueryClient()
   const [range, setRange] = useState<RecentRange>(createInitialRange)
   const [currentPage, setCurrentPage] = useState(1)
@@ -35,7 +32,7 @@ export function useRecentPages({
   const { data, isPending, error } = useQuery({
     queryKey: createPageQueryKey(queryKeyPrefix, range, currentPage),
     queryFn: () =>
-      ensureRecentPage({ queryClient, storeName, queryKeyPrefix, range }, currentPage),
+      ensureRecentPage({ queryClient, source, queryKeyPrefix, range }, currentPage),
     staleTime: Infinity,
     gcTime: Infinity,
     retry: false,

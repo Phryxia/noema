@@ -8,7 +8,9 @@ function RootLayout(): ReactElement {
       <header className="pico container">
         <section>
           <article>
-            <h1>NOEMA System</h1>
+            <h1>
+              <Link to="/">NOEMA System</Link>
+            </h1>
             <p>나만의 말뭉치를 만들자!</p>
           </article>
         </section>

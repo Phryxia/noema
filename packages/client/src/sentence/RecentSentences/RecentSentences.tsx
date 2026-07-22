@@ -12,7 +12,7 @@ export function RecentSentences(): ReactElement {
   })
 
   return (
-    <RecentLines title="최근에 추가된 문장">
+    <RecentLines title={<Link to="/recent/sentences">최근에 추가된 문장</Link>}>
       {recentSentences?.map((sentence) => (
         <li key={sentence.sentenceId}>
           <Link to="/sentence/$sentenceId" params={{ sentenceId: String(sentence.sentenceId) }}>

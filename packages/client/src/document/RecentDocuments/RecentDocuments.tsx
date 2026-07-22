@@ -12,7 +12,7 @@ export function RecentDocuments(): ReactElement {
   })
 
   return (
-    <RecentLines title="최근에 추가된 문서">
+    <RecentLines title={<Link to="/recent/documents">최근에 추가된 문서</Link>}>
       {recentDocuments?.map((document) => (
         <li key={document.documentId}>
           <Link to="/document/$documentId" params={{ documentId: String(document.documentId) }}>

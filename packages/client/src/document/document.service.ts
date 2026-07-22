@@ -3,12 +3,11 @@ import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { deleteRelationsReferencing } from '../relation/relation.service'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
+import { sliceSafely } from '../utils/sliceSafely'
 import type { Document, RecentDocument } from './types'
 
 const RECENT_DOCUMENTS_SIZE = 4
 const PREVIEW_LENGTH = 64
-const HIGH_SURROGATE_START = 0xd800
-const HIGH_SURROGATE_END = 0xdbff
 
 export async function createDocument(value: string, source: string): Promise<number> {
   if (!value) {
@@ -140,10 +139,5 @@ async function forEachRecentSlot(
 }
 
 function createPreview(value: string): string {
-  const preview = value.slice(0, PREVIEW_LENGTH)
-  const lastCharCode = preview.charCodeAt(preview.length - 1)
-  if (lastCharCode >= HIGH_SURROGATE_START && lastCharCode <= HIGH_SURROGATE_END) {
-    return preview.slice(0, -1)
-  }
-  return preview
+  return sliceSafely(value, PREVIEW_LENGTH)
 }

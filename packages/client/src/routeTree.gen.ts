@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DocumentDocumentIdRouteImport } from './routes/document.$documentId'
+import { Route as RecentDocumentsRouteImport } from './routes/recent.documents'
+import { Route as RecentSentencesRouteImport } from './routes/recent.sentences'
 import { Route as SentenceSentenceIdRouteImport } from './routes/sentence.$sentenceId'
 import { Route as WordWordRouteImport } from './routes/word.$word'
 
@@ -30,6 +32,16 @@ const DocumentDocumentIdRoute = DocumentDocumentIdRouteImport.update({
   path: '/document/$documentId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecentDocumentsRoute = RecentDocumentsRouteImport.update({
+  id: '/recent/documents',
+  path: '/recent/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecentSentencesRoute = RecentSentencesRouteImport.update({
+  id: '/recent/sentences',
+  path: '/recent/sentences',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SentenceSentenceIdRoute = SentenceSentenceIdRouteImport.update({
   id: '/sentence/$sentenceId',
   path: '/sentence/$sentenceId',
@@ -45,6 +57,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
+  '/recent/documents': typeof RecentDocumentsRoute
+  '/recent/sentences': typeof RecentSentencesRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -52,6 +66,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
+  '/recent/documents': typeof RecentDocumentsRoute
+  '/recent/sentences': typeof RecentSentencesRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -60,6 +76,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
+  '/recent/documents': typeof RecentDocumentsRoute
+  '/recent/sentences': typeof RecentSentencesRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -69,6 +87,8 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/document/$documentId'
+    | '/recent/documents'
+    | '/recent/sentences'
     | '/sentence/$sentenceId'
     | '/word/$word'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +96,8 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/document/$documentId'
+    | '/recent/documents'
+    | '/recent/sentences'
     | '/sentence/$sentenceId'
     | '/word/$word'
   id:
@@ -83,6 +105,8 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/document/$documentId'
+    | '/recent/documents'
+    | '/recent/sentences'
     | '/sentence/$sentenceId'
     | '/word/$word'
   fileRoutesById: FileRoutesById
@@ -91,6 +115,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SettingsRoute: typeof SettingsRoute
   DocumentDocumentIdRoute: typeof DocumentDocumentIdRoute
+  RecentDocumentsRoute: typeof RecentDocumentsRoute
+  RecentSentencesRoute: typeof RecentSentencesRoute
   SentenceSentenceIdRoute: typeof SentenceSentenceIdRoute
   WordWordRoute: typeof WordWordRoute
 }
@@ -118,6 +144,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentDocumentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recent/documents': {
+      id: '/recent/documents'
+      path: '/recent/documents'
+      fullPath: '/recent/documents'
+      preLoaderRoute: typeof RecentDocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recent/sentences': {
+      id: '/recent/sentences'
+      path: '/recent/sentences'
+      fullPath: '/recent/sentences'
+      preLoaderRoute: typeof RecentSentencesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sentence/$sentenceId': {
       id: '/sentence/$sentenceId'
       path: '/sentence/$sentenceId'
@@ -139,6 +179,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SettingsRoute: SettingsRoute,
   DocumentDocumentIdRoute: DocumentDocumentIdRoute,
+  RecentDocumentsRoute: RecentDocumentsRoute,
+  RecentSentencesRoute: RecentSentencesRoute,
   SentenceSentenceIdRoute: SentenceSentenceIdRoute,
   WordWordRoute: WordWordRoute,
 }

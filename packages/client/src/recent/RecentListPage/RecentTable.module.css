@@ -1,0 +1,8 @@
+.root {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+
+  .date {
+    text-align: right;
+  }
+}

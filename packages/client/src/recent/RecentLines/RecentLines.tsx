@@ -5,7 +5,7 @@ import styles from './RecentLines.module.css'
 const cx = classnames.bind(styles)
 
 interface RecentLinesProps {
-  title: string
+  title: ReactNode
   children: ReactNode
 }
 

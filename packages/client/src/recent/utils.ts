@@ -1,16 +1,7 @@
 import { sliceSafely } from '../utils/sliceSafely'
 
-const MinuteFormat = new Intl.DateTimeFormat('ko-KR', {
-  dateStyle: 'short',
-  timeStyle: 'short',
-})
-
 export function formatDateTimeLocal(date: Date): string {
-  const year = String(date.getFullYear()).padStart(4, '0')
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hour = String(date.getHours()).padStart(2, '0')
-  const minute = String(date.getMinutes()).padStart(2, '0')
+  const { year, month, day, hour, minute } = splitDateTime(date)
   return `${year}-${month}-${day}T${hour}:${minute}`
 }
 
@@ -32,7 +23,26 @@ export function toInclusiveMinuteEnd(date: Date): Date {
 }
 
 export function formatMinute(date: Date): string {
-  return MinuteFormat.format(date)
+  const { year, month, day, hour, minute } = splitDateTime(date)
+  return `${year.slice(2)}-${month}-${day} ${hour}:${minute}`
+}
+
+interface DateTimeParts {
+  year: string
+  month: string
+  day: string
+  hour: string
+  minute: string
+}
+
+function splitDateTime(date: Date): DateTimeParts {
+  return {
+    year: String(date.getFullYear()).padStart(4, '0'),
+    month: String(date.getMonth() + 1).padStart(2, '0'),
+    day: String(date.getDate()).padStart(2, '0'),
+    hour: String(date.getHours()).padStart(2, '0'),
+    minute: String(date.getMinutes()).padStart(2, '0'),
+  }
 }
 
 export function createPreview(value: string, length: number): string {

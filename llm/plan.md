@@ -5,13 +5,6 @@
 
 # 할 일
 
-## 통계 수동 백필 버튼 제거
-
-대시보드 맨 아래의 `RebuildCountLogsButton`은 임시다.
-`DB_VERSION` 2로 이미 올라간 개발 환경이 자동 백필을 못 받아서 넣었다.
-개발 환경의 통계를 다시 만든 뒤 컴포넌트와 `rebuildCountLogs`를 지운다.
-`backfillCountLogs`는 마이그레이션이 계속 쓰므로 남긴다.
-
 ## 데이터 영속성과 백업 규약 정하기
 
 `navigator.storage.persist()`를 언제 요청할지, 거절당했을 때 사용자에게 무엇을 보여줄지 정한다.

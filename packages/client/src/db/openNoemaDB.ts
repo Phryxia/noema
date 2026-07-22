@@ -1,15 +1,22 @@
 import {
+  DAY_ACC_STORE,
+  DAY_DELTA_STORE,
   DB_NAME,
   DB_VERSION,
   DOCUMENTS_STORE,
+  HOUR_ACC_STORE,
+  HOUR_DELTA_STORE,
   RECENT_DOCUMENTS_STORE,
   RECENT_SENTENCES_STORE,
   RECENT_WORDS_STORE,
   RELATIONS_STORE,
   SENTENCES_STORE,
+  WEEK_ACC_STORE,
+  WEEK_DELTA_STORE,
   WORD_META_STORE,
   WORD_NODES_STORE,
 } from './consts'
+import { backfillCountLogs } from '../statistic/backfillCountLogs'
 
 let dbPromise: Promise<IDBDatabase> | undefined
 
@@ -33,6 +40,9 @@ function createConnection(): Promise<IDBDatabase> {
       switch (event.oldVersion) {
         case 0:
           createInitialSchema(db, transaction)
+        case 1:
+          createCountLogSchema(db)
+          void backfillCountLogs(transaction)
       }
     }
 
@@ -77,4 +87,16 @@ function createInitialSchema(db: IDBDatabase, transaction: IDBTransaction): void
   transaction.objectStore(RECENT_WORDS_STORE).put(0, 'next')
   transaction.objectStore(RECENT_SENTENCES_STORE).put(0, 'next')
   transaction.objectStore(RECENT_DOCUMENTS_STORE).put(0, 'next')
+}
+
+function createCountLogSchema(db: IDBDatabase): void {
+  const stores = [
+    HOUR_DELTA_STORE,
+    HOUR_ACC_STORE,
+    DAY_DELTA_STORE,
+    DAY_ACC_STORE,
+    WEEK_DELTA_STORE,
+    WEEK_ACC_STORE,
+  ]
+  stores.forEach((store) => db.createObjectStore(store, { keyPath: 'beginDate' }))
 }

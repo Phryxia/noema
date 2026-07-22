@@ -5,6 +5,7 @@ import { WordWriter } from '../word/WordWriter/WordWriter'
 import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
 import { RecentCreations } from '../recent/RecentCreations'
+import { Statistic } from '../statistic/Statistic/Statistic'
 
 export const Route = createFileRoute('/')({
   component: MainPage,
@@ -19,6 +20,7 @@ function MainPage(): ReactElement {
     <article>
       <WriterSection />
       <RecentCreations />
+      <Statistic />
     </article>
   )
 }

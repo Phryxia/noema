@@ -2,6 +2,7 @@ import { RECENT_SENTENCES_STORE, SENTENCES_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { deleteRelationsReferencing } from '../relation/relation.service'
+import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import type { RecentSentence, Sentence } from './types'
 
 const RECENT_SENTENCES_SIZE = 4
@@ -26,6 +27,7 @@ export async function createSentence(value: string): Promise<number> {
   recentStore.put((next + 1) % RECENT_SENTENCES_SIZE, 'next')
 
   await awaitTransaction(transaction)
+  recordCreation(db, 'sentenceCount')
   return sentenceId
 }
 
@@ -57,7 +59,9 @@ export async function updateSentence(sentenceId: number, value: string): Promise
 export async function deleteSentence(sentenceId: number): Promise<void> {
   const db = await openNoemaDB()
   const transaction = db.transaction([SENTENCES_STORE, RECENT_SENTENCES_STORE], 'readwrite')
-  transaction.objectStore(SENTENCES_STORE).delete(sentenceId)
+  const sentenceStore = transaction.objectStore(SENTENCES_STORE)
+  const isExisting = !!(await awaitRequest<number>(sentenceStore.count(sentenceId)))
+  sentenceStore.delete(sentenceId)
 
   const recentStore = transaction.objectStore(RECENT_SENTENCES_STORE)
   await forEachRecentSlot(recentStore, sentenceId, (_slot, index) =>
@@ -65,6 +69,9 @@ export async function deleteSentence(sentenceId: number): Promise<void> {
   )
 
   await awaitTransaction(transaction)
+  if (isExisting) {
+    recordDeletion(db, 'sentenceCount')
+  }
   void deleteRelationsReferencing({ type: 'sentence', id: sentenceId })
 }
 

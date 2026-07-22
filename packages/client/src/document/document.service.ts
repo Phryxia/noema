@@ -2,6 +2,7 @@ import { DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { deleteRelationsReferencing } from '../relation/relation.service'
+import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import type { Document, RecentDocument } from './types'
 
 const RECENT_DOCUMENTS_SIZE = 4
@@ -33,6 +34,7 @@ export async function createDocument(value: string, source: string): Promise<num
   recentStore.put((next + 1) % RECENT_DOCUMENTS_SIZE, 'next')
 
   await awaitTransaction(transaction)
+  recordCreation(db, 'documentCount')
   return documentId
 }
 
@@ -73,7 +75,9 @@ export async function updateDocument(
 export async function deleteDocument(documentId: number): Promise<void> {
   const db = await openNoemaDB()
   const transaction = db.transaction([DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE], 'readwrite')
-  transaction.objectStore(DOCUMENTS_STORE).delete(documentId)
+  const documentStore = transaction.objectStore(DOCUMENTS_STORE)
+  const isExisting = !!(await awaitRequest<number>(documentStore.count(documentId)))
+  documentStore.delete(documentId)
 
   const recentStore = transaction.objectStore(RECENT_DOCUMENTS_STORE)
   await forEachRecentSlot(recentStore, documentId, (_slot, index) =>
@@ -81,6 +85,9 @@ export async function deleteDocument(documentId: number): Promise<void> {
   )
 
   await awaitTransaction(transaction)
+  if (isExisting) {
+    recordDeletion(db, 'documentCount')
+  }
   void deleteRelationsReferencing({ type: 'document', id: documentId })
 }
 
@@ -96,18 +103,26 @@ export async function getDocument(documentId: number): Promise<Document | null> 
 
 export async function getRecentDocuments(): Promise<RecentDocument[]> {
   const db = await openNoemaDB()
-  const recentStore = db.transaction(RECENT_DOCUMENTS_STORE).objectStore(RECENT_DOCUMENTS_STORE)
+  const transaction = db.transaction([DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE], 'readwrite')
+  const documentStore = transaction.objectStore(DOCUMENTS_STORE)
+  const recentStore = transaction.objectStore(RECENT_DOCUMENTS_STORE)
   const next = await awaitRequest<number>(recentStore.get('next'))
 
   const result: RecentDocument[] = []
   for (let offset = 1; offset <= RECENT_DOCUMENTS_SIZE; offset += 1) {
-    const slot = await awaitRequest<RecentDocument | null | undefined>(
-      recentStore.get((next - offset + RECENT_DOCUMENTS_SIZE) % RECENT_DOCUMENTS_SIZE),
-    )
-    if (slot) {
-      result.push(slot)
+    const index = (next - offset + RECENT_DOCUMENTS_SIZE) % RECENT_DOCUMENTS_SIZE
+    const slot = await awaitRequest<RecentDocument | null | undefined>(recentStore.get(index))
+    if (!slot) {
+      continue
     }
+    if (!(await awaitRequest<number>(documentStore.count(slot.documentId)))) {
+      recentStore.put(null, index)
+      continue
+    }
+    result.push(slot)
   }
+
+  await awaitTransaction(transaction)
   return result
 }
 

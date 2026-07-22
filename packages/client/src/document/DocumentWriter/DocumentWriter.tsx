@@ -58,14 +58,17 @@ export function DocumentWriter({
 
   return (
     <form className={cx('root')} onSubmit={handleSubmit}>
-      <input
-        className={cx('source')}
-        type="text"
-        placeholder="출처"
-        value={draft.source}
-        readOnly={!isEditable}
-        onChange={(event) => setDraft({ ...draft, source: event.target.value })}
-      />
+      <label>
+        출처
+        <input
+          className={cx('source')}
+          type="text"
+          placeholder="출처"
+          value={draft.source}
+          readOnly={!isEditable}
+          onChange={(event) => setDraft({ ...draft, source: event.target.value })}
+        />
+      </label>
       <textarea
         className={cx('textarea')}
         value={draft.value}

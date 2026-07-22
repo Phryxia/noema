@@ -114,13 +114,18 @@ export async function deleteWord(nodeId: number): Promise<void> {
 }
 
 export async function getWordNodeId(word: string): Promise<number | null> {
+  const node = await getWordNode(word)
+  return node?.nodeId ?? null
+}
+
+export async function getWordNode(word: string): Promise<TrieNode | null> {
   const db = await openNoemaDB()
   const nodeStore = db.transaction(WORD_NODES_STORE).objectStore(WORD_NODES_STORE)
   const node = await walkToNode(nodeStore, word)
   if (!node?.createdAt) {
     return null
   }
-  return node.nodeId
+  return node
 }
 
 export async function getWordsByPrefix(prefix: string, n: number): Promise<Lexis[]> {

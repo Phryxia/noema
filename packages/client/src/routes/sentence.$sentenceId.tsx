@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { SENTENCE_QUERY_KEY } from '../sentence/consts'
 import { getSentence } from '../sentence/sentence.service'
 import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
+import { MetaFields } from '../meta/MetaFields/MetaFields'
 
 export const Route = createFileRoute('/sentence/$sentenceId')({
   component: SentencePage,
@@ -26,7 +27,13 @@ function SentencePage(): ReactElement {
   return (
     <article>
       <h2>문장</h2>
-      <p>id: {sentence.sentenceId}</p>
+      <MetaFields
+        fields={[
+          { label: 'sentenceId', value: sentence.sentenceId },
+          { label: 'createdAt', value: sentence.createdAt },
+          { label: 'modifiedAt', value: sentence.modifiedAt },
+        ]}
+      />
       <SentenceWriter
         key={sentence.sentenceId}
         isEditable

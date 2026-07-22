@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { DOCUMENT_QUERY_KEY } from '../document/consts'
 import { getDocument } from '../document/document.service'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
+import { MetaFields } from '../meta/MetaFields/MetaFields'
 
 export const Route = createFileRoute('/document/$documentId')({
   component: DocumentPage,
@@ -26,7 +27,13 @@ function DocumentPage(): ReactElement {
   return (
     <article>
       <h2>문서</h2>
-      <p>id: {target.documentId}</p>
+      <MetaFields
+        fields={[
+          { label: 'documentId', value: target.documentId },
+          { label: 'createdAt', value: target.createdAt },
+          { label: 'modifiedAt', value: target.modifiedAt },
+        ]}
+      />
       <DocumentWriter
         key={target.documentId}
         isEditable

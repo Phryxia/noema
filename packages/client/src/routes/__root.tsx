@@ -12,6 +12,13 @@ function RootLayout(): ReactElement {
               <Link to="/">NOEMA System</Link>
             </h1>
             <p>나만의 말뭉치를 만들자!</p>
+            <nav>
+              <ul>
+                <li>
+                  <Link to="/settings">설정</Link>
+                </li>
+              </ul>
+            </nav>
           </article>
         </section>
       </header>

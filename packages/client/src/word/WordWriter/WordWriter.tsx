@@ -28,17 +28,19 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
     },
   })
 
-  const throttledValue = useThrottledValue(value, 100)
-  const { data: existingNodeId } = useQuery({
+  const throttledValue = useThrottledValue(value, 500)
+  const { data: existingNodeId, isFetching } = useQuery({
     queryKey: [WORD_NODE_ID_QUERY_KEY, throttledValue],
     queryFn: () => getWordNodeId(throttledValue),
     enabled: !!throttledValue,
   })
-  const isExisting = throttledValue === value && typeof existingNodeId === 'number'
+  const isChecking = throttledValue !== value || isFetching
+  const isExisting = !isChecking && typeof existingNodeId === 'number'
+  const isSaveable = !!value && isEditable && !isPending && !isChecking && !isExisting
 
   function handleSubmit(event: FormEvent): void {
     event.preventDefault()
-    if (!value || !isEditable || isPending || isExisting) {
+    if (!isSaveable) {
       return
     }
     saveWord(value)
@@ -65,8 +67,13 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
             />
           </div>
           {isEditable && (
-            <button type="submit" disabled={!value || isPending || isExisting}>
-              저장
+            <button
+              className={cx('save-button')}
+              type="submit"
+              disabled={!isSaveable}
+              aria-busy={isChecking}
+            >
+              {!isChecking && '저장'}
             </button>
           )}
         </fieldset>

@@ -1,6 +1,10 @@
 .group {
   button {
     white-space: nowrap;
+
+    &.save-button {
+      flex: 0 0 150px;
+    }
   }
 
   .inputWrapper {

@@ -28,7 +28,7 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
     },
   })
 
-  const throttledValue = useThrottledValue(value, 500)
+  const throttledValue = useThrottledValue(value, 250)
   const { data: existingNodeId, isFetching } = useQuery({
     queryKey: [WORD_NODE_ID_QUERY_KEY, throttledValue],
     queryFn: () => getWordNodeId(throttledValue),

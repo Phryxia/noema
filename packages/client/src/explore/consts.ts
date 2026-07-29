@@ -3,6 +3,7 @@ import type { QuestionType } from '../question/types'
 import type { Similarity } from '../relation/types'
 
 export const EXPLORE_QUESTION_QUERY_KEY = 'exploreQuestion'
+export const CHECKED_TYPES_STORAGE_KEY = 'explore/checkedTypes'
 export const WORD_COUNT_QUERY_KEY = 'wordCount'
 
 export const MIN_WORD_COUNT = 10

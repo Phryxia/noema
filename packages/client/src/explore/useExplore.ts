@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { checkIsAnswerReady } from './checkIsAnswerReady'
 import {
+  CHECKED_TYPES_STORAGE_KEY,
   EmptyAnswer,
   EmptyComment,
   EXPLORE_QUESTION_QUERY_KEY,
@@ -32,10 +33,10 @@ export interface Explore {
 }
 
 export function useExplore(isEnabled: boolean): Explore {
-  const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(AllQuestionTypes)
+  const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(loadCheckedTypes)
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
   const [comment, setComment] = useState<CommentDraft>(EmptyComment)
-  const appliedTypes = useRef<QuestionType[]>(AllQuestionTypes)
+  const appliedTypes = useRef<QuestionType[]>(checkedTypes)
   const queryClient = useQueryClient()
 
   const {
@@ -63,6 +64,7 @@ export function useExplore(isEnabled: boolean): Explore {
 
   function updateCheckedTypes(types: QuestionType[]): void {
     setCheckedTypes(types)
+    saveCheckedTypes(types)
     if (pick?.status === 'ok') {
       return
     }
@@ -103,4 +105,24 @@ export function useExplore(isEnabled: boolean): Explore {
     skip,
     save,
   }
+}
+
+function loadCheckedTypes(): QuestionType[] {
+  const raw = localStorage.getItem(CHECKED_TYPES_STORAGE_KEY)
+  if (!raw) {
+    return AllQuestionTypes
+  }
+  try {
+    const parsed: unknown = JSON.parse(raw)
+    if (!Array.isArray(parsed)) {
+      return AllQuestionTypes
+    }
+    return AllQuestionTypes.filter((type) => parsed.includes(type))
+  } catch {
+    return AllQuestionTypes
+  }
+}
+
+function saveCheckedTypes(types: QuestionType[]): void {
+  localStorage.setItem(CHECKED_TYPES_STORAGE_KEY, JSON.stringify(types))
 }

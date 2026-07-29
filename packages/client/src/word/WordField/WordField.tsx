@@ -11,6 +11,8 @@ interface WordFieldProps {
   isEditable: boolean
   placeholder?: string
   onChange: (value: string) => void
+  onFocus?: () => void
+  onBlur?: () => void
 }
 
 export function WordField({
@@ -18,6 +20,8 @@ export function WordField({
   isEditable,
   placeholder,
   onChange,
+  onFocus,
+  onBlur,
 }: WordFieldProps): ReactElement {
   const [scrollLeft, setScrollLeft] = useState(0)
 
@@ -31,6 +35,8 @@ export function WordField({
         readOnly={!isEditable}
         onChange={(event) => onChange(event.target.value)}
         onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       <WhitespaceEcho value={value} isMultiline={false} scrollLeft={scrollLeft} scrollTop={0} />
     </div>

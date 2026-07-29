@@ -38,7 +38,7 @@ export function WordSuggestion({
   }
 
   return (
-    <article className={cx('root')}>
+    <article className={cx('root')} onMouseDown={(event) => event.preventDefault()}>
       <ul className={cx('list')}>
         {lexes?.map((lexis) => (
           <li key={lexis.nodeId} className={cx('item')}>

@@ -18,6 +18,7 @@ interface WordWriterProps {
 
 export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
   const [value, setValue] = useState('')
+  const [isFocused, setIsFocused] = useState(false)
   const queryClient = useQueryClient()
   const { mutate: saveWord, isPending } = useMutation({
     mutationFn: createWord,
@@ -49,7 +50,13 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
     <div>
       <form onSubmit={handleSubmit}>
         <fieldset role="group" className={cx('group')}>
-          <WordField value={value} isEditable={isEditable} onChange={setValue} />
+          <WordField
+            value={value}
+            isEditable={isEditable}
+            onChange={setValue}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
           {isEditable && (
             <button
               className={cx('save-button')}
@@ -62,7 +69,7 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
           )}
         </fieldset>
       </form>
-      <WordSuggestion keyword={value} n={16} />
+      {isFocused && <WordSuggestion keyword={value} n={16} />}
     </div>
   )
 }

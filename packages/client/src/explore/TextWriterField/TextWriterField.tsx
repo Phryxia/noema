@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react'
+import { useState } from 'react'
 import { SentenceField } from '../../sentence/SentenceField/SentenceField'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
@@ -30,6 +31,8 @@ export function TextWriterField({
   onChange,
   onSubmit,
 }: TextWriterFieldProps): ReactElement {
+  const [isFocused, setIsFocused] = useState(false)
+
   return (
     <div>
       {modes.length > 1 && (
@@ -39,8 +42,15 @@ export function TextWriterField({
       )}
       {mode === '단어' && (
         <>
-          <WordField value={value} isEditable placeholder={placeholder} onChange={onChange} />
-          <WordSuggestion keyword={value} n={16} onSelect={onChange} />
+          <WordField
+            value={value}
+            isEditable
+            placeholder={placeholder}
+            onChange={onChange}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
+          {isFocused && <WordSuggestion keyword={value} n={16} onSelect={onChange} />}
         </>
       )}
       {mode === '문장' && (

@@ -21,31 +21,37 @@ export async function submitAnswer({
   answer,
   comment,
 }: SubmitAnswerParams): Promise<void> {
+  const createdAt = new Date()
+  const questionId = await createQuestion(question, createdAt)
+  const source = createSource(questionId)
   const answerTarget = await createTarget(
     getAnswerMode(question.type, answer.mode),
     answer.text,
+    source,
   )
-  const commentTarget = await createTarget(comment.mode, comment.text)
+  const commentTarget = await createTarget(comment.mode, comment.text, source)
   const newRelation = createNewRelation(question, answer, answerTarget, commentTarget)
+  await createRelation(newRelation, questionId, createdAt)
+}
 
+async function createQuestion(question: NewQuestion, createdAt: Date): Promise<number> {
   const db = await openNoemaDB()
-  const transaction = db.transaction([QUESTIONS_STORE, RELATIONS_STORE], 'readwrite')
-  const createdAt = new Date()
+  const transaction = db.transaction(QUESTIONS_STORE, 'readwrite')
   const questionId = (await awaitRequest<IDBValidKey>(
     transaction.objectStore(QUESTIONS_STORE).add({ ...question, createdAt }),
   )) as number
-  const relation: NewRelation & Pick<Relation, 'questionId' | 'createdAt'> = {
-    ...newRelation,
-    questionId,
-    createdAt,
-  }
-  transaction.objectStore(RELATIONS_STORE).add(relation)
   await awaitTransaction(transaction)
+  return questionId
+}
+
+function createSource(questionId: number): string {
+  return `Harvest via NOEMA system exploration, qid=${questionId}`
 }
 
 async function createTarget(
   mode: TextWriterMode,
   text: string,
+  source: string,
 ): Promise<WordOrSentence | null> {
   if (!text) {
     return null
@@ -53,5 +59,21 @@ async function createTarget(
   if (mode === '단어') {
     return { type: 'word', id: await createWord(text) }
   }
-  return { type: 'sentence', id: await createSentence(text, '') }
+  return { type: 'sentence', id: await createSentence(text, source) }
+}
+
+async function createRelation(
+  newRelation: NewRelation,
+  questionId: number,
+  createdAt: Date,
+): Promise<void> {
+  const db = await openNoemaDB()
+  const transaction = db.transaction(RELATIONS_STORE, 'readwrite')
+  const relation: NewRelation & Pick<Relation, 'questionId' | 'createdAt'> = {
+    ...newRelation,
+    questionId,
+    createdAt,
+  }
+  transaction.objectStore(RELATIONS_STORE).add(relation)
+  await awaitTransaction(transaction)
 }

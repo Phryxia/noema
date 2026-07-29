@@ -40,7 +40,7 @@ export function TextWriterField({
       {mode === '단어' && (
         <>
           <WordField value={value} isEditable placeholder={placeholder} onChange={onChange} />
-          <WordSuggestion keyword={value} n={16} />
+          <WordSuggestion keyword={value} n={16} onSelect={onChange} />
         </>
       )}
       {mode === '문장' && (

@@ -13,9 +13,14 @@ const cx = classnames.bind(styles)
 interface WordSuggestionProps {
   keyword: string
   n: number
+  onSelect?: (word: string) => void
 }
 
-export function WordSuggestion({ keyword, n }: WordSuggestionProps): ReactElement | null {
+export function WordSuggestion({
+  keyword,
+  n,
+  onSelect,
+}: WordSuggestionProps): ReactElement | null {
   const throttledKeyword = useThrottledValue(keyword, 100)
   const queryClient = useQueryClient()
   const { data: lexes, isLoading } = useQuery({
@@ -37,9 +42,7 @@ export function WordSuggestion({ keyword, n }: WordSuggestionProps): ReactElemen
       <ul className={cx('list')}>
         {lexes?.map((lexis) => (
           <li key={lexis.nodeId} className={cx('item')}>
-            <Link to="/word/$word" params={{ word: lexis.value }}>
-              {lexis.value}
-            </Link>
+            <WordSuggestionLabel word={lexis.value} onSelect={onSelect} />
             <button
               type="button"
               className={cx('deleteButton')}
@@ -51,5 +54,26 @@ export function WordSuggestion({ keyword, n }: WordSuggestionProps): ReactElemen
         ))}
       </ul>
     </article>
+  )
+}
+
+interface WordSuggestionLabelProps {
+  word: string
+  onSelect?: (word: string) => void
+}
+
+function WordSuggestionLabel({ word, onSelect }: WordSuggestionLabelProps): ReactElement {
+  if (onSelect) {
+    return (
+      <button type="button" className={cx('selectButton')} onClick={() => onSelect(word)}>
+        {word}
+      </button>
+    )
+  }
+
+  return (
+    <Link to="/word/$word" params={{ word }}>
+      {word}
+    </Link>
   )
 }

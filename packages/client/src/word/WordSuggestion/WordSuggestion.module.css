@@ -16,6 +16,16 @@
       white-space: pre;
     }
 
+    .selectButton {
+      margin: 0;
+      padding: 0;
+      width: auto;
+      background: none;
+      border: none;
+      color: var(--pico-primary);
+      white-space: pre;
+    }
+
     .deleteButton {
       margin: 0;
       padding: 0 0.5rem;

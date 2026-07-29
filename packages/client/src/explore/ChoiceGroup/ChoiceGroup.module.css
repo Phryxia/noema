@@ -1,0 +1,13 @@
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+:global(.pico) .root {
+  width: fit-content;
+  max-width: 100%;
+
+  button {
+    white-space: nowrap;
+  }
+}

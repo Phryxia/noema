@@ -1,5 +1,4 @@
 import {
-  CREATED_AT_INDEX,
   DAY_ACC_STORE,
   DAY_DELTA_STORE,
   DB_NAME,
@@ -7,6 +6,7 @@ import {
   DOCUMENTS_STORE,
   HOUR_ACC_STORE,
   HOUR_DELTA_STORE,
+  QUESTIONS_STORE,
   RECENT_DOCUMENTS_STORE,
   RECENT_SENTENCES_STORE,
   RECENT_WORDS_STORE,
@@ -17,6 +17,7 @@ import {
   WORD_META_STORE,
   WORD_NODES_STORE,
 } from './consts'
+import { IndexSpecs } from './indexSpecs'
 import { backfillCountLogs } from '../statistic/backfillCountLogs'
 
 let dbPromise: Promise<IDBDatabase> | undefined
@@ -45,7 +46,8 @@ function createConnection(): Promise<IDBDatabase> {
           createCountLogSchema(db)
           void backfillCountLogs(transaction)
       }
-      ensureCreatedAtIndexes(transaction)
+      ensureQuestionsStore(db)
+      ensureIndexes(transaction)
     }
 
     request.onsuccess = (): void => {
@@ -91,14 +93,20 @@ function createInitialSchema(db: IDBDatabase, transaction: IDBTransaction): void
   transaction.objectStore(RECENT_DOCUMENTS_STORE).put(0, 'next')
 }
 
-function ensureCreatedAtIndexes(transaction: IDBTransaction): void {
-  const storeNames = [SENTENCES_STORE, DOCUMENTS_STORE, WORD_NODES_STORE]
-  storeNames.forEach((storeName) => {
+function ensureQuestionsStore(db: IDBDatabase): void {
+  if (db.objectStoreNames.contains(QUESTIONS_STORE)) {
+    return
+  }
+  db.createObjectStore(QUESTIONS_STORE, { keyPath: 'questionId', autoIncrement: true })
+}
+
+function ensureIndexes(transaction: IDBTransaction): void {
+  IndexSpecs.forEach(({ storeName, name, keyPath, options }) => {
     const store = transaction.objectStore(storeName)
-    if (store.indexNames.contains(CREATED_AT_INDEX)) {
+    if (store.indexNames.contains(name)) {
       return
     }
-    store.createIndex(CREATED_AT_INDEX, CREATED_AT_INDEX)
+    store.createIndex(name, keyPath, options)
   })
 }
 

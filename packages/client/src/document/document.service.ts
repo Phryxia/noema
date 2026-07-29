@@ -1,7 +1,6 @@
 import { DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
-import { deleteRelationsReferencing } from '../relation/relation.service'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import { sliceSafely } from '../utils/sliceSafely'
 import type { Document, RecentDocument } from './types'
@@ -87,7 +86,6 @@ export async function deleteDocument(documentId: number): Promise<void> {
   if (isExisting) {
     recordDeletion(db, 'documentCount')
   }
-  void deleteRelationsReferencing({ type: 'document', id: documentId })
 }
 
 export async function getDocument(documentId: number): Promise<Document | null> {

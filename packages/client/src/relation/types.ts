@@ -1,13 +1,59 @@
-export interface Relation {
-  relationId: number
-  labelNodeId: number
-  from: RelationTarget
-  to: RelationTarget
-  createdAt: Date
-  modifiedAt?: Date
-}
+import type { BinaryWords, TernaryWords } from '../question/types'
 
-export interface RelationTarget {
-  type: 'word' | 'sentence' | 'document' | 'relation'
+export interface WordOrSentence {
+  type: 'word' | 'sentence'
   id: number
 }
+
+export type Similarity = -1 | -0.5 | 0 | 0.5 | 1
+
+export interface RelationBase {
+  relationId: number
+  questionId: number
+  createdAt: Date
+  comment?: WordOrSentence
+}
+
+export interface WordExplainRelation extends RelationBase {
+  type: 'WordExplain'
+  wordId: number
+  answer: WordOrSentence
+}
+
+export interface WordsUsageRelation extends RelationBase {
+  type: 'WordsUsage'
+  wordIds: number[]
+  answer: WordOrSentence | null
+}
+
+export interface BinaryCommonRelation extends RelationBase, BinaryWords {
+  type: 'BinaryCommon'
+  answer: WordOrSentence
+}
+
+export interface BinaryDifferenceRelation extends RelationBase, BinaryWords {
+  type: 'BinaryDifference'
+  answer: WordOrSentence
+}
+
+export interface BinarySimilarityRelation extends RelationBase, BinaryWords {
+  type: 'BinarySimilarity'
+  similarity: Similarity
+}
+
+export interface TernaryIsolationRelation extends RelationBase, TernaryWords {
+  type: 'TernaryIsolation'
+  selection: 1 | 2 | 3
+}
+
+export type Relation =
+  | WordExplainRelation
+  | WordsUsageRelation
+  | BinaryCommonRelation
+  | BinaryDifferenceRelation
+  | BinarySimilarityRelation
+  | TernaryIsolationRelation
+
+export type NewRelation = DistributiveOmit<Relation, keyof Omit<RelationBase, 'comment'>>
+
+type DistributiveOmit<T, K extends keyof never> = T extends unknown ? Omit<T, K> : never

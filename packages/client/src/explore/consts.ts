@@ -1,0 +1,45 @@
+import type { AnswerDraft, CommentDraft } from './types'
+import type { QuestionType } from '../question/types'
+import type { Similarity } from '../relation/types'
+
+export const EXPLORE_QUESTION_QUERY_KEY = 'exploreQuestion'
+export const WORD_COUNT_QUERY_KEY = 'wordCount'
+
+export const MIN_WORD_COUNT = 10
+export const MAX_USAGE_WORD_COUNT = 3
+
+export interface QuestionTypeSpec {
+  type: QuestionType
+  label: string
+}
+
+export const QuestionTypeSpecs: QuestionTypeSpec[] = [
+  { type: 'WordExplain', label: '단어 설명' },
+  { type: 'WordsUsage', label: '예문 만들기' },
+  { type: 'BinaryCommon', label: '이항 공통점' },
+  { type: 'BinaryDifference', label: '이항 차이점' },
+  { type: 'BinarySimilarity', label: '이항 유사성' },
+  { type: 'TernaryIsolation', label: '삼항 격리' },
+]
+
+export interface SimilarityLevel {
+  label: string
+  value: Similarity
+}
+
+export const SimilarityLevels: SimilarityLevel[] = [
+  { label: '매우 반대', value: -1 },
+  { label: '약간 반대', value: -0.5 },
+  { label: '서로 무관', value: 0 },
+  { label: '약간 비슷', value: 0.5 },
+  { label: '매우 비슷', value: 1 },
+]
+
+export const EmptyAnswer: AnswerDraft = {
+  mode: '단어',
+  text: '',
+  similarity: null,
+  selection: null,
+}
+
+export const EmptyComment: CommentDraft = { mode: '단어', text: '' }

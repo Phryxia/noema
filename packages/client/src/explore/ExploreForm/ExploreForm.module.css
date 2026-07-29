@@ -1,0 +1,16 @@
+:global(.pico) .question {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--pico-spacing);
+  min-height: calc(128px + 11rem);
+
+  textarea {
+    min-height: 128px;
+  }
+}
+
+.commentLabel {
+  margin-top: calc(var(--pico-spacing) * 1.5);
+  margin-bottom: calc(var(--pico-spacing) * 0.5);
+}

@@ -1,0 +1,20 @@
+.root {
+  text-align: center;
+}
+
+.words {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--pico-spacing);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}

@@ -1,7 +1,6 @@
 import { RECENT_SENTENCES_STORE, SENTENCES_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
-import { deleteRelationsReferencing } from '../relation/relation.service'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import type { RecentSentence, Sentence } from './types'
 
@@ -81,7 +80,6 @@ export async function deleteSentence(sentenceId: number): Promise<void> {
   if (isExisting) {
     recordDeletion(db, 'sentenceCount')
   }
-  void deleteRelationsReferencing({ type: 'sentence', id: sentenceId })
 }
 
 export async function getSentence(sentenceId: number): Promise<Sentence | null> {

@@ -15,6 +15,9 @@ function RootLayout(): ReactElement {
             <nav>
               <ul>
                 <li>
+                  <Link to="/explore">탐색</Link>
+                </li>
+                <li>
                   <Link to="/settings">설정</Link>
                 </li>
               </ul>

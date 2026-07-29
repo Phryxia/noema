@@ -1,0 +1,10 @@
+.modes {
+  display: flex;
+  justify-content: center;
+
+  :global(.pico) & fieldset {
+    width: fit-content;
+    max-width: 100%;
+    gap: calc(var(--pico-spacing) * 1.5);
+  }
+}

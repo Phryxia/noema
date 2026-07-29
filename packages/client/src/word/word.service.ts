@@ -1,7 +1,6 @@
 import { RECENT_WORDS_STORE, WORD_META_STORE, WORD_NODES_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
-import { deleteRelationsReferencing } from '../relation/relation.service'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import type { Lexis, RecentWord, TrieNode } from './types'
 
@@ -113,7 +112,6 @@ export async function deleteWord(nodeId: number): Promise<void> {
 
   await awaitTransaction(transaction)
   recordDeletion(db, 'wordCount')
-  void deleteRelationsReferencing({ type: 'word', id: nodeId })
 }
 
 export async function getWordNodeId(word: string): Promise<number | null> {

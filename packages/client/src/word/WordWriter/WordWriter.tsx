@@ -4,8 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { WORD_NODE_ID_QUERY_KEY } from '../consts'
 import { createWord, getWordNodeId } from '../word.service'
 import { invalidateWordQueries } from '../utils'
+import { WordField } from '../WordField/WordField'
 import { WordSuggestion } from '../WordSuggestion/WordSuggestion'
-import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import { useThrottledValue } from '../../utils/useThrottledValue'
 import classNames from 'classnames/bind'
 import styles from './WordWriter.module.css'
@@ -18,7 +18,6 @@ interface WordWriterProps {
 
 export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
   const [value, setValue] = useState('')
-  const [scrollLeft, setScrollLeft] = useState(0)
   const queryClient = useQueryClient()
   const { mutate: saveWord, isPending } = useMutation({
     mutationFn: createWord,
@@ -50,22 +49,7 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
     <div>
       <form onSubmit={handleSubmit}>
         <fieldset role="group" className={cx('group')}>
-          <div className={cx('inputWrapper')}>
-            <input
-              className={cx('input')}
-              type="text"
-              value={value}
-              readOnly={!isEditable}
-              onChange={(event) => setValue(event.target.value)}
-              onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
-            />
-            <WhitespaceEcho
-              value={value}
-              isMultiline={false}
-              scrollLeft={scrollLeft}
-              scrollTop={0}
-            />
-          </div>
+          <WordField value={value} isEditable={isEditable} onChange={setValue} />
           {isEditable && (
             <button
               className={cx('save-button')}

@@ -6,14 +6,13 @@ import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
 import { RecentCreations } from '../recent/RecentCreations'
 import { Statistic } from '../statistic/Statistic/Statistic'
+import { WriterModeSelector } from '../writer/WriterModeSelector/WriterModeSelector'
+import { WriterModes } from '../writer/consts'
+import type { WriterMode } from '../writer/types'
 
 export const Route = createFileRoute('/')({
   component: MainPage,
 })
-
-type WriterMode = '단어' | '문장' | '문서'
-
-const WriterModes: WriterMode[] = ['단어', '문장', '문서']
 
 function MainPage(): ReactElement {
   return (
@@ -30,33 +29,15 @@ function WriterSection(): ReactElement {
 
   return (
     <article>
-      <WriterModeSelector mode={mode} onChange={setMode} />
+      <WriterModeSelector
+        name="writerMode"
+        modes={WriterModes}
+        mode={mode}
+        onChange={setMode}
+      />
       {mode === '단어' && <WordWriter isEditable />}
       {mode === '문장' && <SentenceWriter isEditable />}
       {mode === '문서' && <DocumentWriter isEditable />}
     </article>
-  )
-}
-
-interface WriterModeSelectorProps {
-  mode: WriterMode
-  onChange: (mode: WriterMode) => void
-}
-
-function WriterModeSelector({ mode, onChange }: WriterModeSelectorProps): ReactElement {
-  return (
-    <fieldset role="group">
-      {WriterModes.map((writerMode) => (
-        <label key={writerMode}>
-          <input
-            type="radio"
-            name="writerMode"
-            checked={mode === writerMode}
-            onChange={() => onChange(writerMode)}
-          />
-          {writerMode}
-        </label>
-      ))}
-    </fieldset>
   )
 }

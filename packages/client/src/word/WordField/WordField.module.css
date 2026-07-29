@@ -1,0 +1,9 @@
+.inputWrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
+
+  .input {
+    font-family: var(--font-mono);
+  }
+}

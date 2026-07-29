@@ -1,17 +1,11 @@
-import type { FormEvent, KeyboardEvent, ReactElement } from 'react'
-import { useState } from 'react'
+import type { FormEvent, ReactElement } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
-import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import { SourceField } from '../../writer/SourceField/SourceField'
-import { insertTabIfPressed } from '../../writer/insertTabIfPressed'
+import { SentenceField } from '../SentenceField/SentenceField'
 import { createSentence, deleteSentence, updateSentence } from '../sentence.service'
 import { invalidateSentenceQueries } from '../utils'
 import type { Sentence } from '../types'
-import classnames from 'classnames/bind'
-import styles from './SentenceWriter.module.css'
-
-const cx = classnames.bind(styles)
 
 interface SentenceWriterProps {
   isEditable: boolean
@@ -24,7 +18,6 @@ export function SentenceWriter({
   sentence,
   onDelete,
 }: SentenceWriterProps): ReactElement {
-  const [scrollTop, setScrollTop] = useState(0)
   const { draft, setDraft, canSave, save, remove } = useWriterForm({
     isEditable,
     isEditing: !!sentence,
@@ -40,17 +33,6 @@ export function SentenceWriter({
     save()
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>): void {
-    if (isEditable && insertTabIfPressed(event)) {
-      return
-    }
-    if (event.key !== 'Enter' || !event.ctrlKey) {
-      return
-    }
-    event.preventDefault()
-    save()
-  }
-
   return (
     <form onSubmit={handleSubmit}>
       <SourceField
@@ -58,17 +40,12 @@ export function SentenceWriter({
         isEditable={isEditable}
         onChange={(source) => setDraft({ ...draft, source })}
       />
-      <div className={cx('textareaWrapper')}>
-        <textarea
-          className={cx('textarea')}
-          value={draft.value}
-          readOnly={!isEditable}
-          onChange={(event) => setDraft({ ...draft, value: event.target.value })}
-          onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
-          onKeyDown={handleKeyDown}
-        />
-        <WhitespaceEcho value={draft.value} isMultiline scrollLeft={0} scrollTop={scrollTop} />
-      </div>
+      <SentenceField
+        value={draft.value}
+        isEditable={isEditable}
+        onChange={(value) => setDraft({ ...draft, value })}
+        onSubmit={save}
+      />
       {isEditable && (
         <WriterActions isEditing={!!sentence} canSave={canSave} onDelete={remove} />
       )}

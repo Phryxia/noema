@@ -9,11 +9,11 @@ interface StoredEntry {
   source?: string
 }
 
-export async function getRecentPage(
-  { storeName, hydrate }: RecentSource,
+export async function getRecentPage<TEntry, TRow>(
+  { storeName, toEntry, hydrate }: RecentSource<TEntry, TRow>,
   range: RecentRange,
   from: RecentCursor | null,
-): Promise<RecentPage> {
+): Promise<RecentPage<TEntry>> {
   const keyRange = createKeyRange(range)
   if (!keyRange) {
     return { entries: [], nextCursor: null }
@@ -25,11 +25,20 @@ export async function getRecentPage(
       `${storeName}에 ${CREATED_AT_INDEX} 인덱스가 없습니다. 열려 있는 DB가 버전 ${db.version}입니다. 이 앱을 띄운 다른 탭을 모두 닫고 새로고침해주세요`,
     )
   }
-  const page = await readPage(store.index(CREATED_AT_INDEX).openCursor(keyRange, 'prev'), from)
+  const page = await readPage(
+    store.index(CREATED_AT_INDEX).openCursor(keyRange, 'prev'),
+    from,
+    toEntry,
+  )
   if (!hydrate) {
-    return page
+    return { entries: page.rows as unknown as TEntry[], nextCursor: page.nextCursor }
   }
-  return { entries: await hydrate(page.entries), nextCursor: page.nextCursor }
+  return { entries: await hydrate(page.rows), nextCursor: page.nextCursor }
+}
+
+export function toRecentEntry(id: number, stored: unknown): RecentEntry {
+  const { value, createdAt, source } = stored as StoredEntry
+  return { id, value, createdAt, source }
 }
 
 function createKeyRange({ since, until }: RecentRange): IDBKeyRange | null {
@@ -42,18 +51,24 @@ function createKeyRange({ since, until }: RecentRange): IDBKeyRange | null {
   return IDBKeyRange.bound(since, until)
 }
 
-function readPage(
+interface RecentRowPage<TRow> {
+  rows: TRow[]
+  nextCursor: RecentCursor | null
+}
+
+function readPage<TRow>(
   request: IDBRequest<IDBCursorWithValue | null>,
   from: RecentCursor | null,
-): Promise<RecentPage> {
-  return new Promise<RecentPage>((resolve, reject) => {
-    const entries: RecentEntry[] = []
+  toEntry: (id: number, stored: unknown) => TRow,
+): Promise<RecentRowPage<TRow>> {
+  return new Promise<RecentRowPage<TRow>>((resolve, reject) => {
+    const rows: TRow[] = []
     let pendingJump = from
 
     request.onsuccess = (): void => {
       const cursor = request.result
       if (!cursor) {
-        resolve({ entries, nextCursor: null })
+        resolve({ rows, nextCursor: null })
         return
       }
       if (pendingJump) {
@@ -62,11 +77,11 @@ function readPage(
         cursor.continuePrimaryKey(createdAt, id)
         return
       }
-      if (entries.length === RECENT_PAGE_SIZE) {
-        resolve({ entries, nextCursor: toCursor(cursor) })
+      if (rows.length === RECENT_PAGE_SIZE) {
+        resolve({ rows, nextCursor: toCursor(cursor) })
         return
       }
-      entries.push(toEntry(cursor))
+      rows.push(toEntry(cursor.primaryKey as number, cursor.value))
       cursor.continue()
     }
 
@@ -76,9 +91,4 @@ function readPage(
 
 function toCursor(cursor: IDBCursorWithValue): RecentCursor {
   return { createdAt: cursor.key as Date, id: cursor.primaryKey as number }
-}
-
-function toEntry(cursor: IDBCursorWithValue): RecentEntry {
-  const { value, createdAt, source } = cursor.value as StoredEntry
-  return { id: cursor.primaryKey as number, value, createdAt, source }
 }

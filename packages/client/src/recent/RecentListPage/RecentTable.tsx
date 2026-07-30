@@ -19,9 +19,6 @@ interface RecentTableProps {
 }
 
 export function RecentTable({ entries, hasSource, EntryLink }: RecentTableProps): ReactElement {
-  if (!entries.length) {
-    return <p>해당 범위에 아무것도 없습니다</p>
-  }
   return (
     <table className={cx('root')}>
       <thead>

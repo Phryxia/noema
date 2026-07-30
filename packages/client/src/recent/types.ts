@@ -1,6 +1,7 @@
-export interface RecentSource {
+export interface RecentSource<TEntry = RecentEntry, TRow = TEntry> {
   storeName: string
-  hydrate?: (entries: RecentEntry[]) => Promise<RecentEntry[]>
+  toEntry: (id: number, stored: unknown) => TRow
+  hydrate?: (rows: TRow[]) => Promise<TEntry[]>
 }
 
 export interface RecentEntry {
@@ -15,8 +16,8 @@ export interface RecentCursor {
   id: number
 }
 
-export interface RecentPage {
-  entries: RecentEntry[]
+export interface RecentPage<TEntry = RecentEntry> {
+  entries: TEntry[]
   nextCursor: RecentCursor | null
 }
 

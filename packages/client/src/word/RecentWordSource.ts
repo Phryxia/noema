@@ -1,9 +1,11 @@
 import { WORD_NODES_STORE } from '../db/consts'
+import { toRecentEntry } from '../recent/recent.service'
 import type { RecentEntry, RecentSource } from '../recent/types'
 import { getWordValues } from './getWordValues'
 
 export const RecentWordSource: RecentSource = {
   storeName: WORD_NODES_STORE,
+  toEntry: toRecentEntry,
   hydrate: restoreEntryValues,
 }
 

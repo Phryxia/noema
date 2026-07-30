@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as QnaRouteImport } from './routes/qna'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DocumentDocumentIdRouteImport } from './routes/document.$documentId'
 import { Route as RecentDocumentsRouteImport } from './routes/recent.documents'
@@ -27,6 +28,11 @@ const IndexRoute = IndexRouteImport.update({
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QnaRoute = QnaRouteImport.update({
+  id: '/qna',
+  path: '/qna',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -68,6 +74,7 @@ const WordWordRoute = WordWordRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/recent/documents': typeof RecentDocumentsRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/recent/documents': typeof RecentDocumentsRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/recent/documents': typeof RecentDocumentsRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/explore'
+    | '/qna'
     | '/settings'
     | '/document/$documentId'
     | '/recent/documents'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/explore'
+    | '/qna'
     | '/settings'
     | '/document/$documentId'
     | '/recent/documents'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/explore'
+    | '/qna'
     | '/settings'
     | '/document/$documentId'
     | '/recent/documents'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExploreRoute: typeof ExploreRoute
+  QnaRoute: typeof QnaRoute
   SettingsRoute: typeof SettingsRoute
   DocumentDocumentIdRoute: typeof DocumentDocumentIdRoute
   RecentDocumentsRoute: typeof RecentDocumentsRoute
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qna': {
+      id: '/qna'
+      path: '/qna'
+      fullPath: '/qna'
+      preLoaderRoute: typeof QnaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExploreRoute: ExploreRoute,
+  QnaRoute: QnaRoute,
   SettingsRoute: SettingsRoute,
   DocumentDocumentIdRoute: DocumentDocumentIdRoute,
   RecentDocumentsRoute: RecentDocumentsRoute,

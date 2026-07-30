@@ -18,6 +18,9 @@ function RootLayout(): ReactElement {
                   <Link to="/explore">탐색</Link>
                 </li>
                 <li>
+                  <Link to="/qna">문답</Link>
+                </li>
+                <li>
                   <Link to="/settings">설정</Link>
                 </li>
               </ul>

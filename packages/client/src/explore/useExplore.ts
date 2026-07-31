@@ -10,12 +10,20 @@ import {
 } from './consts'
 import { pickQuestion } from './pickQuestion'
 import { submitAnswer } from './submitAnswer'
+import type { SubmitAnswerParams } from './submitAnswer'
 import type { AnswerDraft, CommentDraft, QuestionPick } from './types'
 import type { QuestionType } from '../question/types'
 import { invalidateSentenceQueries } from '../sentence/utils'
 import { invalidateWordQueries } from '../word/utils'
 
 const AllQuestionTypes: QuestionType[] = QuestionTypeSpecs.map(({ type }) => type)
+
+export interface ExploreOptions {
+  fixedTypes?: QuestionType[]
+  pickQuestion?: (types: QuestionType[]) => Promise<QuestionPick>
+  queryKey?: string
+  onSaved?: (params: SubmitAnswerParams) => void
+}
 
 export interface Explore {
   checkedTypes: QuestionType[]
@@ -32,8 +40,11 @@ export interface Explore {
   save: () => void
 }
 
-export function useExplore(isEnabled: boolean): Explore {
-  const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(loadCheckedTypes)
+export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explore {
+  const fixedTypes = options?.fixedTypes
+  const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(
+    () => fixedTypes ?? loadCheckedTypes(),
+  )
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
   const [comment, setComment] = useState<CommentDraft>(EmptyComment)
   const appliedTypes = useRef<QuestionType[]>(checkedTypes)
@@ -44,8 +55,8 @@ export function useExplore(isEnabled: boolean): Explore {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: [EXPLORE_QUESTION_QUERY_KEY],
-    queryFn: () => pickQuestion(appliedTypes.current),
+    queryKey: [options?.queryKey ?? EXPLORE_QUESTION_QUERY_KEY],
+    queryFn: () => (options?.pickQuestion ?? pickQuestion)(appliedTypes.current),
     enabled: isEnabled,
     staleTime: Infinity,
     gcTime: 0,
@@ -64,7 +75,9 @@ export function useExplore(isEnabled: boolean): Explore {
 
   function updateCheckedTypes(types: QuestionType[]): void {
     setCheckedTypes(types)
-    saveCheckedTypes(types)
+    if (!fixedTypes) {
+      saveCheckedTypes(types)
+    }
     if (pick?.status === 'ok') {
       return
     }
@@ -73,7 +86,8 @@ export function useExplore(isEnabled: boolean): Explore {
 
   const { mutate: submit, isPending: isSubmitting } = useMutation({
     mutationFn: submitAnswer,
-    onSuccess: () => {
+    onSuccess: (_, params) => {
+      options?.onSaved?.(params)
       invalidateWordQueries(queryClient)
       invalidateSentenceQueries(queryClient)
       skip()

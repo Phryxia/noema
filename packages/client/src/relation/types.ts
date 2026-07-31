@@ -28,12 +28,12 @@ export interface WordsUsageRelation extends RelationBase {
 
 export interface BinaryCommonRelation extends RelationBase, BinaryWords {
   type: 'BinaryCommon'
-  answer: WordOrSentence
+  answer: WordOrSentence | null
 }
 
 export interface BinaryDifferenceRelation extends RelationBase, BinaryWords {
   type: 'BinaryDifference'
-  answer: WordOrSentence
+  answer: WordOrSentence | null
 }
 
 export interface BinarySimilarityRelation extends RelationBase, BinaryWords {

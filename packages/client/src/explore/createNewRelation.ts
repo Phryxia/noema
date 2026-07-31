@@ -30,7 +30,7 @@ export function createNewRelation(
         type: question.type,
         word1Id: question.word1Id,
         word2Id: question.word2Id,
-        answer: requireTarget(answerTarget),
+        answer: answerTarget,
       }
     case 'BinaryDifference':
       return {
@@ -38,7 +38,7 @@ export function createNewRelation(
         type: question.type,
         word1Id: question.word1Id,
         word2Id: question.word2Id,
-        answer: requireTarget(answerTarget),
+        answer: answerTarget,
       }
     case 'BinarySimilarity':
       return {

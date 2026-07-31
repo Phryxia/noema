@@ -14,6 +14,7 @@ import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as QnaRouteImport } from './routes/qna'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DocumentDocumentIdRouteImport } from './routes/document.$documentId'
+import { Route as LabEmbeddingRouteImport } from './routes/lab.embedding'
 import { Route as RecentDocumentsRouteImport } from './routes/recent.documents'
 import { Route as RecentSentencesRouteImport } from './routes/recent.sentences'
 import { Route as RecentWordsRouteImport } from './routes/recent.words'
@@ -43,6 +44,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const DocumentDocumentIdRoute = DocumentDocumentIdRouteImport.update({
   id: '/document/$documentId',
   path: '/document/$documentId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LabEmbeddingRoute = LabEmbeddingRouteImport.update({
+  id: '/lab/embedding',
+  path: '/lab/embedding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecentDocumentsRoute = RecentDocumentsRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
+  '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
+  '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
+  '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/qna'
     | '/settings'
     | '/document/$documentId'
+    | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/qna'
     | '/settings'
     | '/document/$documentId'
+    | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/qna'
     | '/settings'
     | '/document/$documentId'
+    | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   QnaRoute: typeof QnaRoute
   SettingsRoute: typeof SettingsRoute
   DocumentDocumentIdRoute: typeof DocumentDocumentIdRoute
+  LabEmbeddingRoute: typeof LabEmbeddingRoute
   RecentDocumentsRoute: typeof RecentDocumentsRoute
   RecentSentencesRoute: typeof RecentSentencesRoute
   RecentWordsRoute: typeof RecentWordsRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/document/$documentId'
       fullPath: '/document/$documentId'
       preLoaderRoute: typeof DocumentDocumentIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lab/embedding': {
+      id: '/lab/embedding'
+      path: '/lab/embedding'
+      fullPath: '/lab/embedding'
+      preLoaderRoute: typeof LabEmbeddingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recent/documents': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   QnaRoute: QnaRoute,
   SettingsRoute: SettingsRoute,
   DocumentDocumentIdRoute: DocumentDocumentIdRoute,
+  LabEmbeddingRoute: LabEmbeddingRoute,
   RecentDocumentsRoute: RecentDocumentsRoute,
   RecentSentencesRoute: RecentSentencesRoute,
   RecentWordsRoute: RecentWordsRoute,

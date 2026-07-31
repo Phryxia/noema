@@ -8,7 +8,11 @@ export function checkIsAnswerReady(question: NewQuestion, answer: AnswerDraft): 
   if (question.type === 'TernaryIsolation') {
     return answer.selection !== null
   }
-  if (question.type === 'WordsUsage') {
+  if (
+    question.type === 'WordsUsage' ||
+    question.type === 'BinaryCommon' ||
+    question.type === 'BinaryDifference'
+  ) {
     return true
   }
   return !!answer.text

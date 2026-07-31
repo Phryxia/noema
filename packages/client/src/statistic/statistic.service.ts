@@ -1,12 +1,17 @@
-import { DOCUMENTS_STORE, SENTENCES_STORE, WORD_META_STORE } from '../db/consts'
+import {
+  DOCUMENTS_STORE,
+  RELATIONS_STORE,
+  SENTENCES_STORE,
+  WORD_META_STORE,
+} from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
-import { backfillCountLogs, SourceStoreNames } from './backfillCountLogs'
+import { clearAndBackfillCountLogs, SourceStoreNames } from './backfillCountLogs'
 import { CountStoreNames, CountStores, TimeUnits } from './consts'
 import type { ChartMode, CountKind, CountLog, TimeUnit, Totals } from './types'
 import { createBins, createEmptyLog, createLog, getBinDate } from './utils'
 
-const TotalStoreNames = [WORD_META_STORE, SENTENCES_STORE, DOCUMENTS_STORE]
+const TotalStoreNames = [WORD_META_STORE, SENTENCES_STORE, DOCUMENTS_STORE, RELATIONS_STORE]
 
 export async function getTotals(): Promise<Totals> {
   const db = await openNoemaDB()
@@ -36,8 +41,7 @@ export async function getCountLogs(unit: TimeUnit, mode: ChartMode): Promise<Cou
 export async function rebuildCountLogs(): Promise<void> {
   const db = await openNoemaDB()
   const transaction = db.transaction([...SourceStoreNames, ...CountStoreNames], 'readwrite')
-  CountStoreNames.forEach((storeName) => transaction.objectStore(storeName).clear())
-  await backfillCountLogs(transaction)
+  await clearAndBackfillCountLogs(transaction)
   await awaitTransaction(transaction)
 }
 
@@ -74,7 +78,10 @@ async function readTotals(transaction: IDBTransaction): Promise<Totals> {
   const documentCount = await awaitRequest<number>(
     transaction.objectStore(DOCUMENTS_STORE).count(),
   )
-  return { wordCount, sentenceCount, documentCount }
+  const relationCount = await awaitRequest<number>(
+    transaction.objectStore(RELATIONS_STORE).count(),
+  )
+  return { wordCount, sentenceCount, documentCount, relationCount }
 }
 
 async function getLastLogBefore(

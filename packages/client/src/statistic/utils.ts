@@ -43,7 +43,7 @@ export function shiftBin(unit: TimeUnit, date: Date, amount: number): Date {
 }
 
 export function createEmptyLog(beginDate: Date): CountLog {
-  return { beginDate, wordCount: 0, sentenceCount: 0, documentCount: 0 }
+  return { beginDate, wordCount: 0, sentenceCount: 0, documentCount: 0, relationCount: 0 }
 }
 
 export function createLog(beginDate: Date, totals: Totals): CountLog {
@@ -52,6 +52,7 @@ export function createLog(beginDate: Date, totals: Totals): CountLog {
     wordCount: totals.wordCount,
     sentenceCount: totals.sentenceCount,
     documentCount: totals.documentCount,
+    relationCount: totals.relationCount,
   }
 }
 

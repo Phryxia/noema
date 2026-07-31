@@ -27,7 +27,7 @@ Chart.register(
 
 const CountChartOptions: ChartOptions<'line'> = {
   responsive: true,
-  aspectRatio: 2,
+  aspectRatio: 2 / 1.3,
   interaction: { mode: 'index', intersect: false },
   scales: {
     y: { beginAtZero: true, ticks: { precision: 0 } },
@@ -81,6 +81,9 @@ function createDatasets(
   const values = logs.map((log) => log[series.key])
   if (mode === 'acc') {
     return [createDataset(TOTAL_LABEL, series.color, values)]
+  }
+  if (!series.hasDeletion) {
+    return [createDataset(INCREASE_LABEL, series.color, values)]
   }
   return [
     createDataset(

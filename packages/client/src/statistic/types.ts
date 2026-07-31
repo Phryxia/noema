@@ -1,4 +1,4 @@
-export type CountKind = 'wordCount' | 'sentenceCount' | 'documentCount'
+export type CountKind = 'wordCount' | 'sentenceCount' | 'documentCount' | 'relationCount'
 
 export type TimeUnit = 'hour' | 'day' | 'week'
 
@@ -14,4 +14,5 @@ export interface CountSeries {
   key: CountKind
   label: string
   color: string
+  hasDeletion: boolean
 }

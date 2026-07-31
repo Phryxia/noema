@@ -44,9 +44,10 @@ export const ChartModeLabels: Record<ChartMode, string> = {
 }
 
 export const CountSeriesList: CountSeries[] = [
-  { key: 'wordCount', label: '단어', color: '#4f8ff7' },
-  { key: 'sentenceCount', label: '문장', color: '#3fae7a' },
-  { key: 'documentCount', label: '문서', color: '#d98b2b' },
+  { key: 'wordCount', label: '단어', color: '#4f8ff7', hasDeletion: true },
+  { key: 'sentenceCount', label: '문장', color: '#3fae7a', hasDeletion: true },
+  { key: 'documentCount', label: '문서', color: '#d98b2b', hasDeletion: true },
+  { key: 'relationCount', label: '관계', color: '#8f6fd8', hasDeletion: false },
 ]
 
 export const CountKinds: CountKind[] = CountSeriesList.map((series) => series.key)

@@ -7,6 +7,7 @@ import { awaitRequest, awaitTransaction } from '../db/utils'
 import type { NewQuestion } from '../question/types'
 import type { NewRelation, Relation, WordOrSentence } from '../relation/types'
 import { createSentence } from '../sentence/sentence.service'
+import { recordCreation } from '../statistic/statistic.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
 
@@ -76,4 +77,5 @@ async function createRelation(
   }
   transaction.objectStore(RELATIONS_STORE).add(relation)
   await awaitTransaction(transaction)
+  recordCreation(db, 'relationCount')
 }

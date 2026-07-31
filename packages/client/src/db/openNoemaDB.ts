@@ -18,7 +18,9 @@ import {
   WORD_NODES_STORE,
 } from './consts'
 import { IndexSpecs } from './indexSpecs'
-import { backfillCountLogs } from '../statistic/backfillCountLogs'
+import { clearAndBackfillCountLogs } from '../statistic/backfillCountLogs'
+
+const RELATION_COUNT_VERSION = 9
 
 let dbPromise: Promise<IDBDatabase> | undefined
 
@@ -44,10 +46,12 @@ function createConnection(): Promise<IDBDatabase> {
           createInitialSchema(db, transaction)
         case 1:
           createCountLogSchema(db)
-          void backfillCountLogs(transaction)
       }
       ensureQuestionsStore(db)
       ensureIndexes(transaction)
+      if (event.oldVersion < RELATION_COUNT_VERSION) {
+        void clearAndBackfillCountLogs(transaction)
+      }
     }
 
     request.onsuccess = (): void => {

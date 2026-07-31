@@ -1,5 +1,10 @@
-import { DOCUMENTS_STORE, SENTENCES_STORE, WORD_NODES_STORE } from '../db/consts'
-import { CountKinds, CountStores, TimeUnits } from './consts'
+import {
+  DOCUMENTS_STORE,
+  RELATIONS_STORE,
+  SENTENCES_STORE,
+  WORD_NODES_STORE,
+} from '../db/consts'
+import { CountKinds, CountStoreNames, CountStores, TimeUnits } from './consts'
 import type { CountKind, CountLog, TimeUnit } from './types'
 import { createEmptyLog, createLog, getBinDate } from './utils'
 
@@ -7,9 +12,15 @@ const SourceStores: Record<CountKind, string> = {
   wordCount: WORD_NODES_STORE,
   sentenceCount: SENTENCES_STORE,
   documentCount: DOCUMENTS_STORE,
+  relationCount: RELATIONS_STORE,
 }
 
 export const SourceStoreNames: string[] = CountKinds.map((kind) => SourceStores[kind])
+
+export function clearAndBackfillCountLogs(transaction: IDBTransaction): Promise<void> {
+  CountStoreNames.forEach((storeName) => transaction.objectStore(storeName).clear())
+  return backfillCountLogs(transaction)
+}
 
 export async function backfillCountLogs(transaction: IDBTransaction): Promise<void> {
   const binsByUnit: Record<TimeUnit, Map<number, CountLog>> = {

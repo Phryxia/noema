@@ -42,6 +42,7 @@ export function LabEmbeddingPage(): ReactElement {
         isRunning={lab.isRunning}
         progress={lab.progress}
         onStart={lab.startExperiment}
+        onChangeTemperature={lab.setTemperature}
       />
       <ModelSelector
         modelDims={lab.modelDims}

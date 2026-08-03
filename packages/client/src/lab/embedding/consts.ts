@@ -4,7 +4,7 @@ export const LAB_CHECKED_TYPES_STORAGE_KEY = 'lab/embedding/checkedTypes'
 import type { TrajectoryPoint } from './types'
 
 export const INITIAL_BIAS = -3
-export const SOFTMAX_TEMPERATURE = 1
+export const DEFAULT_SOFTMAX_TEMPERATURE = 2
 export const INITIAL_MU_SCALE = 0.1
 export const CHUNK_TIME_BUDGET_MS = 12
 export const TRAIN_PROBABILITY = 0.8

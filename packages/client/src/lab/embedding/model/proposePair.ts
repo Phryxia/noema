@@ -1,7 +1,6 @@
 import { getNodeEmbedding } from './embeddingModel'
 import { dot, sampleGaussian, sampleGumbel } from './math'
 import type { EmbeddingModel } from './types'
-import { SOFTMAX_TEMPERATURE } from '../consts'
 import { ROOT_NODE_ID } from '../../../word/consts'
 import { getPathNodeIds } from '../../../word/getWordTrie'
 import type { WordTrie } from '../../../word/getWordTrie'
@@ -10,6 +9,7 @@ export function proposePair(
   model: EmbeddingModel,
   trie: WordTrie,
   labeledPairs: Set<string>,
+  temperature: number,
 ): [number, number] | null {
   const { wordNodeIds } = trie
   if (wordNodeIds.length < 2) {
@@ -48,7 +48,7 @@ export function proposePair(
       nodeId !== u &&
       !labeledPairs.has(createPairKey(u, nodeId))
     ) {
-      const score = dot(zu, acc) + model.bias.mu + SOFTMAX_TEMPERATURE * sampleGumbel()
+      const score = dot(zu, acc) + model.bias.mu + temperature * sampleGumbel()
       if (score > bestScore) {
         bestScore = score
         best = nodeId

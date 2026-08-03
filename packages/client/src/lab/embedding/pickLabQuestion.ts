@@ -12,12 +12,13 @@ export async function pickLabQuestion(
   trie: WordTrie | null,
   labeledPairs: Set<string>,
   types: QuestionType[],
+  temperature: number,
 ): Promise<QuestionPick> {
   const labTypes = LabQuestionTypes.filter((type) => types.includes(type))
   if (!model || !trie || !labTypes.length) {
     return pickQuestion(labTypes)
   }
-  const pair = proposePair(model, trie, labeledPairs)
+  const pair = proposePair(model, trie, labeledPairs, temperature)
   if (!pair) {
     return pickQuestion(labTypes)
   }

@@ -3,6 +3,7 @@ import { assignSplit } from './assignSplit'
 import { computeDims } from './computeDims'
 import type { DimRange } from './computeDims'
 import {
+  DEFAULT_SOFTMAX_TEMPERATURE,
   EmptyTrajectoryPoint,
   LAB_CHECKED_TYPES_STORAGE_KEY,
   LAB_QUESTION_QUERY_KEY,
@@ -32,6 +33,7 @@ export interface EmbeddingLab {
   isRunning: boolean
   progress: number
   startExperiment: (range: DimRange) => void
+  setTemperature: (temperature: number) => void
 }
 
 export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
@@ -44,6 +46,7 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
   const testSetRef = useRef<BinaryExample[]>([])
   const lastPointsRef = useRef<Record<number, TrajectoryPoint>>({})
   const labeledPairsRef = useRef<Set<string>>(new Set())
+  const temperatureRef = useRef(DEFAULT_SOFTMAX_TEMPERATURE)
   const [modelDims, setModelDims] = useState(() => initialModels.map(({ d }) => d))
   const [selectedD, setSelectedD] = useState<number | null>(null)
   const [trajectories, setTrajectories] = useState<Record<number, TrajectoryPoint[]>>({})
@@ -62,6 +65,7 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
         trieRef.current,
         labeledPairsRef.current,
         types,
+        temperatureRef.current,
       )
     },
     onSaved: handleSaved,
@@ -121,6 +125,10 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
     }
   }
 
+  function setTemperature(temperature: number): void {
+    temperatureRef.current = temperature
+  }
+
   function selectModel(d: number | null): void {
     setSelectedD(d)
     selectedModelRef.current = modelsRef.current.find((model) => model.d === d) ?? null
@@ -168,5 +176,6 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
     isRunning,
     progress,
     startExperiment,
+    setTemperature,
   }
 }

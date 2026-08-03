@@ -3,6 +3,7 @@ import { createModel } from './embeddingModel'
 import type * as MathModule from './math'
 import { createPairKey, proposePair } from './proposePair'
 import type { EmbeddingModel } from './types'
+import { DEFAULT_SOFTMAX_TEMPERATURE } from '../consts'
 import type { WordTrie } from '../../../word/getWordTrie'
 
 vi.mock('./math', async (importOriginal) => {
@@ -50,25 +51,42 @@ afterEach(() => {
 
 describe('proposePair', () => {
   it('경로 합 점수가 가장 높은 후보를 고른다', () => {
-    const pair = proposePair(createFixedModel(), createTrie(), new Set())
+    const pair = proposePair(
+      createFixedModel(),
+      createTrie(),
+      new Set(),
+      DEFAULT_SOFTMAX_TEMPERATURE,
+    )
     expect(pair).toEqual([2, 3])
   })
 
   it('라벨된 쌍은 건너뛴다', () => {
     const labeled = new Set([createPairKey(2, 3)])
-    const pair = proposePair(createFixedModel(), createTrie(), labeled)
+    const pair = proposePair(
+      createFixedModel(),
+      createTrie(),
+      labeled,
+      DEFAULT_SOFTMAX_TEMPERATURE,
+    )
     expect(pair).toEqual([2, 4])
   })
 
   it('전부 라벨된 경우 무작위 폴백한다', () => {
     const labeled = new Set([createPairKey(2, 3), createPairKey(2, 4)])
-    const pair = proposePair(createFixedModel(), createTrie(), labeled)
+    const pair = proposePair(
+      createFixedModel(),
+      createTrie(),
+      labeled,
+      DEFAULT_SOFTMAX_TEMPERATURE,
+    )
     expect(pair).toEqual([2, 3])
   })
 
   it('단어가 2개 미만이면 null을 돌려준다', () => {
     const trie = createTrie()
     trie.wordNodeIds = [2]
-    expect(proposePair(createFixedModel(), trie, new Set())).toBeNull()
+    expect(
+      proposePair(createFixedModel(), trie, new Set(), DEFAULT_SOFTMAX_TEMPERATURE),
+    ).toBeNull()
   })
 })

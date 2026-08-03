@@ -1,14 +1,19 @@
 import type { ReactElement } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import classnames from 'classnames/bind'
 import { LabQuestionTypes } from '../consts'
 import { ExperimentControls } from '../ExperimentControls/ExperimentControls'
 import { ModelReport } from '../ModelReport/ModelReport'
 import { ModelSelector } from '../ModelSelector/ModelSelector'
+import { TemperatureControl } from '../TemperatureControl/TemperatureControl'
 import { useEmbeddingLab } from '../useEmbeddingLab'
 import { ExploreForm } from '../../../explore/ExploreForm/ExploreForm'
 import { MIN_WORD_COUNT, WORD_COUNT_QUERY_KEY } from '../../../explore/consts'
 import { QuestionTypeSelector } from '../../../explore/QuestionTypeSelector/QuestionTypeSelector'
 import { getWordCount } from '../../../word/getWordCount'
+import styles from './LabEmbeddingPage.module.css'
+
+const cx = classnames.bind(styles)
 
 export function LabEmbeddingPage(): ReactElement {
   const { data: wordCount, isPending } = useQuery({
@@ -29,11 +34,14 @@ export function LabEmbeddingPage(): ReactElement {
   return (
     <article>
       <h2>임베딩 실험</h2>
-      <QuestionTypeSelector
-        availableTypes={LabQuestionTypes}
-        checkedTypes={lab.explore.checkedTypes}
-        onChange={lab.explore.setCheckedTypes}
-      />
+      <div className={cx('controls')}>
+        <QuestionTypeSelector
+          availableTypes={LabQuestionTypes}
+          checkedTypes={lab.explore.checkedTypes}
+          onChange={lab.explore.setCheckedTypes}
+        />
+        <TemperatureControl onChange={lab.setTemperature} />
+      </div>
       <hr />
       <ExploreForm explore={lab.explore} />
       <hr />
@@ -42,7 +50,6 @@ export function LabEmbeddingPage(): ReactElement {
         isRunning={lab.isRunning}
         progress={lab.progress}
         onStart={lab.startExperiment}
-        onChangeTemperature={lab.setTemperature}
       />
       <ModelSelector
         modelDims={lab.modelDims}

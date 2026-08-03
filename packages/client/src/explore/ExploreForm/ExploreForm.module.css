@@ -10,6 +10,11 @@
   }
 }
 
+.loading {
+  margin: 0;
+  text-align: center;
+}
+
 .commentLabel {
   margin-top: calc(var(--pico-spacing) * 1.5);
   margin-bottom: calc(var(--pico-spacing) * 0.5);

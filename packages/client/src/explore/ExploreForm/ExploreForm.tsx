@@ -16,17 +16,15 @@ interface ExploreFormProps {
 export function ExploreForm({ explore }: ExploreFormProps): ReactElement {
   const { pick, isFetching, isSubmitting, isSubmittable, answer, comment, skip, save } = explore
 
-  if (isFetching || !pick) {
-    return <p aria-busy="true" />
-  }
-
-  if (pick.status === 'noType') {
+  if (!isFetching && pick?.status === 'noType') {
     return <p>출제할 문제 유형을 하나 이상 선택하세요</p>
   }
 
-  if (pick.status === 'noWord') {
+  if (!isFetching && pick?.status === 'noWord') {
     return <p>고른 유형에 쓸 단어가 부족합니다. 단어를 더 추가해주세요</p>
   }
+
+  const draft = !isFetching && pick?.status === 'ok' ? pick.draft : undefined
 
   function handleSubmit(event: FormEvent): void {
     event.preventDefault()
@@ -36,13 +34,19 @@ export function ExploreForm({ explore }: ExploreFormProps): ReactElement {
   return (
     <form onSubmit={handleSubmit}>
       <div className={cx('question')}>
-        <QuestionPrompt draft={pick.draft} />
-        <AnswerSection
-          draft={pick.draft}
-          answer={answer}
-          onChange={explore.setAnswer}
-          onSubmit={save}
-        />
+        {draft ? (
+          <>
+            <QuestionPrompt draft={draft} />
+            <AnswerSection
+              draft={draft}
+              answer={answer}
+              onChange={explore.setAnswer}
+              onSubmit={save}
+            />
+          </>
+        ) : (
+          <p className={cx('loading')} aria-busy="true" />
+        )}
       </div>
       <h6 className={cx('commentLabel')}>참고사항</h6>
       <TextWriterField

@@ -7,14 +7,20 @@ import styles from './QuestionTypeSelector.module.css'
 const cx = classnames.bind(styles)
 
 interface QuestionTypeSelectorProps {
+  availableTypes?: QuestionType[]
   checkedTypes: QuestionType[]
   onChange: (checkedTypes: QuestionType[]) => void
 }
 
 export function QuestionTypeSelector({
+  availableTypes,
   checkedTypes,
   onChange,
 }: QuestionTypeSelectorProps): ReactElement {
+  const specs = availableTypes
+    ? QuestionTypeSpecs.filter(({ type }) => availableTypes.includes(type))
+    : QuestionTypeSpecs
+
   function toggle(type: QuestionType): void {
     if (checkedTypes.includes(type)) {
       onChange(checkedTypes.filter((checked) => checked !== type))
@@ -25,7 +31,7 @@ export function QuestionTypeSelector({
 
   return (
     <fieldset className={cx('root')}>
-      {QuestionTypeSpecs.map(({ type, label }) => (
+      {specs.map(({ type, label }) => (
         <label key={type}>
           <input
             type="checkbox"

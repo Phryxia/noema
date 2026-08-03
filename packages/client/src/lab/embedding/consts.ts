@@ -1,8 +1,10 @@
 export const LAB_QUESTION_QUERY_KEY = 'labEmbeddingQuestion'
 export const MODELS_STORAGE_KEY = 'lab/embedding/models'
+export const LAB_CHECKED_TYPES_STORAGE_KEY = 'lab/embedding/checkedTypes'
 import type { TrajectoryPoint } from './types'
 
-export const EMBEDDING_BIAS = -2
+export const INITIAL_BIAS = -3
+export const SOFTMAX_TEMPERATURE = 1
 export const INITIAL_MU_SCALE = 0.1
 export const CHUNK_TIME_BUDGET_MS = 12
 export const TRAIN_PROBABILITY = 0.8

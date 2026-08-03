@@ -3,6 +3,7 @@ import { createModel, updateModel } from './model/embeddingModel'
 import { evaluateAccuracy } from './model/evaluateAccuracy'
 import type { BinaryExample, EmbeddingModel } from './model/types'
 import type { AssignedExample, TrajectoryPoint } from './types'
+import type { WordTrie } from '../../word/getWordTrie'
 
 export interface ExperimentCallbacks {
   onProgress: (ratio: number) => void
@@ -12,6 +13,7 @@ export interface ExperimentCallbacks {
 export async function runExperiment(
   dims: number[],
   examples: AssignedExample[],
+  trie: WordTrie,
   { onProgress, onModelDone }: ExperimentCallbacks,
 ): Promise<void> {
   const totalSteps = dims.length * examples.length
@@ -29,7 +31,7 @@ export async function runExperiment(
       } else {
         testSet.push(example)
       }
-      lastPoint = consumeExample(model, example, trainSet, testSet, lastPoint)
+      lastPoint = consumeExample(model, trie, example, trainSet, testSet, lastPoint)
       trajectory.push(lastPoint)
       doneSteps += 1
       if (performance.now() - lastYieldedAt > CHUNK_TIME_BUDGET_MS) {
@@ -45,16 +47,17 @@ export async function runExperiment(
 
 export function consumeExample(
   model: EmbeddingModel,
+  trie: WordTrie,
   example: AssignedExample,
   trainSet: BinaryExample[],
   testSet: BinaryExample[],
   lastPoint: TrajectoryPoint,
 ): TrajectoryPoint {
   if (example.isTraining) {
-    updateModel(model, example.word1Id, example.word2Id, example.label)
-    return { train: evaluateAccuracy(model, trainSet), validation: lastPoint.validation }
+    updateModel(model, trie, example.word1Id, example.word2Id, example.label)
+    return { train: evaluateAccuracy(model, trie, trainSet), validation: lastPoint.validation }
   }
-  return { train: lastPoint.train, validation: evaluateAccuracy(model, testSet) }
+  return { train: lastPoint.train, validation: evaluateAccuracy(model, trie, testSet) }
 }
 
 function yieldToMain(): Promise<void> {

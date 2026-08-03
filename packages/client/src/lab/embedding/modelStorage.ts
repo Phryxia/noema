@@ -1,17 +1,18 @@
 import { MODELS_STORAGE_KEY } from './consts'
-import type { EmbeddingModel, WordEmbedding } from './model/types'
+import type { EmbeddingModel, NodeEmbedding } from './model/types'
 
 interface StoredModels {
-  version: 1
+  version: 3
   models: StoredModel[]
 }
 
 interface StoredModel {
   d: number
-  words: StoredWord[]
+  bias: [mu: number, varr: number]
+  nodes: StoredNode[]
 }
 
-type StoredWord = [nodeId: number, mu: number[], varr: number[]]
+type StoredNode = [nodeId: number, mu: number[], varr: number[]]
 
 export function loadStoredModels(): EmbeddingModel[] {
   const raw = localStorage.getItem(MODELS_STORAGE_KEY)
@@ -30,7 +31,7 @@ export function loadStoredModels(): EmbeddingModel[] {
 }
 
 export function saveStoredModels(models: EmbeddingModel[]): boolean {
-  const payload: StoredModels = { version: 1, models: models.map(serializeModel) }
+  const payload: StoredModels = { version: 3, models: models.map(serializeModel) }
   try {
     localStorage.setItem(MODELS_STORAGE_KEY, JSON.stringify(payload))
     return true
@@ -44,22 +45,23 @@ function checkIsStoredModels(value: unknown): value is StoredModels {
     return false
   }
   const candidate = value as StoredModels
-  return candidate.version === 1 && Array.isArray(candidate.models)
+  return candidate.version === 3 && Array.isArray(candidate.models)
 }
 
-function deserializeModel({ d, words }: StoredModel): EmbeddingModel {
-  const entries = words.map(([nodeId, mu, varr]): [number, WordEmbedding] => [
+function deserializeModel({ d, bias, nodes }: StoredModel): EmbeddingModel {
+  const entries = nodes.map(([nodeId, mu, varr]): [number, NodeEmbedding] => [
     nodeId,
     { mu, varr },
   ])
-  return { d, words: new Map(entries) }
+  return { d, bias: { mu: bias[0], varr: bias[1] }, nodes: new Map(entries) }
 }
 
-function serializeModel({ d, words }: EmbeddingModel): StoredModel {
-  const entries = [...words.entries()]
+function serializeModel({ d, bias, nodes }: EmbeddingModel): StoredModel {
+  const entries = [...nodes.entries()]
   return {
     d,
-    words: entries.map(([nodeId, { mu, varr }]) => [
+    bias: [truncate(bias.mu), truncate(bias.varr)],
+    nodes: entries.map(([nodeId, { mu, varr }]) => [
       nodeId,
       mu.map(truncate),
       varr.map(truncate),

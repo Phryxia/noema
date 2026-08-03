@@ -19,7 +19,8 @@ import { invalidateWordQueries } from '../word/utils'
 const AllQuestionTypes: QuestionType[] = QuestionTypeSpecs.map(({ type }) => type)
 
 export interface ExploreOptions {
-  fixedTypes?: QuestionType[]
+  availableTypes?: QuestionType[]
+  checkedTypesStorageKey?: string
   pickQuestion?: (types: QuestionType[]) => Promise<QuestionPick>
   queryKey?: string
   onSaved?: (params: SubmitAnswerParams) => void
@@ -41,9 +42,10 @@ export interface Explore {
 }
 
 export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explore {
-  const fixedTypes = options?.fixedTypes
-  const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(
-    () => fixedTypes ?? loadCheckedTypes(),
+  const availableTypes = options?.availableTypes ?? AllQuestionTypes
+  const storageKey = options?.checkedTypesStorageKey ?? CHECKED_TYPES_STORAGE_KEY
+  const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(() =>
+    loadCheckedTypes(availableTypes, storageKey),
   )
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
   const [comment, setComment] = useState<CommentDraft>(EmptyComment)
@@ -75,9 +77,7 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
 
   function updateCheckedTypes(types: QuestionType[]): void {
     setCheckedTypes(types)
-    if (!fixedTypes) {
-      saveCheckedTypes(types)
-    }
+    saveCheckedTypes(storageKey, types)
     if (pick?.status === 'ok') {
       return
     }
@@ -121,22 +121,22 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
   }
 }
 
-function loadCheckedTypes(): QuestionType[] {
-  const raw = localStorage.getItem(CHECKED_TYPES_STORAGE_KEY)
+function loadCheckedTypes(availableTypes: QuestionType[], storageKey: string): QuestionType[] {
+  const raw = localStorage.getItem(storageKey)
   if (!raw) {
-    return AllQuestionTypes
+    return availableTypes
   }
   try {
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed)) {
-      return AllQuestionTypes
+      return availableTypes
     }
-    return AllQuestionTypes.filter((type) => parsed.includes(type))
+    return availableTypes.filter((type) => parsed.includes(type))
   } catch {
-    return AllQuestionTypes
+    return availableTypes
   }
 }
 
-function saveCheckedTypes(types: QuestionType[]): void {
-  localStorage.setItem(CHECKED_TYPES_STORAGE_KEY, JSON.stringify(types))
+function saveCheckedTypes(storageKey: string, types: QuestionType[]): void {
+  localStorage.setItem(storageKey, JSON.stringify(types))
 }

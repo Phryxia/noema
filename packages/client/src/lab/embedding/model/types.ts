@@ -1,11 +1,19 @@
-export interface WordEmbedding {
+export interface NodeEmbedding {
   mu: number[]
   varr: number[]
 }
 
+export type WordEmbedding = NodeEmbedding
+
+export interface BiasParameter {
+  mu: number
+  varr: number
+}
+
 export interface EmbeddingModel {
   d: number
-  words: Map<number, WordEmbedding>
+  bias: BiasParameter
+  nodes: Map<number, NodeEmbedding>
 }
 
 export interface BinaryExample {

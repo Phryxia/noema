@@ -3,24 +3,27 @@ import { proposePair } from './model/proposePair'
 import type { EmbeddingModel } from './model/types'
 import { pickQuestion } from '../../explore/pickQuestion'
 import type { QuestionPick } from '../../explore/types'
-import { getAllWordNodeIds } from '../../word/getAllWordNodeIds'
+import type { QuestionType } from '../../question/types'
+import type { WordTrie } from '../../word/getWordTrie'
 import { getWordValues } from '../../word/getWordValues'
 
 export async function pickLabQuestion(
   model: EmbeddingModel | null,
+  trie: WordTrie | null,
   labeledPairs: Set<string>,
+  types: QuestionType[],
 ): Promise<QuestionPick> {
-  if (!model) {
-    return pickQuestion(LabQuestionTypes)
+  const labTypes = LabQuestionTypes.filter((type) => types.includes(type))
+  if (!model || !trie || !labTypes.length) {
+    return pickQuestion(labTypes)
   }
-  const allNodeIds = await getAllWordNodeIds()
-  const pair = proposePair(model, allNodeIds, labeledPairs)
+  const pair = proposePair(model, trie, labeledPairs)
   if (!pair) {
-    return pickQuestion(LabQuestionTypes)
+    return pickQuestion(labTypes)
   }
   const [word1Id, word2Id] = shufflePair(pair)
   const values = await getWordValues([word1Id, word2Id])
-  const type = LabQuestionTypes[Math.floor(Math.random() * LabQuestionTypes.length)]
+  const type = labTypes[Math.floor(Math.random() * labTypes.length)]
   return {
     status: 'ok',
     draft: {

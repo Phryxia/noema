@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { assignSplit } from './assignSplit'
 import { computeDims } from './computeDims'
 import type { DimRange } from './computeDims'
-import { EmptyTrajectoryPoint, LAB_QUESTION_QUERY_KEY, LabQuestionTypes } from './consts'
+import {
+  EmptyTrajectoryPoint,
+  LAB_CHECKED_TYPES_STORAGE_KEY,
+  LAB_QUESTION_QUERY_KEY,
+  LabQuestionTypes,
+} from './consts'
 import { createExampleFromAnswer } from './createBinaryExample'
 import { loadBinaryExamples } from './loadBinaryExamples'
 import { createPairKey } from './model/proposePair'
@@ -14,6 +19,8 @@ import type { TrajectoryPoint } from './types'
 import type { SubmitAnswerParams } from '../../explore/submitAnswer'
 import { useExplore } from '../../explore/useExplore'
 import type { Explore } from '../../explore/useExplore'
+import { getWordTrie } from '../../word/getWordTrie'
+import type { WordTrie } from '../../word/getWordTrie'
 
 export interface EmbeddingLab {
   explore: Explore
@@ -31,6 +38,7 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
   const [initialModels] = useState(loadStoredModels)
   const modelsRef = useRef<EmbeddingModel[]>(initialModels)
   const selectedModelRef = useRef<EmbeddingModel | null>(null)
+  const trieRef = useRef<WordTrie | null>(null)
   const examplesRef = useRef<BinaryExample[]>([])
   const trainSetRef = useRef<BinaryExample[]>([])
   const testSetRef = useRef<BinaryExample[]>([])
@@ -44,15 +52,25 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
   const [progress, setProgress] = useState(0)
 
   const explore = useExplore(isEnabled, {
-    fixedTypes: LabQuestionTypes,
+    availableTypes: LabQuestionTypes,
+    checkedTypesStorageKey: LAB_CHECKED_TYPES_STORAGE_KEY,
     queryKey: LAB_QUESTION_QUERY_KEY,
-    pickQuestion: () => pickLabQuestion(selectedModelRef.current, labeledPairsRef.current),
+    pickQuestion: async (types) => {
+      trieRef.current = await getWordTrie()
+      return pickLabQuestion(
+        selectedModelRef.current,
+        trieRef.current,
+        labeledPairsRef.current,
+        types,
+      )
+    },
     onSaved: handleSaved,
   })
 
   useEffect(() => {
-    void loadBinaryExamples().then((examples) => {
+    void Promise.all([loadBinaryExamples(), getWordTrie()]).then(([examples, trie]) => {
       examplesRef.current = examples
+      trieRef.current = trie
       labeledPairsRef.current = new Set(
         examples.map(({ word1Id, word2Id }) => createPairKey(word1Id, word2Id)),
       )
@@ -74,13 +92,15 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
       testSetRef.current.push(example)
     }
     const models = modelsRef.current
-    if (!models.length) {
+    const trie = trieRef.current
+    if (!models.length || !trie) {
       return
     }
     const points = models.map((model): [number, TrajectoryPoint] => {
       const lastPoint = lastPointsRef.current[model.d] ?? EmptyTrajectoryPoint
       const point = consumeExample(
         model,
+        trie,
         assigned,
         trainSetRef.current,
         testSetRef.current,
@@ -111,7 +131,8 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
       return
     }
     const dims = computeDims(range)
-    if (!dims) {
+    const trie = trieRef.current
+    if (!dims || !trie) {
       return
     }
     setIsRunning(true)
@@ -124,7 +145,7 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
     const assigned = examplesRef.current.map(assignSplit)
     trainSetRef.current = assigned.filter(({ isTraining }) => isTraining)
     testSetRef.current = assigned.filter(({ isTraining }) => !isTraining)
-    void runExperiment(dims, assigned, {
+    void runExperiment(dims, assigned, trie, {
       onProgress: setProgress,
       onModelDone: (model, trajectory) => {
         modelsRef.current.push(model)

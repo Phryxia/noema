@@ -15,3 +15,7 @@ export function sampleGaussian(): number {
   const v = Math.random()
   return Math.sqrt(-2 * Math.log(1 - u)) * Math.cos(2 * Math.PI * v)
 }
+
+export function sampleGumbel(): number {
+  return -Math.log(-Math.log(1 - Math.random()))
+}

@@ -1,4 +1,6 @@
 import type { ReactElement } from 'react'
+import { useRef } from 'react'
+import { useChoiceShortcut } from './useChoiceShortcut'
 import classnames from 'classnames/bind'
 import styles from './ChoiceGroup.module.css'
 
@@ -12,17 +14,32 @@ export interface Choice<TValue> {
 interface ChoiceGroupProps<TValue> {
   choices: Choice<TValue>[]
   selected: TValue | null
+  hasKeyboardShortcut?: boolean
   onSelect: (value: TValue) => void
+  onSubmit?: () => void
 }
 
 export function ChoiceGroup<TValue>({
   choices,
   selected,
+  hasKeyboardShortcut,
   onSelect,
+  onSubmit,
 }: ChoiceGroupProps<TValue>): ReactElement {
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useChoiceShortcut({
+    isEnabled: !!hasKeyboardShortcut,
+    rootRef,
+    choices,
+    hasSelection: selected !== null,
+    onSelect,
+    onSubmit,
+  })
+
   return (
     <div className={cx('center')}>
-      <div role="group" className={cx('root')}>
+      <div role="group" className={cx('root')} ref={rootRef}>
         {choices.map(({ label, value }) => (
           <button
             key={label}

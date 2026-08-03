@@ -25,7 +25,9 @@ export function AnswerSection({
       <ChoiceGroup
         choices={SimilarityLevels}
         selected={answer.similarity}
+        hasKeyboardShortcut
         onSelect={(similarity: Similarity) => onChange({ ...answer, similarity })}
+        onSubmit={onSubmit}
       />
     )
   }
@@ -35,7 +37,9 @@ export function AnswerSection({
       <ChoiceGroup
         choices={createSelectionChoices(draft)}
         selected={answer.selection}
+        hasKeyboardShortcut
         onSelect={(selection) => onChange({ ...answer, selection })}
+        onSubmit={onSubmit}
       />
     )
   }

@@ -50,7 +50,7 @@ export function TextWriterField({
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
           />
-          {isFocused && <WordSuggestion keyword={value} n={16} onSelect={onChange} />}
+          <WordSuggestion keyword={value} n={16} isVisible={isFocused} onSelect={onChange} />
         </>
       )}
       {mode === '문장' && (

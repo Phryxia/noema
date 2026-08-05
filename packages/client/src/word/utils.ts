@@ -6,6 +6,7 @@ import {
   WORD_SUGGESTION_QUERY_KEY,
 } from './consts'
 import { invalidateStatisticQueries } from '../statistic/utils'
+import { QNA_PAGES_QUERY_KEY } from '../qna/QnaRelationSource'
 
 export function invalidateWordQueries(queryClient: QueryClient): void {
   invalidateStatisticQueries(queryClient)
@@ -13,4 +14,9 @@ export function invalidateWordQueries(queryClient: QueryClient): void {
   queryClient.invalidateQueries({ queryKey: [RECENT_WORDS_QUERY_KEY] })
   queryClient.invalidateQueries({ queryKey: [WORD_NODE_ID_QUERY_KEY] })
   queryClient.invalidateQueries({ queryKey: [WORD_NODE_QUERY_KEY] })
+}
+
+export function invalidateWordAndQnaQueries(queryClient: QueryClient): void {
+  invalidateWordQueries(queryClient)
+  queryClient.invalidateQueries({ queryKey: [QNA_PAGES_QUERY_KEY] })
 }

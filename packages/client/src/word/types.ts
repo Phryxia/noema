@@ -4,6 +4,7 @@ export interface TrieNode {
   value: string
   children: Record<string, number>
   createdAt?: Date
+  modifiedAt?: Date
 }
 
 export interface Lexis {

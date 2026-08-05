@@ -17,7 +17,7 @@ describe('modelStorage', () => {
   it('저장한 모델을 그대로 복원한다', () => {
     const model: EmbeddingModel = {
       d: 2,
-      bias: { mu: -2.5, varr: 0.5 },
+      bias: -2.5,
       nodes: new Map([
         [1, { mu: [0.5, -0.25], varr: [1, 0.5] }],
         [3, { mu: [0.125, 0], varr: [0.25, 1] }],
@@ -30,7 +30,7 @@ describe('modelStorage', () => {
   it('저장 시 유효숫자 6자리로 절사한다', () => {
     const model: EmbeddingModel = {
       d: 1,
-      bias: { mu: -3, varr: 1 },
+      bias: -3,
       nodes: new Map([[1, { mu: [0.123456789], varr: [0.987654321] }]]),
     }
     saveStoredModels([model])
@@ -45,7 +45,7 @@ describe('modelStorage', () => {
   it('손상된 데이터는 빈 배열로 폴백한다', () => {
     storage.set(MODELS_STORAGE_KEY, '{"broken"')
     expect(loadStoredModels()).toEqual([])
-    storage.set(MODELS_STORAGE_KEY, JSON.stringify({ version: 4, models: [] }))
+    storage.set(MODELS_STORAGE_KEY, JSON.stringify({ version: 5, models: [] }))
     expect(loadStoredModels()).toEqual([])
   })
 
@@ -58,6 +58,11 @@ describe('modelStorage', () => {
     storage.set(
       MODELS_STORAGE_KEY,
       JSON.stringify({ version: 2, models: [{ d: 2, nodes: [] }] }),
+    )
+    expect(loadStoredModels()).toEqual([])
+    storage.set(
+      MODELS_STORAGE_KEY,
+      JSON.stringify({ version: 3, models: [{ d: 2, bias: [-3, 1], nodes: [] }] }),
     )
     expect(loadStoredModels()).toEqual([])
   })

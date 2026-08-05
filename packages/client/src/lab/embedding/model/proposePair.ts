@@ -48,7 +48,7 @@ export function proposePair(
       nodeId !== u &&
       !labeledPairs.has(createPairKey(u, nodeId))
     ) {
-      const score = dot(zu, acc) + model.bias.mu + temperature * sampleGumbel()
+      const score = dot(zu, acc) + model.bias + temperature * sampleGumbel()
       if (score > bestScore) {
         bestScore = score
         best = nodeId

@@ -5,14 +5,9 @@ export interface NodeEmbedding {
 
 export type WordEmbedding = NodeEmbedding
 
-export interface BiasParameter {
-  mu: number
-  varr: number
-}
-
 export interface EmbeddingModel {
   d: number
-  bias: BiasParameter
+  bias: number
   nodes: Map<number, NodeEmbedding>
 }
 

@@ -26,7 +26,7 @@ function createTrie(): WordTrie {
 }
 
 function createFixedModel(mu1: number[], mu2: number[]): EmbeddingModel {
-  const model = createModel(mu1.length)
+  const model = createModel(mu1.length, -3)
   model.nodes.set(1, { mu: mu1.slice(), varr: mu1.map(() => 1) })
   model.nodes.set(2, { mu: mu2.slice(), varr: mu2.map(() => 1) })
   model.nodes.set(3, { mu: mu1.map(() => 0), varr: mu1.map(() => 1) })
@@ -35,7 +35,7 @@ function createFixedModel(mu1: number[], mu2: number[]): EmbeddingModel {
 
 describe('getNodeEmbedding', () => {
   it('없는 노드는 varr가 1인 임베딩을 만들어 등록한다', () => {
-    const model = createModel(4)
+    const model = createModel(4, -3)
     const embedding = getNodeEmbedding(model, 7)
     expect(embedding.mu).toHaveLength(4)
     expect(embedding.varr).toEqual([1, 1, 1, 1])
@@ -120,17 +120,10 @@ describe('updateModel', () => {
     expect(model.nodes.get(3)).toEqual(node3Before)
   })
 
-  it('bias도 라벨 방향으로 학습되고 분산이 줄어든다', () => {
+  it('bias는 학습되지 않고 상수로 유지된다', () => {
     const trie = createTrie()
     const model = createFixedModel([0.5, 0.1], [0.3, -0.2])
-    const biasBefore = model.bias.mu
     updateModel(model, trie, 1, 2, 1)
-    expect(model.bias.mu).toBeGreaterThan(biasBefore)
-    expect(model.bias.varr).toBeLessThan(1)
-
-    const model2 = createFixedModel([0.5, 0.1], [0.3, -0.2])
-    model2.bias.mu = 0
-    updateModel(model2, trie, 1, 2, 0)
-    expect(model2.bias.mu).toBeLessThan(0)
+    expect(model.bias).toBe(-3)
   })
 })

@@ -33,7 +33,7 @@ function createTrie(): WordTrie {
 }
 
 function createFixedModel(): EmbeddingModel {
-  const model = createModel(2)
+  const model = createModel(2, -3)
   model.nodes.set(1, { mu: [1, 0], varr: [1, 1] })
   model.nodes.set(2, { mu: [0, 1], varr: [1, 1] })
   model.nodes.set(3, { mu: [2, 0], varr: [1, 1] })

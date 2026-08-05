@@ -1,11 +1,11 @@
 import { dot, sampleGaussian, sigmoid } from './math'
 import type { EmbeddingModel, NodeEmbedding, WordEmbedding } from './types'
-import { INITIAL_BIAS, INITIAL_MU_SCALE } from '../consts'
+import { INITIAL_MU_SCALE } from '../consts'
 import { getPathNodeIds } from '../../../word/getWordTrie'
 import type { WordTrie } from '../../../word/getWordTrie'
 
-export function createModel(d: number): EmbeddingModel {
-  return { d, bias: { mu: INITIAL_BIAS, varr: 1 }, nodes: new Map() }
+export function createModel(d: number, bias: number): EmbeddingModel {
+  return { d, bias, nodes: new Map() }
 }
 
 export function getNodeEmbedding(model: EmbeddingModel, nodeId: number): NodeEmbedding {
@@ -46,7 +46,7 @@ export function predictPair(
 ): number {
   const e1 = embedWord(model, trie, word1Id)
   const e2 = embedWord(model, trie, word2Id)
-  return sigmoid(dot(e1.mu, e2.mu) + model.bias.mu)
+  return sigmoid(dot(e1.mu, e2.mu) + model.bias)
 }
 
 export function updateModel(
@@ -58,13 +58,11 @@ export function updateModel(
 ): void {
   const eu = embedWord(model, trie, word1Id)
   const ev = embedWord(model, trie, word2Id)
-  const p = sigmoid(dot(eu.mu, ev.mu) + model.bias.mu)
+  const p = sigmoid(dot(eu.mu, ev.mu) + model.bias)
   const err = label - p
   const gain = p * (1 - p)
   updatePathNodes(model, getPathNodeIds(trie, word1Id), err, gain, ev.mu)
   updatePathNodes(model, getPathNodeIds(trie, word2Id), err, gain, eu.mu)
-  model.bias.mu += model.bias.varr * err
-  model.bias.varr /= 1 + model.bias.varr * gain
 }
 
 function updatePathNodes(

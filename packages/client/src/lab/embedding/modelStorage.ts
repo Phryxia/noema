@@ -2,13 +2,13 @@ import { MODELS_STORAGE_KEY } from './consts'
 import type { EmbeddingModel, NodeEmbedding } from './model/types'
 
 interface StoredModels {
-  version: 3
+  version: 4
   models: StoredModel[]
 }
 
 interface StoredModel {
   d: number
-  bias: [mu: number, varr: number]
+  bias: number
   nodes: StoredNode[]
 }
 
@@ -31,7 +31,7 @@ export function loadStoredModels(): EmbeddingModel[] {
 }
 
 export function saveStoredModels(models: EmbeddingModel[]): boolean {
-  const payload: StoredModels = { version: 3, models: models.map(serializeModel) }
+  const payload: StoredModels = { version: 4, models: models.map(serializeModel) }
   try {
     localStorage.setItem(MODELS_STORAGE_KEY, JSON.stringify(payload))
     return true
@@ -45,7 +45,7 @@ function checkIsStoredModels(value: unknown): value is StoredModels {
     return false
   }
   const candidate = value as StoredModels
-  return candidate.version === 3 && Array.isArray(candidate.models)
+  return candidate.version === 4 && Array.isArray(candidate.models)
 }
 
 function deserializeModel({ d, bias, nodes }: StoredModel): EmbeddingModel {
@@ -53,14 +53,14 @@ function deserializeModel({ d, bias, nodes }: StoredModel): EmbeddingModel {
     nodeId,
     { mu, varr },
   ])
-  return { d, bias: { mu: bias[0], varr: bias[1] }, nodes: new Map(entries) }
+  return { d, bias, nodes: new Map(entries) }
 }
 
 function serializeModel({ d, bias, nodes }: EmbeddingModel): StoredModel {
   const entries = [...nodes.entries()]
   return {
     d,
-    bias: [truncate(bias.mu), truncate(bias.varr)],
+    bias: truncate(bias),
     nodes: entries.map(([nodeId, { mu, varr }]) => [
       nodeId,
       mu.map(truncate),

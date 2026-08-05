@@ -12,6 +12,7 @@ export interface ExperimentCallbacks {
 
 export async function runExperiment(
   dims: number[],
+  bias: number,
   examples: AssignedExample[],
   trie: WordTrie,
   { onProgress, onModelDone }: ExperimentCallbacks,
@@ -20,7 +21,7 @@ export async function runExperiment(
   let doneSteps = 0
   let lastYieldedAt = performance.now()
   for (const d of dims) {
-    const model = createModel(d)
+    const model = createModel(d, bias)
     const trajectory: TrajectoryPoint[] = []
     const trainSet: BinaryExample[] = []
     const testSet: BinaryExample[] = []

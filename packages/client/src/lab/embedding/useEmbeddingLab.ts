@@ -32,7 +32,7 @@ export interface EmbeddingLab {
   isLoaded: boolean
   isRunning: boolean
   progress: number
-  startExperiment: (range: DimRange) => void
+  startExperiment: (range: DimRange, bias: number) => void
   setTemperature: (temperature: number) => void
 }
 
@@ -134,7 +134,7 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
     selectedModelRef.current = modelsRef.current.find((model) => model.d === d) ?? null
   }
 
-  function startExperiment(range: DimRange): void {
+  function startExperiment(range: DimRange, bias: number): void {
     if (isRunning) {
       return
     }
@@ -153,7 +153,7 @@ export function useEmbeddingLab(isEnabled: boolean): EmbeddingLab {
     const assigned = examplesRef.current.map(assignSplit)
     trainSetRef.current = assigned.filter(({ isTraining }) => isTraining)
     testSetRef.current = assigned.filter(({ isTraining }) => !isTraining)
-    void runExperiment(dims, assigned, trie, {
+    void runExperiment(dims, bias, assigned, trie, {
       onProgress: setProgress,
       onModelDone: (model, trajectory) => {
         modelsRef.current.push(model)

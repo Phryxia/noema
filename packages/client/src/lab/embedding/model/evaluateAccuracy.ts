@@ -16,7 +16,7 @@ export function evaluateAccuracy(
   for (const { word1Id, word2Id, label } of examples) {
     const mu1 = getWordMu(model, trie, muCache, word1Id)
     const mu2 = getWordMu(model, trie, muCache, word2Id)
-    const prediction = sigmoid(dot(mu1, mu2) + model.bias.mu) > 0.5 ? 1 : 0
+    const prediction = sigmoid(dot(mu1, mu2) + model.bias) > 0.5 ? 1 : 0
     if (prediction === label) {
       correctCount += 1
     }

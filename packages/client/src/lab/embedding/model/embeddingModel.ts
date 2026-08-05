@@ -72,11 +72,12 @@ function updatePathNodes(
   gain: number,
   otherMu: number[],
 ): void {
+  const scale = 1 / pathNodeIds.length
   for (const nodeId of pathNodeIds) {
     const node = getNodeEmbedding(model, nodeId)
     for (let i = 0; i < model.d; i++) {
-      node.mu[i] += node.varr[i] * err * otherMu[i]
-      node.varr[i] /= 1 + node.varr[i] * otherMu[i] ** 2 * gain
+      node.mu[i] += scale * node.varr[i] * err * otherMu[i]
+      node.varr[i] /= 1 + scale * node.varr[i] * otherMu[i] ** 2 * gain
     }
   }
 }

@@ -8,6 +8,10 @@
     text-overflow: ellipsis;
   }
 
+  .row {
+    cursor: pointer;
+  }
+
   .type {
     width: 1%;
   }

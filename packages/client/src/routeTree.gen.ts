@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 
 // @ts-nocheck
 
@@ -18,6 +18,7 @@ import { Route as LabEmbeddingRouteImport } from './routes/lab.embedding'
 import { Route as RecentDocumentsRouteImport } from './routes/recent.documents'
 import { Route as RecentSentencesRouteImport } from './routes/recent.sentences'
 import { Route as RecentWordsRouteImport } from './routes/recent.words'
+import { Route as RelationRelationIdRouteImport } from './routes/relation.$relationId'
 import { Route as RelationNewRouteImport } from './routes/relation.new'
 import { Route as SentenceSentenceIdRouteImport } from './routes/sentence.$sentenceId'
 import { Route as WordWordRouteImport } from './routes/word.$word'
@@ -67,6 +68,11 @@ const RecentWordsRoute = RecentWordsRouteImport.update({
   path: '/recent/words',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RelationRelationIdRoute = RelationRelationIdRouteImport.update({
+  id: '/relation/$relationId',
+  path: '/relation/$relationId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RelationNewRoute = RelationNewRouteImport.update({
   id: '/relation/new',
   path: '/relation/new',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
+  '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
+  '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
+  '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
+    | '/relation/$relationId'
     | '/relation/new'
     | '/sentence/$sentenceId'
     | '/word/$word'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
+    | '/relation/$relationId'
     | '/relation/new'
     | '/sentence/$sentenceId'
     | '/word/$word'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
+    | '/relation/$relationId'
     | '/relation/new'
     | '/sentence/$sentenceId'
     | '/word/$word'
@@ -181,6 +193,7 @@ export interface RootRouteChildren {
   RecentDocumentsRoute: typeof RecentDocumentsRoute
   RecentSentencesRoute: typeof RecentSentencesRoute
   RecentWordsRoute: typeof RecentWordsRoute
+  RelationRelationIdRoute: typeof RelationRelationIdRoute
   RelationNewRoute: typeof RelationNewRoute
   SentenceSentenceIdRoute: typeof SentenceSentenceIdRoute
   WordWordRoute: typeof WordWordRoute
@@ -251,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecentWordsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/relation/$relationId': {
+      id: '/relation/$relationId'
+      path: '/relation/$relationId'
+      fullPath: '/relation/$relationId'
+      preLoaderRoute: typeof RelationRelationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/relation/new': {
       id: '/relation/new'
       path: '/relation/new'
@@ -285,6 +305,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecentDocumentsRoute: RecentDocumentsRoute,
   RecentSentencesRoute: RecentSentencesRoute,
   RecentWordsRoute: RecentWordsRoute,
+  RelationRelationIdRoute: RelationRelationIdRoute,
   RelationNewRoute: RelationNewRoute,
   SentenceSentenceIdRoute: SentenceSentenceIdRoute,
   WordWordRoute: WordWordRoute,

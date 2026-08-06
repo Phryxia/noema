@@ -1,4 +1,5 @@
 import type { FormEvent, ReactElement } from 'react'
+import { RelationActions } from '../RelationActions/RelationActions'
 import { SubjectWordFields } from '../SubjectWordFields/SubjectWordFields'
 import { SubjectWordSpecs } from '../consts'
 import type { RelationEditor } from '../useRelationEditor'
@@ -21,7 +22,9 @@ export function RelationForm({ editor }: RelationFormProps): ReactElement {
     isWordsReady,
     isSubmitting,
     isSubmittable,
+    isDeleting,
     save,
+    remove,
   } = editor
 
   function handleSubmit(event: FormEvent): void {
@@ -58,9 +61,12 @@ export function RelationForm({ editor }: RelationFormProps): ReactElement {
         onChange={(text) => editor.setComment({ ...comment, text })}
         onSubmit={save}
       />
-      <button type="submit" disabled={!isSubmittable} aria-busy={isSubmitting}>
-        {!isSubmitting && '제출'}
-      </button>
+      <RelationActions
+        isSubmitting={isSubmitting}
+        isSubmittable={isSubmittable}
+        isDeleting={isDeleting}
+        onDelete={remove}
+      />
     </form>
   )
 }

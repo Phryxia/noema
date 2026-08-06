@@ -8,11 +8,13 @@ const cx = classnames.bind(styles)
 
 interface RelationTypeSelectorProps {
   type: QuestionType
+  isEditable: boolean
   onChange: (type: QuestionType) => void
 }
 
 export function RelationTypeSelector({
   type,
+  isEditable,
   onChange,
 }: RelationTypeSelectorProps): ReactElement {
   return (
@@ -23,6 +25,7 @@ export function RelationTypeSelector({
             type="radio"
             name="relationType"
             checked={type === spec.type}
+            disabled={!isEditable}
             onChange={() => onChange(spec.type)}
           />
           {spec.label}

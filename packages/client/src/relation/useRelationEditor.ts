@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import type { RefObject } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { checkIsAnswerReady } from '../explore/checkIsAnswerReady'
 import { EmptyAnswer, EmptyComment } from '../explore/consts'
@@ -11,6 +12,7 @@ import { createRelationDraft } from './createRelationDraft'
 import { resizeWords } from './resizeWords'
 import { saveType } from './typeStorage'
 import { invalidateRelationQueries } from './utils'
+import { focusFirstElement } from '../utils/focusFirstElement'
 
 export interface RelationValues {
   type: QuestionType
@@ -38,6 +40,7 @@ export interface RelationEditor {
   comment: CommentDraft
   setComment: (comment: CommentDraft) => void
   draft: QuestionDraft
+  formRef: RefObject<HTMLFormElement | null>
   isTypeEditable: boolean
   isWordsReady: boolean
   isSubmitting: boolean
@@ -60,6 +63,7 @@ export function useRelationEditor({
   const [words, setWords] = useState<string[]>(initial.words)
   const [answer, setAnswer] = useState<AnswerDraft>(initial.answer)
   const [comment, setComment] = useState<CommentDraft>(initial.comment)
+  const formRef = useRef<HTMLFormElement>(null)
   const queryClient = useQueryClient()
 
   function updateType(nextType: QuestionType): void {
@@ -79,6 +83,7 @@ export function useRelationEditor({
       setWords(createEmptyWords(type))
       setAnswer(EmptyAnswer)
       setComment(EmptyComment)
+      focusFirstElement(formRef.current)
     },
   })
 
@@ -114,6 +119,7 @@ export function useRelationEditor({
     comment,
     setComment,
     draft,
+    formRef,
     isTypeEditable,
     isWordsReady,
     isSubmitting,

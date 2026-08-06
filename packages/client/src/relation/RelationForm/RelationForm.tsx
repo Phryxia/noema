@@ -33,7 +33,7 @@ export function RelationForm({ editor }: RelationFormProps): ReactElement {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form ref={editor.formRef} onSubmit={handleSubmit}>
       <p>{getQuestionPrompt(draft.question)}</p>
       <SubjectWordFields
         words={words}

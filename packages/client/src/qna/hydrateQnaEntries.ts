@@ -1,3 +1,5 @@
+import { getQuestionWordIds } from '../relation/getQuestionWordIds'
+import { getRelationAnswer } from '../relation/getRelationAnswer'
 import type { Relation, WordOrSentence } from '../relation/types'
 import { getSentence } from '../sentence/sentence.service'
 import { getWordValues } from '../word/getWordValues'
@@ -38,23 +40,11 @@ function collectSentenceIds(relations: Relation[]): number[] {
   return Array.from(ids)
 }
 
-function getQuestionWordIds(relation: Relation): number[] {
-  if (relation.type === 'WordExplain') {
-    return [relation.wordId]
-  }
-  if (relation.type === 'WordsUsage') {
-    return relation.wordIds
-  }
-  if (relation.type === 'TernaryIsolation') {
-    return [relation.word1Id, relation.word2Id, relation.word3Id]
-  }
-  return [relation.word1Id, relation.word2Id]
-}
-
 function getTextRefs(relation: Relation): WordOrSentence[] {
   const refs: WordOrSentence[] = []
-  if ('answer' in relation && relation.answer) {
-    refs.push(relation.answer)
+  const answer = getRelationAnswer(relation)
+  if (answer) {
+    refs.push(answer)
   }
   if (relation.comment) {
     refs.push(relation.comment)

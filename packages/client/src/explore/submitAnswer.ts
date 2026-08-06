@@ -1,4 +1,5 @@
 import { createNewRelation } from './createNewRelation'
+import { createSource, EXPLORE_SOURCE_PREFIX } from './createSource'
 import { getAnswerMode } from './getAnswerModes'
 import type { AnswerDraft, CommentDraft } from './types'
 import { QUESTIONS_STORE, RELATIONS_STORE } from '../db/consts'
@@ -10,8 +11,6 @@ import { createSentence } from '../sentence/sentence.service'
 import { recordCreation } from '../statistic/statistic.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
-
-const EXPLORE_SOURCE_PREFIX = 'Harvest via NOEMA system exploration'
 
 export interface SubmitAnswerParams {
   question: NewQuestion
@@ -47,10 +46,6 @@ async function createQuestion(question: NewQuestion, createdAt: Date): Promise<n
   )) as number
   await awaitTransaction(transaction)
   return questionId
-}
-
-function createSource(questionId: number, prefix: string): string {
-  return `${prefix}, qid=${questionId}`
 }
 
 async function createTarget(

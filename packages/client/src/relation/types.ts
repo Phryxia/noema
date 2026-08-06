@@ -11,6 +11,7 @@ export interface RelationBase {
   relationId: number
   questionId: number
   createdAt: Date
+  modifiedAt?: Date
   comment?: WordOrSentence
 }
 

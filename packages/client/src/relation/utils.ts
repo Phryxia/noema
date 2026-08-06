@@ -1,0 +1,12 @@
+import type { QueryClient } from '@tanstack/react-query'
+import { QNA_PAGES_QUERY_KEY } from '../qna/QnaRelationSource'
+import { invalidateSentenceQueries } from '../sentence/utils'
+import { invalidateWordQueries } from '../word/utils'
+import { RELATION_QUERY_KEY } from './consts'
+
+export function invalidateRelationQueries(queryClient: QueryClient): void {
+  invalidateWordQueries(queryClient)
+  invalidateSentenceQueries(queryClient)
+  queryClient.invalidateQueries({ queryKey: [RELATION_QUERY_KEY] })
+  queryClient.invalidateQueries({ queryKey: [QNA_PAGES_QUERY_KEY] })
+}

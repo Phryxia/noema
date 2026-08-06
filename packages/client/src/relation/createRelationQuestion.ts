@@ -1,6 +1,6 @@
 import type { NewQuestion, QuestionType } from '../question/types'
 
-export function createTeachQuestion(type: QuestionType, wordIds: number[]): NewQuestion {
+export function createRelationQuestion(type: QuestionType, wordIds: number[]): NewQuestion {
   switch (type) {
     case 'WordExplain':
       return { type, wordId: wordIds[0] }

@@ -18,10 +18,10 @@ function RootLayout(): ReactElement {
                   <Link to="/explore">탐색</Link>
                 </li>
                 <li>
-                  <Link to="/teach">알려주기</Link>
+                  <Link to="/relation/new">알려주기</Link>
                 </li>
                 <li>
-                  <Link to="/qna">문답</Link>
+                  <Link to="/qna">관계</Link>
                 </li>
                 <li>
                   <Link to="/lab/embedding">실험</Link>

@@ -13,12 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as QnaRouteImport } from './routes/qna'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as TeachRouteImport } from './routes/teach'
 import { Route as DocumentDocumentIdRouteImport } from './routes/document.$documentId'
 import { Route as LabEmbeddingRouteImport } from './routes/lab.embedding'
 import { Route as RecentDocumentsRouteImport } from './routes/recent.documents'
 import { Route as RecentSentencesRouteImport } from './routes/recent.sentences'
 import { Route as RecentWordsRouteImport } from './routes/recent.words'
+import { Route as RelationNewRouteImport } from './routes/relation.new'
 import { Route as SentenceSentenceIdRouteImport } from './routes/sentence.$sentenceId'
 import { Route as WordWordRouteImport } from './routes/word.$word'
 
@@ -40,11 +40,6 @@ const QnaRoute = QnaRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TeachRoute = TeachRouteImport.update({
-  id: '/teach',
-  path: '/teach',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentDocumentIdRoute = DocumentDocumentIdRouteImport.update({
@@ -72,6 +67,11 @@ const RecentWordsRoute = RecentWordsRouteImport.update({
   path: '/recent/words',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RelationNewRoute = RelationNewRouteImport.update({
+  id: '/relation/new',
+  path: '/relation/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SentenceSentenceIdRoute = SentenceSentenceIdRouteImport.update({
   id: '/sentence/$sentenceId',
   path: '/sentence/$sentenceId',
@@ -88,12 +88,12 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
-  '/teach': typeof TeachRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
+  '/relation/new': typeof RelationNewRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -102,12 +102,12 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
-  '/teach': typeof TeachRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
+  '/relation/new': typeof RelationNewRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -117,12 +117,12 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
-  '/teach': typeof TeachRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
+  '/relation/new': typeof RelationNewRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -133,12 +133,12 @@ export interface FileRouteTypes {
     | '/explore'
     | '/qna'
     | '/settings'
-    | '/teach'
     | '/document/$documentId'
     | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
+    | '/relation/new'
     | '/sentence/$sentenceId'
     | '/word/$word'
   fileRoutesByTo: FileRoutesByTo
@@ -147,12 +147,12 @@ export interface FileRouteTypes {
     | '/explore'
     | '/qna'
     | '/settings'
-    | '/teach'
     | '/document/$documentId'
     | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
+    | '/relation/new'
     | '/sentence/$sentenceId'
     | '/word/$word'
   id:
@@ -161,12 +161,12 @@ export interface FileRouteTypes {
     | '/explore'
     | '/qna'
     | '/settings'
-    | '/teach'
     | '/document/$documentId'
     | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
+    | '/relation/new'
     | '/sentence/$sentenceId'
     | '/word/$word'
   fileRoutesById: FileRoutesById
@@ -176,12 +176,12 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   QnaRoute: typeof QnaRoute
   SettingsRoute: typeof SettingsRoute
-  TeachRoute: typeof TeachRoute
   DocumentDocumentIdRoute: typeof DocumentDocumentIdRoute
   LabEmbeddingRoute: typeof LabEmbeddingRoute
   RecentDocumentsRoute: typeof RecentDocumentsRoute
   RecentSentencesRoute: typeof RecentSentencesRoute
   RecentWordsRoute: typeof RecentWordsRoute
+  RelationNewRoute: typeof RelationNewRoute
   SentenceSentenceIdRoute: typeof SentenceSentenceIdRoute
   WordWordRoute: typeof WordWordRoute
 }
@@ -214,13 +214,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/teach': {
-      id: '/teach'
-      path: '/teach'
-      fullPath: '/teach'
-      preLoaderRoute: typeof TeachRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/document/$documentId': {
@@ -258,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecentWordsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/relation/new': {
+      id: '/relation/new'
+      path: '/relation/new'
+      fullPath: '/relation/new'
+      preLoaderRoute: typeof RelationNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sentence/$sentenceId': {
       id: '/sentence/$sentenceId'
       path: '/sentence/$sentenceId'
@@ -280,12 +280,12 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   QnaRoute: QnaRoute,
   SettingsRoute: SettingsRoute,
-  TeachRoute: TeachRoute,
   DocumentDocumentIdRoute: DocumentDocumentIdRoute,
   LabEmbeddingRoute: LabEmbeddingRoute,
   RecentDocumentsRoute: RecentDocumentsRoute,
   RecentSentencesRoute: RecentSentencesRoute,
   RecentWordsRoute: RecentWordsRoute,
+  RelationNewRoute: RelationNewRoute,
   SentenceSentenceIdRoute: SentenceSentenceIdRoute,
   WordWordRoute: WordWordRoute,
 }

@@ -11,7 +11,7 @@ export const Route = createFileRoute('/qna')({
 function QnaPage(): ReactElement {
   return (
     <RecentListPage
-      title="문답 기록"
+      title="관계"
       source={QnaRelationSource}
       queryKeyPrefix={QNA_PAGES_QUERY_KEY}
       Table={QnaTable}

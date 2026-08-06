@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { checkSubjectWordsReady } from './checkSubjectWordsReady'
 import { SubjectWordSpecs, TEACH_TYPE_STORAGE_KEY } from './consts'
-import { createTeachDraft } from './createTeachDraft'
-import { submitTeaching } from './submitTeaching'
+import { createRelationDraft } from './createRelationDraft'
+import { submitRelation } from './submitRelation'
 import { checkIsAnswerReady } from '../explore/checkIsAnswerReady'
 import { EmptyAnswer, EmptyComment, QuestionTypeSpecs } from '../explore/consts'
 import type { AnswerDraft, CommentDraft, QuestionDraft } from '../explore/types'
@@ -11,7 +11,7 @@ import type { QuestionType } from '../question/types'
 import { invalidateSentenceQueries } from '../sentence/utils'
 import { invalidateWordQueries } from '../word/utils'
 
-export interface Teach {
+export interface RelationEditor {
   type: QuestionType
   setType: (type: QuestionType) => void
   words: string[]
@@ -27,7 +27,7 @@ export interface Teach {
   save: () => void
 }
 
-export function useTeach(): Teach {
+export function useRelationEditor(): RelationEditor {
   const [type, setType] = useState<QuestionType>(loadType)
   const [words, setWords] = useState<string[]>(() => createEmptyWords(type))
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
@@ -42,7 +42,7 @@ export function useTeach(): Teach {
   }
 
   const { mutate: submit, isPending: isSubmitting } = useMutation({
-    mutationFn: submitTeaching,
+    mutationFn: submitRelation,
     onSuccess: () => {
       invalidateWordQueries(queryClient)
       invalidateSentenceQueries(queryClient)
@@ -52,7 +52,7 @@ export function useTeach(): Teach {
     },
   })
 
-  const draft = createTeachDraft(type, words)
+  const draft = createRelationDraft(type, words)
   const isWordsReady = checkSubjectWordsReady(type, words)
   const isSubmittable =
     isWordsReady && !isSubmitting && checkIsAnswerReady(draft.question, answer)

@@ -1,10 +1,10 @@
-import { createTeachQuestion } from './createTeachQuestion'
+import { createRelationQuestion } from './createRelationQuestion'
 import type { QuestionDraft } from '../explore/types'
 import type { QuestionType } from '../question/types'
 
-export function createTeachDraft(type: QuestionType, words: string[]): QuestionDraft {
+export function createRelationDraft(type: QuestionType, words: string[]): QuestionDraft {
   return {
-    question: createTeachQuestion(type, createPlaceholderIds(type, words)),
+    question: createRelationQuestion(type, createPlaceholderIds(type, words)),
     lexes: words.map((value, nodeId) => ({ nodeId, value })),
   }
 }

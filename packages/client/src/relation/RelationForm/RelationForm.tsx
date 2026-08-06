@@ -1,17 +1,17 @@
 import type { FormEvent, ReactElement } from 'react'
 import { SubjectWordFields } from '../SubjectWordFields/SubjectWordFields'
 import { SubjectWordSpecs } from '../consts'
-import type { Teach } from '../useTeach'
+import type { RelationEditor } from '../useRelationEditor'
 import { AnswerSection } from '../../explore/AnswerSection/AnswerSection'
 import { TextWriterField } from '../../explore/TextWriterField/TextWriterField'
 import { getQuestionPrompt } from '../../explore/getQuestionPrompt'
 import { TextWriterModes } from '../../writer/consts'
 
-interface TeachFormProps {
-  teach: Teach
+interface RelationFormProps {
+  editor: RelationEditor
 }
 
-export function TeachForm({ teach }: TeachFormProps): ReactElement {
+export function RelationForm({ editor }: RelationFormProps): ReactElement {
   const {
     type,
     draft,
@@ -22,7 +22,7 @@ export function TeachForm({ teach }: TeachFormProps): ReactElement {
     isSubmitting,
     isSubmittable,
     save,
-  } = teach
+  } = editor
 
   function handleSubmit(event: FormEvent): void {
     event.preventDefault()
@@ -35,7 +35,7 @@ export function TeachForm({ teach }: TeachFormProps): ReactElement {
       <SubjectWordFields
         words={words}
         requiredCount={SubjectWordSpecs[type].minCount}
-        onChange={teach.setWords}
+        onChange={editor.setWords}
       />
       {type === 'TernaryIsolation' && !isWordsReady ? (
         <p>대상 단어를 먼저 입력하세요</p>
@@ -43,7 +43,7 @@ export function TeachForm({ teach }: TeachFormProps): ReactElement {
         <AnswerSection
           draft={draft}
           answer={answer}
-          onChange={teach.setAnswer}
+          onChange={editor.setAnswer}
           onSubmit={save}
         />
       )}
@@ -54,8 +54,8 @@ export function TeachForm({ teach }: TeachFormProps): ReactElement {
         mode={comment.mode}
         value={comment.text}
         placeholder="(optional)"
-        onModeChange={(mode) => teach.setComment({ ...comment, mode })}
-        onChange={(text) => teach.setComment({ ...comment, text })}
+        onModeChange={(mode) => editor.setComment({ ...comment, mode })}
+        onChange={(text) => editor.setComment({ ...comment, text })}
         onSubmit={save}
       />
       <button type="submit" disabled={!isSubmittable} aria-busy={isSubmitting}>

@@ -11,20 +11,24 @@ import { recordCreation } from '../statistic/statistic.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
 
+const EXPLORE_SOURCE_PREFIX = 'Harvest via NOEMA system exploration'
+
 export interface SubmitAnswerParams {
   question: NewQuestion
   answer: AnswerDraft
   comment: CommentDraft
+  sourcePrefix?: string
 }
 
 export async function submitAnswer({
   question,
   answer,
   comment,
+  sourcePrefix,
 }: SubmitAnswerParams): Promise<void> {
   const createdAt = new Date()
   const questionId = await createQuestion(question, createdAt)
-  const source = createSource(questionId)
+  const source = createSource(questionId, sourcePrefix ?? EXPLORE_SOURCE_PREFIX)
   const answerTarget = await createTarget(
     getAnswerMode(question.type, answer.mode),
     answer.text,
@@ -45,8 +49,8 @@ async function createQuestion(question: NewQuestion, createdAt: Date): Promise<n
   return questionId
 }
 
-function createSource(questionId: number): string {
-  return `Harvest via NOEMA system exploration, qid=${questionId}`
+function createSource(questionId: number, prefix: string): string {
+  return `${prefix}, qid=${questionId}`
 }
 
 async function createTarget(

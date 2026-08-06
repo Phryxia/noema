@@ -1,7 +1,8 @@
-import type { KeyboardEvent, ReactElement } from 'react'
-import { useState } from 'react'
+import type { FocusEvent, ReactElement } from 'react'
+import { useRef, useState } from 'react'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
+import { focusNextElement } from '../../utils/focusNextElement'
 
 interface SubjectWordFieldsProps {
   words: string[]
@@ -21,7 +22,7 @@ export function SubjectWordFields({
   }
 
   return (
-    <div onKeyDown={preventEnterSubmit}>
+    <div>
       {words.map((word, index) => (
         <SubjectWordField
           key={index}
@@ -51,25 +52,37 @@ function SubjectWordField({
   onChange,
   onFocusChange,
 }: SubjectWordFieldProps): ReactElement {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  function leaveField(): void {
+    onFocusChange(false)
+    focusNextElement(containerRef.current)
+  }
+
+  function selectSuggestion(value: string): void {
+    onChange(value)
+    leaveField()
+  }
+
+  function handleBlur(event: FocusEvent<HTMLDivElement>): void {
+    if (event.currentTarget.contains(event.relatedTarget)) {
+      return
+    }
+    onFocusChange(false)
+  }
+
   return (
-    <div>
+    <div ref={containerRef} onFocus={() => onFocusChange(true)} onBlur={handleBlur}>
       <WordField
         value={word}
         isEditable
         placeholder={placeholder}
         onChange={onChange}
-        onFocus={() => onFocusChange(true)}
-        onBlur={() => onFocusChange(false)}
+        onEnter={leaveField}
       />
-      <WordSuggestion keyword={word} n={16} isVisible={isFocused} onSelect={onChange} />
+      <WordSuggestion keyword={word} n={16} isVisible={isFocused} onSelect={selectSuggestion} />
     </div>
   )
-}
-
-function preventEnterSubmit(event: KeyboardEvent<HTMLDivElement>): void {
-  if (event.key === 'Enter') {
-    event.preventDefault()
-  }
 }
 
 function createPlaceholder(index: number, requiredCount: number): string {

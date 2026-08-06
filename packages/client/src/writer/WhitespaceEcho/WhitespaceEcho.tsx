@@ -20,7 +20,7 @@ export function WhitespaceEcho({
   scrollTop,
 }: WhitespaceEchoProps): ReactElement {
   return (
-    <div className={cx('echo', { multiline: isMultiline })}>
+    <div className={cx('echo', { multiline: isMultiline })} aria-hidden="true">
       <span style={{ transform: `translate(${-scrollLeft}px, ${-scrollTop}px)` }}>
         {value.split(WHITESPACE_PATTERN).map((token, index) => (
           <span key={index} className={cx(getTokenClassName(token))}>

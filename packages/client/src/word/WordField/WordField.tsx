@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react'
+import type { KeyboardEvent, ReactElement } from 'react'
 import { useState } from 'react'
 import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import classnames from 'classnames/bind'
@@ -11,6 +11,7 @@ interface WordFieldProps {
   isEditable: boolean
   placeholder?: string
   onChange: (value: string) => void
+  onEnter?: () => void
   onFocus?: () => void
   onBlur?: () => void
 }
@@ -20,10 +21,19 @@ export function WordField({
   isEditable,
   placeholder,
   onChange,
+  onEnter,
   onFocus,
   onBlur,
 }: WordFieldProps): ReactElement {
   const [scrollLeft, setScrollLeft] = useState(0)
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
+    if (!onEnter || event.key !== 'Enter' || event.nativeEvent.isComposing) {
+      return
+    }
+    event.preventDefault()
+    onEnter()
+  }
 
   return (
     <div className={cx('inputWrapper')}>
@@ -35,6 +45,7 @@ export function WordField({
         readOnly={!isEditable}
         onChange={(event) => onChange(event.target.value)}
         onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
+        onKeyDown={handleKeyDown}
         onFocus={onFocus}
         onBlur={onBlur}
       />

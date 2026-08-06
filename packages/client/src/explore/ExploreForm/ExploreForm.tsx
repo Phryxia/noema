@@ -33,7 +33,7 @@ export function ExploreForm({ explore }: ExploreFormProps): ReactElement {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className={cx('question')}>
+      <div ref={explore.answerRef} className={cx('question')}>
         {draft ? (
           <>
             <QuestionPrompt draft={draft} />

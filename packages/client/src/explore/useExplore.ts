@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { RefObject } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { checkIsAnswerReady } from './checkIsAnswerReady'
 import {
+  ANSWER_INPUT_SELECTOR,
   CHECKED_TYPES_STORAGE_KEY,
   EmptyAnswer,
   EmptyComment,
@@ -15,6 +17,7 @@ import type { AnswerDraft, CommentDraft, QuestionPick } from './types'
 import type { QuestionType } from '../question/types'
 import { invalidateSentenceQueries } from '../sentence/utils'
 import { invalidateWordQueries } from '../word/utils'
+import { focusFirstElement } from '../utils/focusFirstElement'
 
 const AllQuestionTypes: QuestionType[] = QuestionTypeSpecs.map(({ type }) => type)
 
@@ -34,6 +37,7 @@ export interface Explore {
   comment: CommentDraft
   setComment: (comment: CommentDraft) => void
   pick: QuestionPick | undefined
+  answerRef: RefObject<HTMLDivElement | null>
   isFetching: boolean
   isSubmitting: boolean
   isSubmittable: boolean
@@ -50,6 +54,8 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
   const [comment, setComment] = useState<CommentDraft>(EmptyComment)
   const appliedTypes = useRef<QuestionType[]>(checkedTypes)
+  const answerRef = useRef<HTMLDivElement>(null)
+  const isFocusPending = useRef(false)
   const queryClient = useQueryClient()
 
   const {
@@ -90,9 +96,18 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
       options?.onSaved?.(params)
       invalidateWordQueries(queryClient)
       invalidateSentenceQueries(queryClient)
+      isFocusPending.current = true
       skip()
     },
   })
+
+  useEffect(() => {
+    if (!isFocusPending.current || isFetching || pick?.status !== 'ok') {
+      return
+    }
+    isFocusPending.current = false
+    focusFirstElement(answerRef.current, ANSWER_INPUT_SELECTOR)
+  }, [isFetching, pick])
 
   const draft = pick?.status === 'ok' ? pick.draft : undefined
   const isSubmittable =
@@ -113,6 +128,7 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
     comment,
     setComment,
     pick,
+    answerRef,
     isFetching,
     isSubmitting,
     isSubmittable,

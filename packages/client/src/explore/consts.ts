@@ -9,6 +9,11 @@ export const WORD_COUNT_QUERY_KEY = 'wordCount'
 export const MIN_WORD_COUNT = 10
 export const MAX_USAGE_WORD_COUNT = 3
 
+export const ANSWER_INPUT_SELECTOR = [
+  'input:not([type="radio"]):not([disabled])',
+  'textarea:not([disabled])',
+].join(',')
+
 export interface QuestionTypeSpec {
   type: QuestionType
   label: string

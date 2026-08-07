@@ -6,6 +6,7 @@ import { createWord, getWordNodeId } from '../word.service'
 import { invalidateWordQueries } from '../utils'
 import { WordField } from '../WordField/WordField'
 import { WordSuggestion } from '../WordSuggestion/WordSuggestion'
+import { useSuggestionFocus } from '../useSuggestionFocus'
 import { useThrottledValue } from '../../utils/useThrottledValue'
 import classNames from 'classnames/bind'
 import styles from './WordWriter.module.css'
@@ -18,7 +19,15 @@ interface WordWriterProps {
 
 export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
   const [value, setValue] = useState('')
-  const [isFocused, setIsFocused] = useState(false)
+  const {
+    rootRef,
+    suggestionRef,
+    isFocused,
+    handleFocus,
+    handleBlur,
+    focusSuggestion,
+    focusField,
+  } = useSuggestionFocus()
   const queryClient = useQueryClient()
   const { mutate: saveWord, isPending } = useMutation({
     mutationFn: createWord,
@@ -47,15 +56,14 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
   }
 
   return (
-    <div>
+    <div ref={rootRef} onFocus={handleFocus} onBlur={handleBlur}>
       <form onSubmit={handleSubmit}>
         <fieldset role="group" className={cx('group')}>
           <WordField
             value={value}
             isEditable={isEditable}
             onChange={setValue}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onArrowDown={focusSuggestion}
           />
           {isEditable && (
             <button
@@ -69,7 +77,13 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
           )}
         </fieldset>
       </form>
-      <WordSuggestion keyword={value} n={16} isVisible={isFocused} />
+      <WordSuggestion
+        ref={suggestionRef}
+        keyword={value}
+        n={16}
+        isVisible={isFocused}
+        onExitUp={focusField}
+      />
     </div>
   )
 }

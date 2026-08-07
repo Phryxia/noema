@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react'
-import { useState } from 'react'
 import { SentenceField } from '../../sentence/SentenceField/SentenceField'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
+import { useSuggestionFocus } from '../../word/useSuggestionFocus'
 import { WriterModeSelector } from '../../writer/WriterModeSelector/WriterModeSelector'
 import type { TextWriterMode } from '../../writer/types'
 import classnames from 'classnames/bind'
@@ -31,7 +31,15 @@ export function TextWriterField({
   onChange,
   onSubmit,
 }: TextWriterFieldProps): ReactElement {
-  const [isFocused, setIsFocused] = useState(false)
+  const {
+    rootRef,
+    suggestionRef,
+    isFocused,
+    handleFocus,
+    handleBlur,
+    focusSuggestion,
+    focusField,
+  } = useSuggestionFocus()
 
   return (
     <div>
@@ -41,17 +49,23 @@ export function TextWriterField({
         </div>
       )}
       {mode === '단어' && (
-        <>
+        <div ref={rootRef} onFocus={handleFocus} onBlur={handleBlur}>
           <WordField
             value={value}
             isEditable
             placeholder={placeholder}
             onChange={onChange}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onArrowDown={focusSuggestion}
           />
-          <WordSuggestion keyword={value} n={16} isVisible={isFocused} onSelect={onChange} />
-        </>
+          <WordSuggestion
+            ref={suggestionRef}
+            keyword={value}
+            n={16}
+            isVisible={isFocused}
+            onSelect={onChange}
+            onExitUp={focusField}
+          />
+        </div>
       )}
       {mode === '문장' && (
         <SentenceField

@@ -1,10 +1,11 @@
-import type { Dispatch, FocusEvent, ReactElement, SetStateAction } from 'react'
-import { useRef, useState } from 'react'
+import type { Dispatch, ReactElement, SetStateAction } from 'react'
+import { useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { useMutation } from '@tanstack/react-query'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
 import { getRandomWords } from '../../word/getRandomWords'
+import { useSuggestionFocus } from '../../word/useSuggestionFocus'
 import { focusNextElement } from '../../utils/focusNextElement'
 import classnames from 'classnames/bind'
 import styles from './SubjectWordFields.module.css'
@@ -26,7 +27,6 @@ export function SubjectWordFields({
   hasRandomPick,
   onChange,
 }: SubjectWordFieldsProps): ReactElement {
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const { mutate: rollRandomWord, isPending: isRolling } = useMutation({
     mutationFn: async (index: number) => {
@@ -43,7 +43,6 @@ export function SubjectWordFields({
   }
 
   function handleFocusChange(index: number, isFocused: boolean): void {
-    setFocusedIndex(isFocused ? index : null)
     if (isFocused) {
       return
     }
@@ -74,7 +73,6 @@ export function SubjectWordFields({
           key={index}
           word={word}
           placeholder={createPlaceholder(index, requiredCount)}
-          isFocused={focusedIndex === index}
           onChange={(value) => updateWord(index, value)}
           onFocusChange={(isFocused) => handleFocusChange(index, isFocused)}
           onEmptyBackspace={
@@ -98,7 +96,6 @@ export function SubjectWordFields({
 interface SubjectWordFieldProps {
   word: string
   placeholder: string
-  isFocused: boolean
   onChange: (value: string) => void
   onFocusChange: (isFocused: boolean) => void
   onEmptyBackspace?: () => void
@@ -108,29 +105,30 @@ interface SubjectWordFieldProps {
 function SubjectWordField({
   word,
   placeholder,
-  isFocused,
   onChange,
   onFocusChange,
   onEmptyBackspace,
   onRandomPick,
 }: SubjectWordFieldProps): ReactElement {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const {
+    rootRef,
+    suggestionRef,
+    isFocused,
+    handleFocus,
+    handleBlur,
+    focusSuggestion,
+    focusField,
+    leave,
+  } = useSuggestionFocus(onFocusChange)
 
   function leaveField(): void {
-    onFocusChange(false)
-    focusNextElement(containerRef.current)
+    leave()
+    focusNextElement(rootRef.current)
   }
 
   function selectSuggestion(value: string): void {
     onChange(value)
     leaveField()
-  }
-
-  function handleBlur(event: FocusEvent<HTMLDivElement>): void {
-    if (event.currentTarget.contains(event.relatedTarget)) {
-      return
-    }
-    onFocusChange(false)
   }
 
   const wordField = (
@@ -141,11 +139,12 @@ function SubjectWordField({
       onChange={onChange}
       onEnter={leaveField}
       onEmptyBackspace={onEmptyBackspace}
+      onArrowDown={focusSuggestion}
     />
   )
 
   return (
-    <div ref={containerRef} onFocus={() => onFocusChange(true)} onBlur={handleBlur}>
+    <div ref={rootRef} onFocus={handleFocus} onBlur={handleBlur}>
       {onRandomPick ? (
         <fieldset role="group" className={cx('group')}>
           {wordField}
@@ -162,7 +161,14 @@ function SubjectWordField({
       ) : (
         wordField
       )}
-      <WordSuggestion keyword={word} n={16} isVisible={isFocused} onSelect={selectSuggestion} />
+      <WordSuggestion
+        ref={suggestionRef}
+        keyword={word}
+        n={16}
+        isVisible={isFocused}
+        onSelect={selectSuggestion}
+        onExitUp={focusField}
+      />
     </div>
   )
 }

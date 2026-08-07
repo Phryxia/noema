@@ -1,5 +1,5 @@
 import type { FormEvent, ReactElement } from 'react'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
 import { deleteWordReplacingReferences } from '../deleteWordReplacingReferences'
@@ -10,6 +10,7 @@ import { useGuardedWordDeletion } from '../useGuardedWordDeletion'
 import { WordField } from '../WordField/WordField'
 import { WordReplaceDialog } from '../WordReplaceDialog/WordReplaceDialog'
 import { WordSuggestion } from '../WordSuggestion/WordSuggestion'
+import { useSuggestionFocus } from '../useSuggestionFocus'
 import type { TrieNode } from '../types'
 
 interface WordEditorProps {
@@ -25,7 +26,15 @@ export function WordEditor({
   onRenamed,
   onDeleted,
 }: WordEditorProps): ReactElement {
-  const [isFocused, setIsFocused] = useState(false)
+  const {
+    rootRef,
+    suggestionRef,
+    isFocused,
+    handleFocus,
+    handleBlur,
+    focusSuggestion,
+    focusField,
+  } = useSuggestionFocus<HTMLFormElement>()
   const replacementRef = useRef<string | null>(null)
 
   const { draft, setDraft, canSave, save, remove } = useWriterForm({
@@ -59,15 +68,20 @@ export function WordEditor({
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form ref={rootRef} onSubmit={handleSubmit} onFocus={handleFocus} onBlur={handleBlur}>
         <WordField
           value={draft.value}
           isEditable
           onChange={(value) => setDraft({ value })}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onArrowDown={focusSuggestion}
         />
-        <WordSuggestion keyword={draft.value} n={16} isVisible={isFocused} />
+        <WordSuggestion
+          ref={suggestionRef}
+          keyword={draft.value}
+          n={16}
+          isVisible={isFocused}
+          onExitUp={focusField}
+        />
         <WriterActions
           isEditing
           canSave={canSave}

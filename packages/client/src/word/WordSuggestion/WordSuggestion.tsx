@@ -1,6 +1,6 @@
-import type { ReactElement } from 'react'
+import type { KeyboardEvent, ReactElement, Ref } from 'react'
 import { Link } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { WORD_SUGGESTION_QUERY_KEY } from '../consts'
 import { deleteWordReplacingReferences } from '../deleteWordReplacingReferences'
 import { deleteWord, getWordsByPrefix } from '../word.service'
@@ -20,6 +20,8 @@ interface WordSuggestionProps {
   isVisible?: boolean
   isDeletable?: boolean
   onSelect?: (word: string) => void
+  onExitUp?: () => void
+  ref?: Ref<HTMLElement>
 }
 
 export function WordSuggestion({
@@ -28,6 +30,8 @@ export function WordSuggestion({
   isVisible = true,
   isDeletable = true,
   onSelect,
+  onExitUp,
+  ref,
 }: WordSuggestionProps): ReactElement | null {
   const throttledKeyword = useThrottledValue(keyword, 100)
   const queryClient = useQueryClient()
@@ -35,6 +39,7 @@ export function WordSuggestion({
     queryKey: [WORD_SUGGESTION_QUERY_KEY, throttledKeyword, n],
     queryFn: () => getWordsByPrefix(throttledKeyword, n),
     enabled: !!throttledKeyword,
+    placeholderData: keepPreviousData,
   })
   const { mutate: removeWord } = useMutation({
     mutationFn: (lexis: Lexis) => deleteWord(lexis.nodeId),
@@ -55,6 +60,28 @@ export function WordSuggestion({
     },
   )
 
+  function handleListKeyDown(event: KeyboardEvent<HTMLUListElement>): void {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+      return
+    }
+    const items = [...event.currentTarget.querySelectorAll<HTMLElement>('li > :first-child')]
+    const index = items.findIndex((item) => item === event.target)
+    if (index < 0) {
+      return
+    }
+    event.preventDefault()
+    if (event.key === 'ArrowDown') {
+      const nextItem = items[index + 1] ?? items[0]
+      nextItem.focus()
+      return
+    }
+    if (index === 0) {
+      onExitUp?.()
+      return
+    }
+    items[index - 1].focus()
+  }
+
   if (pendingWord) {
     return (
       <WordReplaceDialog
@@ -69,8 +96,8 @@ export function WordSuggestion({
   }
 
   return (
-    <article className={cx('root')} onMouseDown={(event) => event.preventDefault()}>
-      <ul className={cx('list')}>
+    <article ref={ref} className={cx('root')} onMouseDown={(event) => event.preventDefault()}>
+      <ul className={cx('list')} onKeyDown={handleListKeyDown}>
         {lexes?.map((lexis) => (
           <li key={lexis.nodeId} className={cx('item')}>
             <WordSuggestionLabel word={lexis.value} onSelect={onSelect} />

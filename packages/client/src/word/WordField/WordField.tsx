@@ -13,6 +13,7 @@ interface WordFieldProps {
   onChange: (value: string) => void
   onEnter?: () => void
   onEmptyBackspace?: () => void
+  onArrowDown?: () => void
   onFocus?: () => void
   onBlur?: () => void
 }
@@ -24,6 +25,7 @@ export function WordField({
   onChange,
   onEnter,
   onEmptyBackspace,
+  onArrowDown,
   onFocus,
   onBlur,
 }: WordFieldProps): ReactElement {
@@ -35,6 +37,11 @@ export function WordField({
       return
     }
     isBackspaceFromEmpty.current = event.key === 'Backspace' && !value
+    if (onArrowDown && event.key === 'ArrowDown') {
+      event.preventDefault()
+      onArrowDown()
+      return
+    }
     if (!onEnter || event.key !== 'Enter') {
       return
     }

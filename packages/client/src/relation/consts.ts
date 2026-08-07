@@ -26,11 +26,12 @@ export const CompoundWordIndexNames = [ANSWER_INDEX, COMMENT_INDEX]
 export interface SubjectWordSpec {
   count: number
   minCount: number
+  isCountAdjustable?: boolean
 }
 
 export const SubjectWordSpecs: Record<QuestionType, SubjectWordSpec> = {
   WordExplain: { count: 1, minCount: 1 },
-  WordsUsage: { count: 3, minCount: 1 },
+  WordsUsage: { count: 2, minCount: 1, isCountAdjustable: true },
   BinaryCommon: { count: 2, minCount: 2 },
   BinaryDifference: { count: 2, minCount: 2 },
   BinarySimilarity: { count: 2, minCount: 2 },

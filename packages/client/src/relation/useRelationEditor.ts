@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import type { RefObject } from 'react'
+import type { Dispatch, RefObject, SetStateAction } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { checkIsAnswerReady } from '../explore/checkIsAnswerReady'
 import { EmptyAnswer, EmptyComment } from '../explore/consts'
@@ -34,7 +34,7 @@ export interface RelationEditor {
   type: QuestionType
   setType: (type: QuestionType) => void
   words: string[]
-  setWords: (words: string[]) => void
+  setWords: Dispatch<SetStateAction<string[]>>
   answer: AnswerDraft
   setAnswer: (answer: AnswerDraft) => void
   comment: CommentDraft

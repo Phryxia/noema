@@ -1,5 +1,5 @@
 import type { KeyboardEvent, ReactElement } from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import classnames from 'classnames/bind'
 import styles from './WordField.module.css'
@@ -12,6 +12,7 @@ interface WordFieldProps {
   placeholder?: string
   onChange: (value: string) => void
   onEnter?: () => void
+  onEmptyBackspace?: () => void
   onFocus?: () => void
   onBlur?: () => void
 }
@@ -22,17 +23,35 @@ export function WordField({
   placeholder,
   onChange,
   onEnter,
+  onEmptyBackspace,
   onFocus,
   onBlur,
 }: WordFieldProps): ReactElement {
   const [scrollLeft, setScrollLeft] = useState(0)
+  const isBackspaceFromEmpty = useRef(false)
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
-    if (!onEnter || event.key !== 'Enter' || event.nativeEvent.isComposing) {
+    if (event.nativeEvent.isComposing) {
+      return
+    }
+    isBackspaceFromEmpty.current = event.key === 'Backspace' && !value
+    if (!onEnter || event.key !== 'Enter') {
       return
     }
     event.preventDefault()
     onEnter()
+  }
+
+  function handleKeyUp(event: KeyboardEvent<HTMLInputElement>): void {
+    if (event.key !== 'Backspace' || event.nativeEvent.isComposing) {
+      return
+    }
+    const isReleasedWhileEmpty = isBackspaceFromEmpty.current && !value
+    isBackspaceFromEmpty.current = false
+    if (!isReleasedWhileEmpty) {
+      return
+    }
+    onEmptyBackspace?.()
   }
 
   return (
@@ -46,6 +65,7 @@ export function WordField({
         onChange={(event) => onChange(event.target.value)}
         onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
         onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         onFocus={onFocus}
         onBlur={onBlur}
       />

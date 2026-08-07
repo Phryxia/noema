@@ -38,6 +38,7 @@ export function RelationForm({ editor }: RelationFormProps): ReactElement {
       <SubjectWordFields
         words={words}
         requiredCount={SubjectWordSpecs[type].minCount}
+        isCountAdjustable={SubjectWordSpecs[type].isCountAdjustable}
         onChange={editor.setWords}
       />
       {type === 'TernaryIsolation' && !isWordsReady ? (

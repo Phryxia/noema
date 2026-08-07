@@ -9,9 +9,15 @@ interface RelationPageProps {
   title: string
   editor: RelationEditor
   meta?: MetaField[]
+  hasRandomPick?: boolean
 }
 
-export function RelationPage({ title, editor, meta }: RelationPageProps): ReactElement {
+export function RelationPage({
+  title,
+  editor,
+  meta,
+  hasRandomPick,
+}: RelationPageProps): ReactElement {
   return (
     <article>
       <h2>{title}</h2>
@@ -22,7 +28,7 @@ export function RelationPage({ title, editor, meta }: RelationPageProps): ReactE
         onChange={editor.setType}
       />
       <hr />
-      <RelationForm editor={editor} />
+      <RelationForm editor={editor} hasRandomPick={hasRandomPick} />
     </article>
   )
 }

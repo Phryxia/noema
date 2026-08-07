@@ -17,5 +17,5 @@ function NewRelationPage(): ReactElement {
     persist: submitRelation,
   })
 
-  return <RelationPage title="알려주기" editor={editor} />
+  return <RelationPage title="알려주기" editor={editor} hasRandomPick />
 }

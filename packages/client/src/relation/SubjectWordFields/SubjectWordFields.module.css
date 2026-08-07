@@ -1,0 +1,9 @@
+.group {
+  button {
+    white-space: nowrap;
+
+    &.random-button {
+      flex: 0 0 auto;
+    }
+  }
+}

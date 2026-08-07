@@ -10,9 +10,10 @@ import { TextWriterModes } from '../../writer/consts'
 
 interface RelationFormProps {
   editor: RelationEditor
+  hasRandomPick?: boolean
 }
 
-export function RelationForm({ editor }: RelationFormProps): ReactElement {
+export function RelationForm({ editor, hasRandomPick }: RelationFormProps): ReactElement {
   const {
     type,
     draft,
@@ -39,6 +40,7 @@ export function RelationForm({ editor }: RelationFormProps): ReactElement {
         words={words}
         requiredCount={SubjectWordSpecs[type].minCount}
         isCountAdjustable={SubjectWordSpecs[type].isCountAdjustable}
+        hasRandomPick={hasRandomPick}
         onChange={editor.setWords}
       />
       {type === 'TernaryIsolation' && !isWordsReady ? (

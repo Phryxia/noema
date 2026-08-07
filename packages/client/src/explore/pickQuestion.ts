@@ -1,15 +1,18 @@
-import { MAX_USAGE_WORD_COUNT } from './consts'
+import { DEFAULT_USAGE_WORD_COUNT } from './consts'
 import type { QuestionPick } from './types'
 import type { NewQuestion, QuestionType } from '../question/types'
 import { getRandomWords } from '../word/getRandomWords'
 import type { Lexis } from '../word/types'
 
-export async function pickQuestion(types: QuestionType[]): Promise<QuestionPick> {
+export async function pickQuestion(
+  types: QuestionType[],
+  usageWordCount: number = DEFAULT_USAGE_WORD_COUNT,
+): Promise<QuestionPick> {
   if (!types.length) {
     return { status: 'noType' }
   }
   const type = pickOne(types)
-  const wordCount = pickWordCount(type)
+  const wordCount = pickWordCount(type, usageWordCount)
   const lexes = await getRandomWords(wordCount)
   if (lexes.length < wordCount) {
     return { status: 'noWord' }
@@ -21,12 +24,12 @@ function pickOne<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)]
 }
 
-function pickWordCount(type: QuestionType): number {
+function pickWordCount(type: QuestionType, usageWordCount: number): number {
   if (type === 'WordExplain') {
     return 1
   }
   if (type === 'WordsUsage') {
-    return 1 + Math.floor(Math.random() * MAX_USAGE_WORD_COUNT)
+    return usageWordCount
   }
   if (type === 'TernaryIsolation') {
     return 3

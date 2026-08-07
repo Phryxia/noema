@@ -1,0 +1,12 @@
+:global(.pico) .root {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--pico-spacing) * 0.5);
+  margin-bottom: 0;
+  white-space: nowrap;
+
+  input[type='number'] {
+    width: 6rem;
+    margin-bottom: 0;
+  }
+}

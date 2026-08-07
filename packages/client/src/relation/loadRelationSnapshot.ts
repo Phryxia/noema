@@ -26,7 +26,7 @@ export async function loadRelationSnapshot(
   const values = await getWordValues(getQuestionWordIds(relation))
   return {
     relation,
-    words: resizeWords(values, SubjectWordSpecs[relation.type].count),
+    words: resizeWords(values, Math.max(values.length, SubjectWordSpecs[relation.type].count)),
     answer: await createAnswerDraft(relation),
     comment: await createTextDraft(relation.comment),
   }

@@ -7,7 +7,6 @@ import {
   WORD_ID_INDEX,
   WORD_IDS_INDEX,
 } from '../db/consts'
-import { MAX_USAGE_WORD_COUNT } from '../explore/consts'
 import type { QuestionType } from '../question/types'
 
 export const RELATION_QUERY_KEY = 'relation'
@@ -31,7 +30,7 @@ export interface SubjectWordSpec {
 
 export const SubjectWordSpecs: Record<QuestionType, SubjectWordSpec> = {
   WordExplain: { count: 1, minCount: 1 },
-  WordsUsage: { count: MAX_USAGE_WORD_COUNT, minCount: 1 },
+  WordsUsage: { count: 3, minCount: 1 },
   BinaryCommon: { count: 2, minCount: 2 },
   BinaryDifference: { count: 2, minCount: 2 },
   BinarySimilarity: { count: 2, minCount: 2 },

@@ -4,10 +4,11 @@ import type { Similarity } from '../relation/types'
 
 export const EXPLORE_QUESTION_QUERY_KEY = 'exploreQuestion'
 export const CHECKED_TYPES_STORAGE_KEY = 'explore/checkedTypes'
+export const USAGE_WORD_COUNT_STORAGE_KEY = 'explore/usageWordCount'
 export const WORD_COUNT_QUERY_KEY = 'wordCount'
 
 export const MIN_WORD_COUNT = 10
-export const MAX_USAGE_WORD_COUNT = 3
+export const DEFAULT_USAGE_WORD_COUNT = 1
 
 export const ANSWER_INPUT_SELECTOR = [
   'input:not([type="radio"]):not([disabled])',

@@ -12,6 +12,7 @@ import {
 } from './consts'
 import { pickQuestion } from './pickQuestion'
 import { submitAnswer } from './submitAnswer'
+import { loadUsageWordCount, saveUsageWordCount } from './usageWordCountStorage'
 import type { SubmitAnswerParams } from './submitAnswer'
 import type { AnswerDraft, CommentDraft, QuestionPick } from './types'
 import type { QuestionType } from '../question/types'
@@ -24,7 +25,7 @@ const AllQuestionTypes: QuestionType[] = QuestionTypeSpecs.map(({ type }) => typ
 export interface ExploreOptions {
   availableTypes?: QuestionType[]
   checkedTypesStorageKey?: string
-  pickQuestion?: (types: QuestionType[]) => Promise<QuestionPick>
+  pickQuestion?: (types: QuestionType[], usageWordCount: number) => Promise<QuestionPick>
   queryKey?: string
   onSaved?: (params: SubmitAnswerParams) => void
 }
@@ -32,6 +33,8 @@ export interface ExploreOptions {
 export interface Explore {
   checkedTypes: QuestionType[]
   setCheckedTypes: (checkedTypes: QuestionType[]) => void
+  usageWordCount: number
+  setUsageWordCount: (count: number) => void
   answer: AnswerDraft
   setAnswer: (answer: AnswerDraft) => void
   comment: CommentDraft
@@ -51,9 +54,11 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
   const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(() =>
     loadCheckedTypes(availableTypes, storageKey),
   )
+  const [usageWordCount, setUsageWordCount] = useState(loadUsageWordCount)
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
   const [comment, setComment] = useState<CommentDraft>(EmptyComment)
   const appliedTypes = useRef<QuestionType[]>(checkedTypes)
+  const appliedUsageWordCount = useRef(usageWordCount)
   const answerRef = useRef<HTMLDivElement>(null)
   const isFocusPending = useRef(false)
   const queryClient = useQueryClient()
@@ -64,21 +69,26 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
     refetch,
   } = useQuery({
     queryKey: [options?.queryKey ?? EXPLORE_QUESTION_QUERY_KEY],
-    queryFn: () => (options?.pickQuestion ?? pickQuestion)(appliedTypes.current),
+    queryFn: () =>
+      (options?.pickQuestion ?? pickQuestion)(
+        appliedTypes.current,
+        appliedUsageWordCount.current,
+      ),
     enabled: isEnabled,
     staleTime: Infinity,
     gcTime: 0,
   })
 
-  function draw(types: QuestionType[]): void {
+  function draw(types: QuestionType[], count: number): void {
     setAnswer(EmptyAnswer)
     setComment(EmptyComment)
     appliedTypes.current = types
+    appliedUsageWordCount.current = count
     void refetch()
   }
 
   function skip(): void {
-    draw(checkedTypes)
+    draw(checkedTypes, usageWordCount)
   }
 
   function updateCheckedTypes(types: QuestionType[]): void {
@@ -87,7 +97,16 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
     if (pick?.status === 'ok') {
       return
     }
-    draw(types)
+    draw(types, usageWordCount)
+  }
+
+  function updateUsageWordCount(count: number): void {
+    setUsageWordCount(count)
+    saveUsageWordCount(count)
+    if (pick?.status === 'ok') {
+      return
+    }
+    draw(checkedTypes, count)
   }
 
   const { mutate: submit, isPending: isSubmitting } = useMutation({
@@ -123,6 +142,8 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
   return {
     checkedTypes,
     setCheckedTypes: updateCheckedTypes,
+    usageWordCount,
+    setUsageWordCount: updateUsageWordCount,
     answer,
     setAnswer,
     comment,

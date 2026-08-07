@@ -2,6 +2,7 @@ import type { ReactElement } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ExploreForm } from '../ExploreForm/ExploreForm'
 import { QuestionTypeSelector } from '../QuestionTypeSelector/QuestionTypeSelector'
+import { UsageWordCountControl } from '../UsageWordCountControl/UsageWordCountControl'
 import { MIN_WORD_COUNT, WORD_COUNT_QUERY_KEY } from '../consts'
 import { useExplore } from '../useExplore'
 import { getWordCount } from '../../word/getWordCount'
@@ -28,6 +29,10 @@ export function ExplorePage(): ReactElement {
       <QuestionTypeSelector
         checkedTypes={explore.checkedTypes}
         onChange={explore.setCheckedTypes}
+      />
+      <UsageWordCountControl
+        value={explore.usageWordCount}
+        onChange={explore.setUsageWordCount}
       />
       <hr />
       <ExploreForm explore={explore} />

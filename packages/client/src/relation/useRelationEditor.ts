@@ -75,6 +75,7 @@ export function useRelationEditor({
 
   const { mutate: submit, isPending: isSubmitting } = useMutation({
     mutationFn: persist,
+    meta: { successMessage: '관계를 저장했습니다' },
     onSuccess: () => {
       invalidateRelationQueries(queryClient)
       if (!isResetOnSave) {
@@ -91,6 +92,7 @@ export function useRelationEditor({
     mutationFn: async () => {
       await remove?.()
     },
+    meta: { successMessage: '관계를 삭제했습니다' },
     onSuccess: () => {
       invalidateRelationQueries(queryClient)
       onRemoved?.()

@@ -27,7 +27,9 @@ export function DocumentWriter({
     isEditing: !!document,
     initialDraft: { value: document?.value ?? '', source: document?.source ?? '' },
     saveDraft: ({ value, source }): Promise<void> => submitDocument(document, value, source),
+    saveSuccessMessage: '문서를 저장했습니다',
     deleteItem: document ? (): Promise<void> => deleteDocument(document.documentId) : undefined,
+    deleteSuccessMessage: '문서를 삭제했습니다',
     invalidateQueries: invalidateDocumentQueries,
     onDeleted: onDelete,
   })

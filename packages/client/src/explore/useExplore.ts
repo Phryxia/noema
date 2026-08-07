@@ -111,6 +111,7 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
 
   const { mutate: submit, isPending: isSubmitting } = useMutation({
     mutationFn: submitAnswer,
+    meta: { successMessage: '답변을 저장했습니다' },
     onSuccess: (_, params) => {
       options?.onSaved?.(params)
       invalidateWordQueries(queryClient)

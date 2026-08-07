@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { useBackupActions } from '../useBackupActions'
 
 export function BackupPanel(): ReactElement {
-  const { notice, isBusy, exportToFile, importFromFile } = useBackupActions()
+  const { isBusy, exportToFile, importFromFile } = useBackupActions()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>): void {
@@ -42,7 +42,6 @@ export function BackupPanel(): ReactElement {
         hidden
         onChange={handleFileChange}
       />
-      {!!notice && <p>{notice}</p>}
     </section>
   )
 }

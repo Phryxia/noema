@@ -23,7 +23,9 @@ export function SentenceWriter({
     isEditing: !!sentence,
     initialDraft: { value: sentence?.value ?? '', source: sentence?.source ?? '' },
     saveDraft: ({ value, source }): Promise<void> => submitSentence(sentence, value, source),
+    saveSuccessMessage: '문장을 저장했습니다',
     deleteItem: sentence ? (): Promise<void> => deleteSentence(sentence.sentenceId) : undefined,
+    deleteSuccessMessage: '문장을 삭제했습니다',
     invalidateQueries: invalidateSentenceQueries,
     onDeleted: onDelete,
   })

@@ -52,10 +52,3 @@ export function createBackupFileName(date: Date): string {
 function pad(value: number): string {
   return String(value).padStart(2, '0')
 }
-
-export function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-  return '알 수 없는 오류가 발생했습니다'
-}

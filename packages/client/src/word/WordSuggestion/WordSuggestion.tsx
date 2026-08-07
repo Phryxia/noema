@@ -43,11 +43,13 @@ export function WordSuggestion({
   })
   const { mutate: removeWord } = useMutation({
     mutationFn: (lexis: Lexis) => deleteWord(lexis.nodeId),
+    meta: { successMessage: '단어를 삭제했습니다' },
     onSuccess: () => invalidateWordAndQnaQueries(queryClient),
   })
   const { mutate: replaceWord } = useMutation({
     mutationFn: ({ lexis, replacementValue }: { lexis: Lexis; replacementValue: string }) =>
       deleteWordReplacingReferences(lexis.nodeId, replacementValue),
+    meta: { successMessage: '단어를 대체하고 삭제했습니다' },
     onSuccess: () => invalidateWordAndQnaQueries(queryClient),
   })
   const { pendingWord, requestDelete, cancelReplace, confirmReplace } = useGuardedWordDeletion(

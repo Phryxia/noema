@@ -31,6 +31,7 @@ export function WordWriter({ isEditable }: WordWriterProps): ReactElement {
   const queryClient = useQueryClient()
   const { mutate: saveWord, isPending } = useMutation({
     mutationFn: createWord,
+    meta: { successMessage: '단어를 저장했습니다' },
     onSuccess: () => {
       setValue('')
       invalidateWordQueries(queryClient)

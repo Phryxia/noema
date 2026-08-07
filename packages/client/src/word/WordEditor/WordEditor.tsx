@@ -42,7 +42,9 @@ export function WordEditor({
     isEditing: true,
     initialDraft: { value: word },
     saveDraft: (draft) => submitWord(node.nodeId, draft.value, onRenamed),
+    saveSuccessMessage: '단어를 수정했습니다',
     deleteItem,
+    deleteSuccessMessage: '단어를 삭제했습니다',
     invalidateQueries: invalidateWordAndQnaQueries,
     onDeleted,
   })

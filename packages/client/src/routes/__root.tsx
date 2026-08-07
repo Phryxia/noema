@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react'
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { ToastStack } from '../toast/ToastStack/ToastStack'
 
 function RootLayout(): ReactElement {
   return (
@@ -37,6 +38,7 @@ function RootLayout(): ReactElement {
       <main className="pico container">
         <Outlet />
       </main>
+      <ToastStack />
       <TanStackRouterDevtools />
     </>
   )

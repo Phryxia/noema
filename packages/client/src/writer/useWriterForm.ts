@@ -8,7 +8,9 @@ interface WriterFormOptions<TDraft> {
   isEditing: boolean
   initialDraft: TDraft
   saveDraft: (draft: TDraft) => Promise<unknown>
+  saveSuccessMessage: string
   deleteItem?: () => Promise<void>
+  deleteSuccessMessage?: string
   invalidateQueries: (queryClient: QueryClient) => void
   onDeleted?: () => void
 }
@@ -26,7 +28,9 @@ export function useWriterForm<TDraft extends { value: string }>({
   isEditing,
   initialDraft,
   saveDraft,
+  saveSuccessMessage,
   deleteItem,
+  deleteSuccessMessage,
   invalidateQueries,
   onDeleted,
 }: WriterFormOptions<TDraft>): WriterForm<TDraft> {
@@ -39,6 +43,7 @@ export function useWriterForm<TDraft extends { value: string }>({
     isPending: isSaving,
   } = useMutation({
     mutationFn: () => saveDraft(draft),
+    meta: { successMessage: saveSuccessMessage },
     onSuccess: () => {
       invalidateQueries(queryClient)
       if (isEditing) {
@@ -51,6 +56,7 @@ export function useWriterForm<TDraft extends { value: string }>({
     mutationFn: async () => {
       await deleteItem?.()
     },
+    meta: { successMessage: deleteSuccessMessage },
     onSuccess: () => {
       invalidateQueries(queryClient)
       onDeleted?.()

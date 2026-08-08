@@ -1,3 +1,4 @@
+import { registerSW } from 'virtual:pwa-register'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
@@ -14,6 +15,8 @@ declare module '@tanstack/react-router' {
 }
 
 import { routeTree } from './routeTree.gen'
+
+registerSW({ immediate: true })
 
 const router = createRouter({ routeTree })
 const queryClient = new QueryClient({

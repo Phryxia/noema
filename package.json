@@ -5,6 +5,7 @@
   "scripts": {
     "dev:client": "npm --workspace=client run dev",
     "dev:server": "npm --workspace=server run dev",
+    "preview": "npm --workspace=client run preview",
     "build": "npm --workspace=client run build && npm --workspace=server run build",
     "build-gh-page": "npm --workspace=client run build -- --outDir ../../docs --emptyOutDir",
     "test": "npm --workspace=client run test && npm --workspace=server run test",

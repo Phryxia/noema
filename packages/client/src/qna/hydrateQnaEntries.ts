@@ -90,10 +90,11 @@ function buildAnswer(
   if (relation.type === 'TernaryIsolation') {
     return { kind: 'selection', word: words[relation.selection - 1] }
   }
-  if (!relation.answer) {
+  const answer = getRelationAnswer(relation)
+  if (!answer) {
     return { kind: 'skip' }
   }
-  return { kind: 'text', text: resolveText(relation.answer, wordMap, sentenceMap) }
+  return { kind: 'text', text: resolveText(answer, wordMap, sentenceMap) }
 }
 
 function resolveText(

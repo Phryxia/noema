@@ -64,6 +64,9 @@ export default defineConfig({
       allow: ['..'],
     },
   },
+  preview: {
+    port: 4173,
+  },
   resolve: {
     alias: {
       '@shared': resolve(__dirname, '../shared'),

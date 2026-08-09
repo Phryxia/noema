@@ -1,10 +1,13 @@
 import type { QuestionType } from '../question/types'
-import { SentenceOnlyModes, TextWriterModes } from '../writer/consts'
+import { SentenceOnlyModes, TextWriterModes, WordOnlyModes } from '../writer/consts'
 import type { TextWriterMode } from '../writer/types'
 
 export function getAnswerModes(type: QuestionType): TextWriterMode[] {
   if (type === 'WordExplain' || type === 'WordsUsage') {
     return SentenceOnlyModes
+  }
+  if (type === 'BinaryAssociation') {
+    return WordOnlyModes
   }
   return TextWriterModes
 }

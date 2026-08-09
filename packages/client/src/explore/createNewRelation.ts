@@ -48,6 +48,13 @@ export function createNewRelation(
         word2Id: question.word2Id,
         similarity: requireSimilarity(answer.similarity),
       }
+    case 'BinaryAssociation':
+      return {
+        ...comment,
+        type: question.type,
+        word1Id: question.wordId,
+        word2Id: requireWordTarget(answerTarget).id,
+      }
     case 'TernaryIsolation':
       return {
         ...comment,
@@ -63,6 +70,13 @@ export function createNewRelation(
 function requireTarget(target: WordOrSentence | null): WordOrSentence {
   if (!target) {
     throw new Error('답을 입력해야 합니다')
+  }
+  return target
+}
+
+function requireWordTarget(target: WordOrSentence | null): WordOrSentence {
+  if (target?.type !== 'word') {
+    throw new Error('답 단어를 입력해야 합니다')
   }
   return target
 }

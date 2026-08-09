@@ -42,6 +42,10 @@ export interface BinarySimilarityRelation extends RelationBase, BinaryWords {
   similarity: Similarity
 }
 
+export interface BinaryAssociationRelation extends RelationBase, BinaryWords {
+  type: 'BinaryAssociation'
+}
+
 export interface TernaryIsolationRelation extends RelationBase, TernaryWords {
   type: 'TernaryIsolation'
   selection: 1 | 2 | 3
@@ -53,6 +57,7 @@ export type Relation =
   | BinaryCommonRelation
   | BinaryDifferenceRelation
   | BinarySimilarityRelation
+  | BinaryAssociationRelation
   | TernaryIsolationRelation
 
 export type NewRelation = DistributiveOmit<Relation, keyof Omit<RelationBase, 'comment'>>

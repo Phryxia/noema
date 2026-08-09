@@ -25,7 +25,7 @@ function pickOne<T>(items: T[]): T {
 }
 
 function pickWordCount(type: QuestionType, usageWordCount: number): number {
-  if (type === 'WordExplain') {
+  if (type === 'WordExplain' || type === 'BinaryAssociation') {
     return 1
   }
   if (type === 'WordsUsage') {
@@ -41,6 +41,8 @@ function createNewQuestion(type: QuestionType, lexes: Lexis[]): NewQuestion {
   const [word1, word2, word3] = lexes
   switch (type) {
     case 'WordExplain':
+      return { type, wordId: word1.nodeId }
+    case 'BinaryAssociation':
       return { type, wordId: word1.nodeId }
     case 'WordsUsage':
       return { type, wordIds: lexes.map(({ nodeId }) => nodeId) }

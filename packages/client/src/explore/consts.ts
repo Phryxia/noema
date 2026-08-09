@@ -26,6 +26,7 @@ export const QuestionTypeSpecs: QuestionTypeSpec[] = [
   { type: 'BinaryCommon', label: '이항 공통점' },
   { type: 'BinaryDifference', label: '이항 차이점' },
   { type: 'BinarySimilarity', label: '이항 유사성' },
+  { type: 'BinaryAssociation', label: '연상' },
   { type: 'TernaryIsolation', label: '삼항 격리' },
 ]
 

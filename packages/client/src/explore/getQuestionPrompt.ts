@@ -12,6 +12,8 @@ export function getQuestionPrompt(question: NewQuestion): string {
       return '다음 두 단어의 차이점을 적으세요.'
     case 'BinarySimilarity':
       return '다음 두 단어는 얼마나 비슷한가요?'
+    case 'BinaryAssociation':
+      return '다음 단어를 보고 연상되는 단어를 적으세요.'
     case 'TernaryIsolation':
       return '다음 세 단어 중 가장 이질적인 단어를 고르세요.'
   }

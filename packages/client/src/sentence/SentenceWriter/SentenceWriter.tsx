@@ -2,6 +2,7 @@ import type { FormEvent, ReactElement } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
 import { SourceField } from '../../writer/SourceField/SourceField'
+import { confirmRelationImpact } from '../../relation/confirmRelationImpact'
 import { SentenceField } from '../SentenceField/SentenceField'
 import { createSentence, deleteSentence, updateSentence } from '../sentence.service'
 import { invalidateSentenceQueries } from '../utils'
@@ -22,6 +23,10 @@ export function SentenceWriter({
     isEditable,
     isEditing: !!sentence,
     initialDraft: { value: sentence?.value ?? '', source: sentence?.source ?? '' },
+    confirmSave: sentence
+      ? (): Promise<boolean> =>
+          confirmRelationImpact({ type: 'sentence', id: sentence.sentenceId })
+      : undefined,
     saveDraft: ({ value, source }): Promise<void> => submitSentence(sentence, value, source),
     saveSuccessMessage: '문장을 저장했습니다',
     deleteItem: sentence ? (): Promise<void> => deleteSentence(sentence.sentenceId) : undefined,

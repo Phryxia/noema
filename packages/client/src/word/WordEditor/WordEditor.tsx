@@ -2,6 +2,7 @@ import type { FormEvent, ReactElement } from 'react'
 import { useRef } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
+import { confirmRelationImpact } from '../../relation/confirmRelationImpact'
 import { deleteWordReplacingReferences } from '../deleteWordReplacingReferences'
 import { updateWord } from '../updateWord'
 import { deleteWord } from '../word.service'
@@ -41,6 +42,7 @@ export function WordEditor({
     isEditable: true,
     isEditing: true,
     initialDraft: { value: word },
+    confirmSave: () => confirmRelationImpact({ type: 'word', id: node.nodeId }),
     saveDraft: (draft) => submitWord(node.nodeId, draft.value, onRenamed),
     saveSuccessMessage: '단어를 수정했습니다',
     deleteItem,

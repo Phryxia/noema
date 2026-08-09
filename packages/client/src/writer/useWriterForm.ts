@@ -7,6 +7,7 @@ interface WriterFormOptions<TDraft> {
   isEditable: boolean
   isEditing: boolean
   initialDraft: TDraft
+  confirmSave?: () => Promise<boolean>
   saveDraft: (draft: TDraft) => Promise<unknown>
   saveSuccessMessage: string
   deleteItem?: () => Promise<void>
@@ -27,6 +28,7 @@ export function useWriterForm<TDraft extends { value: string }>({
   isEditable,
   isEditing,
   initialDraft,
+  confirmSave,
   saveDraft,
   saveSuccessMessage,
   deleteItem,
@@ -68,22 +70,33 @@ export function useWriterForm<TDraft extends { value: string }>({
   useBlocker({
     disabled: !isEditing || !canSave || isDeleted,
     shouldBlockFn: async () => {
-      if (window.confirm('수정된 내용을 저장할까요?')) {
-        await saveAsync()
+      if (!window.confirm('수정된 내용을 저장할까요?')) {
+        return false
       }
+      if (confirmSave && !(await confirmSave())) {
+        return false
+      }
+      await saveAsync()
       return false
     },
   })
+
+  async function saveIfConfirmed(): Promise<void> {
+    if (!canSave) {
+      return
+    }
+    if (confirmSave && !(await confirmSave())) {
+      return
+    }
+    save()
+  }
 
   return {
     draft,
     setDraft,
     canSave,
     save: (): void => {
-      if (!canSave) {
-        return
-      }
-      save()
+      void saveIfConfirmed()
     },
     remove: (): void => {
       if (!deleteItem) {

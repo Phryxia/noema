@@ -49,10 +49,7 @@ export function TextWriterField({
             role="group"
             name={name}
             value={mode}
-            options={modes.map((candidate) => ({
-              value: candidate,
-              label: candidate,
-            }))}
+            options={modes}
             onChange={onModeChange}
           />
         </div>

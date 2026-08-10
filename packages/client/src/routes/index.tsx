@@ -14,11 +14,6 @@ export const Route = createFileRoute('/')({
   component: MainPage,
 })
 
-const WriterModeOptions = WriterModes.map((mode) => ({
-  value: mode,
-  label: mode,
-}))
-
 function MainPage(): ReactElement {
   return (
     <article>
@@ -37,7 +32,7 @@ function WriterSection(): ReactElement {
       <RadioGroup<WriterMode>
         name="writerMode"
         value={mode}
-        options={WriterModeOptions}
+        options={WriterModes}
         onChange={setMode}
       />
       {mode === '단어' && <WordWriter isEditable />}

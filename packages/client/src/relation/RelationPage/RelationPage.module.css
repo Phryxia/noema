@@ -1,4 +1,4 @@
-.root {
+.radio-group {
   display: flex;
   flex-wrap: wrap;
   gap: 0 calc(var(--pico-spacing) * 1.5);

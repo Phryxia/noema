@@ -1,6 +1,7 @@
-import type { AnswerDraft, CommentDraft } from './types'
+import type { Option } from '../shared/types'
 import type { QuestionType } from '../question/types'
 import type { Similarity } from '../relation/types'
+import type { AnswerDraft, CommentDraft } from './types'
 
 export const EXPLORE_QUESTION_QUERY_KEY = 'exploreQuestion'
 export const CHECKED_TYPES_STORAGE_KEY = 'explore/checkedTypes'
@@ -15,19 +16,14 @@ export const ANSWER_INPUT_SELECTOR = [
   'textarea:not([disabled])',
 ].join(',')
 
-export interface QuestionTypeSpec {
-  type: QuestionType
-  label: string
-}
-
-export const QuestionTypeSpecs: QuestionTypeSpec[] = [
-  { type: 'WordExplain', label: '단어 설명' },
-  { type: 'WordsUsage', label: '예문 만들기' },
-  { type: 'BinaryCommon', label: '이항 공통점' },
-  { type: 'BinaryDifference', label: '이항 차이점' },
-  { type: 'BinarySimilarity', label: '이항 유사성' },
-  { type: 'BinaryAssociation', label: '연상' },
-  { type: 'TernaryIsolation', label: '삼항 격리' },
+export const QuestionTypeOptions: Option<QuestionType>[] = [
+  { value: 'WordExplain', label: '단어 설명' },
+  { value: 'WordsUsage', label: '예문 만들기' },
+  { value: 'BinaryCommon', label: '이항 공통점' },
+  { value: 'BinaryDifference', label: '이항 차이점' },
+  { value: 'BinarySimilarity', label: '이항 유사성' },
+  { value: 'BinaryAssociation', label: '연상' },
+  { value: 'TernaryIsolation', label: '삼항 격리' },
 ]
 
 export interface SimilarityLevel {

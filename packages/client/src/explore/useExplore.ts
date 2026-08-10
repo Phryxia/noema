@@ -8,7 +8,7 @@ import {
   EmptyAnswer,
   EmptyComment,
   EXPLORE_QUESTION_QUERY_KEY,
-  QuestionTypeSpecs,
+  QuestionTypeOptions,
 } from './consts'
 import { pickQuestion } from './pickQuestion'
 import { submitAnswer } from './submitAnswer'
@@ -20,7 +20,7 @@ import { invalidateSentenceQueries } from '../sentence/utils'
 import { invalidateWordQueries } from '../word/utils'
 import { focusFirstElement } from '../utils/focusFirstElement'
 
-const AllQuestionTypes: QuestionType[] = QuestionTypeSpecs.map(({ type }) => type)
+const AllQuestionTypes: QuestionType[] = QuestionTypeOptions.map(({ value }) => value)
 
 export interface ExploreOptions {
   availableTypes?: QuestionType[]

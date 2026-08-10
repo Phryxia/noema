@@ -7,7 +7,7 @@ import type { RelationEditor } from '../useRelationEditor'
 import { MetaFields } from '../../meta/MetaFields/MetaFields'
 import type { MetaField } from '../../meta/MetaFields/MetaFields'
 import type { QuestionType } from '../../question/types'
-import { QuestionTypeSpecs } from '../../explore/consts'
+import { QuestionTypeOptions } from '../../explore/consts'
 
 const cx = classnames.bind(styles)
 
@@ -17,11 +17,6 @@ interface RelationPageProps {
   meta?: MetaField[]
   hasRandomPick?: boolean
 }
-
-const QuestionOptions = QuestionTypeSpecs.map((spec) => ({
-  value: spec.type,
-  label: spec.label,
-}))
 
 export function RelationPage({
   title,
@@ -37,7 +32,7 @@ export function RelationPage({
         className={cx('radio-group')}
         name="relationType"
         value={editor.type}
-        options={QuestionOptions}
+        options={QuestionTypeOptions}
         onChange={editor.setType}
         disabled={!editor.isTypeEditable}
       />

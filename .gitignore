@@ -27,3 +27,4 @@ dist-ssr
 docs
 
 corpus.json
+tsconfig.tsbuildinfo

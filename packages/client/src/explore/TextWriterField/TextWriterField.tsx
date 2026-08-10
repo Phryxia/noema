@@ -3,7 +3,7 @@ import { SentenceField } from '../../sentence/SentenceField/SentenceField'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
 import { useSuggestionFocus } from '../../word/useSuggestionFocus'
-import { WriterModeSelector } from '../../writer/WriterModeSelector/WriterModeSelector'
+import { RadioGroup } from '../../shared/RadioGroup'
 import type { TextWriterMode } from '../../writer/types'
 import classnames from 'classnames/bind'
 import styles from './TextWriterField.module.css'
@@ -45,7 +45,16 @@ export function TextWriterField({
     <div>
       {modes.length > 1 && (
         <div className={cx('modes')}>
-          <WriterModeSelector name={name} modes={modes} mode={mode} onChange={onModeChange} />
+          <RadioGroup<TextWriterMode>
+            role="group"
+            name={name}
+            value={mode}
+            options={modes.map((candidate) => ({
+              value: candidate,
+              label: candidate,
+            }))}
+            onChange={onModeChange}
+          />
         </div>
       )}
       {mode === '단어' && (

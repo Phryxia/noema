@@ -1,18 +1,23 @@
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { RadioGroup } from '../shared/RadioGroup'
 import { WordWriter } from '../word/WordWriter/WordWriter'
 import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
 import { RecentCreations } from '../recent/RecentCreations'
 import { Statistic } from '../statistic/Statistic/Statistic'
-import { WriterModeSelector } from '../writer/WriterModeSelector/WriterModeSelector'
 import { WriterModes } from '../writer/consts'
 import type { WriterMode } from '../writer/types'
 
 export const Route = createFileRoute('/')({
   component: MainPage,
 })
+
+const WriterModeOptions = WriterModes.map((mode) => ({
+  value: mode,
+  label: mode,
+}))
 
 function MainPage(): ReactElement {
   return (
@@ -29,10 +34,10 @@ function WriterSection(): ReactElement {
 
   return (
     <article>
-      <WriterModeSelector
+      <RadioGroup<WriterMode>
         name="writerMode"
-        modes={WriterModes}
-        mode={mode}
+        value={mode}
+        options={WriterModeOptions}
         onChange={setMode}
       />
       {mode === '단어' && <WordWriter isEditable />}

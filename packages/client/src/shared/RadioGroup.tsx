@@ -5,7 +5,7 @@ export interface RadioProps<T extends string> {
   /** `name` property for `<input>` elements. */
   name: string
   value: T
-  options: Option<T>[]
+  options: Option<T>[] | T[]
   /** `event` is raised one from react */
   onChange: (value: T, event: ChangeEvent<HTMLInputElement>) => void
   disabled?: boolean
@@ -30,17 +30,25 @@ export function RadioGroup<T extends string>({
   return (
     <fieldset {...rest}>
       {options.map((option) => (
-        <label key={option.value}>
+        <label key={getLabel(option)}>
           <input
             type="radio"
             name={name}
-            checked={value === option.value}
+            checked={value === getValue(option)}
             disabled={disabled}
-            onChange={(event) => onChange(option.value, event)}
+            onChange={(event) => onChange(getValue(option), event)}
           />
-          {option.label}
+          {getLabel(option)}
         </label>
       ))}
     </fieldset>
   )
+}
+
+function getLabel<T extends string>(option: Option<T> | T): string {
+  return typeof option === 'string' ? option : option.label
+}
+
+function getValue<T extends string>(option: Option<T> | T): T {
+  return typeof option === 'string' ? option : option.value
 }

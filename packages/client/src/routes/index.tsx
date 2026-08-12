@@ -30,6 +30,7 @@ function WriterSection(): ReactElement {
   return (
     <article>
       <RadioGroup<WriterMode>
+        role="group"
         name="writerMode"
         value={mode}
         options={WriterModes}

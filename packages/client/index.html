@@ -8,6 +8,13 @@
     <link rel="icon" href="favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <title>NOEMA System</title>
+    <script>
+      if (navigator.serviceWorker?.controller) {
+        const base = document.createElement('base')
+        base.href = new URL('./', navigator.serviceWorker.controller.scriptURL).href
+        document.head.appendChild(base)
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

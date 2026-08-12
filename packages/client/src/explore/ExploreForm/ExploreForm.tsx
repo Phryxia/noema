@@ -37,12 +37,7 @@ export function ExploreForm({ explore }: ExploreFormProps): ReactElement {
         {draft ? (
           <>
             <QuestionPrompt draft={draft} />
-            <AnswerSection
-              draft={draft}
-              answer={answer}
-              onChange={explore.setAnswer}
-              onSubmit={save}
-            />
+            <AnswerSection draft={draft} answer={answer} onChange={explore.setAnswer} />
           </>
         ) : (
           <p className={cx('loading')} aria-busy="true" />
@@ -57,7 +52,7 @@ export function ExploreForm({ explore }: ExploreFormProps): ReactElement {
         placeholder="(optional)"
         onModeChange={(mode) => explore.setComment({ ...comment, mode })}
         onChange={(text) => explore.setComment({ ...comment, text })}
-        onSubmit={save}
+        onComplete={save}
       />
       <div role="group">
         <button

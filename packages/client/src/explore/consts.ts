@@ -14,6 +14,7 @@ export const DEFAULT_USAGE_WORD_COUNT = 1
 export const ANSWER_INPUT_SELECTOR = [
   'input:not([type="radio"]):not([disabled])',
   'textarea:not([disabled])',
+  'button:not([disabled])',
 ].join(',')
 
 export const QuestionTypeOptions: Option<QuestionType>[] = [

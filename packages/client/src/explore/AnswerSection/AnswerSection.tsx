@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react'
+import { useRef } from 'react'
 import { ChoiceGroup } from '../ChoiceGroup/ChoiceGroup'
 import type { Choice } from '../ChoiceGroup/ChoiceGroup'
 import { TextWriterField } from '../TextWriterField/TextWriterField'
@@ -6,20 +7,17 @@ import { SimilarityLevels } from '../consts'
 import { getAnswerMode, getAnswerModes } from '../getAnswerModes'
 import type { AnswerDraft, QuestionDraft } from '../types'
 import type { Similarity } from '../../relation/types'
+import { focusNextElement } from '../../utils/focusNextElement'
 
 interface AnswerSectionProps {
   draft: QuestionDraft
   answer: AnswerDraft
   onChange: (answer: AnswerDraft) => void
-  onSubmit: () => void
 }
 
-export function AnswerSection({
-  draft,
-  answer,
-  onChange,
-  onSubmit,
-}: AnswerSectionProps): ReactElement {
+export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): ReactElement {
+  const rootRef = useRef<HTMLDivElement>(null)
+
   if (draft.question.type === 'BinarySimilarity') {
     return (
       <ChoiceGroup
@@ -27,7 +25,6 @@ export function AnswerSection({
         selected={answer.similarity}
         hasKeyboardShortcut
         onSelect={(similarity: Similarity) => onChange({ ...answer, similarity })}
-        onSubmit={onSubmit}
       />
     )
   }
@@ -39,21 +36,22 @@ export function AnswerSection({
         selected={answer.selection}
         hasKeyboardShortcut
         onSelect={(selection) => onChange({ ...answer, selection })}
-        onSubmit={onSubmit}
       />
     )
   }
 
   return (
-    <TextWriterField
-      name="answerMode"
-      modes={getAnswerModes(draft.question.type)}
-      mode={getAnswerMode(draft.question.type, answer.mode)}
-      value={answer.text}
-      onModeChange={(mode) => onChange({ ...answer, mode })}
-      onChange={(text) => onChange({ ...answer, text })}
-      onSubmit={onSubmit}
-    />
+    <div ref={rootRef}>
+      <TextWriterField
+        name="answerMode"
+        modes={getAnswerModes(draft.question.type)}
+        mode={getAnswerMode(draft.question.type, answer.mode)}
+        value={answer.text}
+        onModeChange={(mode) => onChange({ ...answer, mode })}
+        onChange={(text) => onChange({ ...answer, text })}
+        onComplete={() => focusNextElement(rootRef.current)}
+      />
+    </div>
   )
 }
 

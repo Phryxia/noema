@@ -16,7 +16,6 @@ interface ChoiceGroupProps<TValue> {
   selected: TValue | null
   hasKeyboardShortcut?: boolean
   onSelect: (value: TValue) => void
-  onSubmit?: () => void
 }
 
 export function ChoiceGroup<TValue>({
@@ -24,7 +23,6 @@ export function ChoiceGroup<TValue>({
   selected,
   hasKeyboardShortcut,
   onSelect,
-  onSubmit,
 }: ChoiceGroupProps<TValue>): ReactElement {
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -34,7 +32,6 @@ export function ChoiceGroup<TValue>({
     choices,
     hasSelection: selected !== null,
     onSelect,
-    onSubmit,
   })
 
   return (

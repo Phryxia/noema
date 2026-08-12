@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react'
+import type { KeyboardEvent, ReactElement } from 'react'
 import { SentenceField } from '../../sentence/SentenceField/SentenceField'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
@@ -18,7 +18,7 @@ interface TextWriterFieldProps {
   placeholder?: string
   onModeChange: (mode: TextWriterMode) => void
   onChange: (value: string) => void
-  onSubmit: () => void
+  onComplete: () => void
 }
 
 export function TextWriterField({
@@ -29,7 +29,7 @@ export function TextWriterField({
   placeholder,
   onModeChange,
   onChange,
-  onSubmit,
+  onComplete,
 }: TextWriterFieldProps): ReactElement {
   const {
     rootRef,
@@ -39,12 +39,26 @@ export function TextWriterField({
     handleBlur,
     focusSuggestion,
     focusField,
+    leave,
   } = useSuggestionFocus()
+
+  function handleWordEnter(): void {
+    leave()
+    onComplete()
+  }
+
+  function handleModeKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
+    if (event.key !== 'Enter') {
+      return
+    }
+    event.preventDefault()
+    onComplete()
+  }
 
   return (
     <div>
       {modes.length > 1 && (
-        <div className={cx('modes')}>
+        <div className={cx('modes')} onKeyDown={handleModeKeyDown}>
           <RadioGroup<TextWriterMode>
             role="group"
             name={name}
@@ -61,6 +75,7 @@ export function TextWriterField({
             isEditable
             placeholder={placeholder}
             onChange={onChange}
+            onEnter={handleWordEnter}
             onArrowDown={focusSuggestion}
           />
           <WordSuggestion
@@ -79,7 +94,7 @@ export function TextWriterField({
           isEditable
           placeholder={placeholder}
           onChange={onChange}
-          onSubmit={onSubmit}
+          onSubmit={onComplete}
         />
       )}
     </div>

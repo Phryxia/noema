@@ -48,12 +48,7 @@ export function RelationForm({ editor, hasRandomPick }: RelationFormProps): Reac
         (type === 'TernaryIsolation' && !isWordsReady ? (
           <p>대상 단어를 먼저 입력하세요</p>
         ) : (
-          <AnswerSection
-            draft={draft}
-            answer={answer}
-            onChange={editor.setAnswer}
-            onSubmit={save}
-          />
+          <AnswerSection draft={draft} answer={answer} onChange={editor.setAnswer} />
         ))}
       <h6>참고사항</h6>
       <TextWriterField
@@ -64,7 +59,7 @@ export function RelationForm({ editor, hasRandomPick }: RelationFormProps): Reac
         placeholder="(optional)"
         onModeChange={(mode) => editor.setComment({ ...comment, mode })}
         onChange={(text) => editor.setComment({ ...comment, text })}
-        onSubmit={save}
+        onComplete={save}
       />
       <RelationActions
         isSubmitting={isSubmitting}

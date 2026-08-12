@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import type { RefObject } from 'react'
 import type { Choice } from './ChoiceGroup'
+import { focusNextElement } from '../../utils/focusNextElement'
 
 interface ChoiceShortcutParams<TValue> {
   isEnabled: boolean
@@ -8,7 +9,6 @@ interface ChoiceShortcutParams<TValue> {
   choices: Choice<TValue>[]
   hasSelection: boolean
   onSelect: (value: TValue) => void
-  onSubmit?: () => void
 }
 
 export function useChoiceShortcut<TValue>({
@@ -17,7 +17,6 @@ export function useChoiceShortcut<TValue>({
   choices,
   hasSelection,
   onSelect,
-  onSubmit,
 }: ChoiceShortcutParams<TValue>): void {
   useEffect(() => {
     if (!isEnabled) {
@@ -32,15 +31,11 @@ export function useChoiceShortcut<TValue>({
         return
       }
       if (event.key === 'Enter') {
-        if (
-          !hasSelection ||
-          !onSubmit ||
-          checkIsForeignControl(event.target, rootRef.current)
-        ) {
+        if (!hasSelection || !checkIsInsideOrBody(event.target, rootRef.current)) {
           return
         }
         event.preventDefault()
-        onSubmit()
+        focusNextElement(rootRef.current)
         return
       }
       const index = getChoiceIndex(event.key, choices.length)
@@ -68,14 +63,11 @@ function checkIsTyping(target: EventTarget | null): boolean {
 
 const NonTypingInputTypes = ['button', 'checkbox', 'color', 'radio', 'range', 'reset', 'submit']
 
-function checkIsForeignControl(target: EventTarget | null, root: HTMLElement | null): boolean {
+function checkIsInsideOrBody(target: EventTarget | null, root: HTMLElement | null): boolean {
   if (!(target instanceof HTMLElement)) {
-    return false
+    return true
   }
-  if (root?.contains(target)) {
-    return false
-  }
-  return ['A', 'BUTTON', 'SUMMARY'].includes(target.tagName)
+  return target === target.ownerDocument.body || !!root?.contains(target)
 }
 
 function getChoiceIndex(key: string, count: number): number | null {

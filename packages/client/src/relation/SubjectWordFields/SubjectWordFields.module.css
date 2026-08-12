@@ -7,3 +7,25 @@
     }
   }
 }
+
+.directed {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+
+  > div {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .edge {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    height: calc(
+      1rem * var(--pico-line-height) + var(--pico-form-element-spacing-vertical) * 2 +
+        var(--pico-border-width) * 2
+    );
+  }
+}

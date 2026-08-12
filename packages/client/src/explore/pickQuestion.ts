@@ -53,7 +53,11 @@ function createNewQuestion(type: QuestionType, lexes: Lexis[]): NewQuestion {
         word2Id: word2.nodeId,
         word3Id: word3.nodeId,
       }
-    default:
+    case 'BinaryCommon':
+    case 'BinaryDifference':
+    case 'BinarySimilarity':
       return { type, word1Id: word1.nodeId, word2Id: word2.nodeId }
+    case 'NamedAssociation':
+      throw new Error('탐색에서 출제하지 않는 유형입니다')
   }
 }

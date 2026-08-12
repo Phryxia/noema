@@ -11,7 +11,8 @@ export function checkIsAnswerReady(question: NewQuestion, answer: AnswerDraft): 
   if (
     question.type === 'WordsUsage' ||
     question.type === 'BinaryCommon' ||
-    question.type === 'BinaryDifference'
+    question.type === 'BinaryDifference' ||
+    question.type === 'NamedAssociation'
   ) {
     return true
   }

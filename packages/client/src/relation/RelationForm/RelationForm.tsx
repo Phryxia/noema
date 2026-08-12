@@ -40,19 +40,21 @@ export function RelationForm({ editor, hasRandomPick }: RelationFormProps): Reac
         words={words}
         requiredCount={SubjectWordSpecs[type].minCount}
         isCountAdjustable={SubjectWordSpecs[type].isCountAdjustable}
+        isDirected={type === 'NamedAssociation'}
         hasRandomPick={hasRandomPick}
         onChange={editor.setWords}
       />
-      {type === 'TernaryIsolation' && !isWordsReady ? (
-        <p>대상 단어를 먼저 입력하세요</p>
-      ) : (
-        <AnswerSection
-          draft={draft}
-          answer={answer}
-          onChange={editor.setAnswer}
-          onSubmit={save}
-        />
-      )}
+      {type !== 'NamedAssociation' &&
+        (type === 'TernaryIsolation' && !isWordsReady ? (
+          <p>대상 단어를 먼저 입력하세요</p>
+        ) : (
+          <AnswerSection
+            draft={draft}
+            answer={answer}
+            onChange={editor.setAnswer}
+            onSubmit={save}
+          />
+        ))}
       <h6>참고사항</h6>
       <TextWriterField
         name="commentMode"

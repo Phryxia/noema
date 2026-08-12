@@ -2,11 +2,8 @@ import type { Dispatch, ReactElement, SetStateAction } from 'react'
 import { useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { useMutation } from '@tanstack/react-query'
-import { WordField } from '../../word/WordField/WordField'
-import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
+import { SubjectWordField } from './SubjectWordField'
 import { getRandomWords } from '../../word/getRandomWords'
-import { useSuggestionFocus } from '../../word/useSuggestionFocus'
-import { focusNextElement } from '../../utils/focusNextElement'
 import classnames from 'classnames/bind'
 import styles from './SubjectWordFields.module.css'
 
@@ -16,6 +13,7 @@ interface SubjectWordFieldsProps {
   words: string[]
   requiredCount: number
   isCountAdjustable?: boolean
+  isDirected?: boolean
   hasRandomPick?: boolean
   onChange: Dispatch<SetStateAction<string[]>>
 }
@@ -24,6 +22,7 @@ export function SubjectWordFields({
   words,
   requiredCount,
   isCountAdjustable,
+  isDirected,
   hasRandomPick,
   onChange,
 }: SubjectWordFieldsProps): ReactElement {
@@ -66,109 +65,49 @@ export function SubjectWordFields({
     onChange((currentWords) => currentWords.filter((_, wordIndex) => wordIndex !== index))
   }
 
+  function createField(index: number, placeholder: string): ReactElement {
+    return (
+      <SubjectWordField
+        key={index}
+        word={words[index]}
+        placeholder={placeholder}
+        onChange={(value) => updateWord(index, value)}
+        onFocusChange={(isFocused) => handleFocusChange(index, isFocused)}
+        onEmptyBackspace={
+          isCountAdjustable && index > 0 ? (): void => removeWord(index) : undefined
+        }
+        onRandomPick={
+          hasRandomPick
+            ? (): void => {
+                if (!isRolling) {
+                  rollRandomWord(index)
+                }
+              }
+            : undefined
+        }
+      />
+    )
+  }
+
+  if (isDirected) {
+    return (
+      <div ref={rootRef} className={cx('directed')}>
+        {createField(0, '단어 1')}
+        <span className={cx('edge')} aria-hidden>
+          ──
+        </span>
+        {createField(2, '관계')}
+        <span className={cx('edge')} aria-hidden>
+          ──▶
+        </span>
+        {createField(1, '단어 2')}
+      </div>
+    )
+  }
+
   return (
     <div ref={rootRef}>
-      {words.map((word, index) => (
-        <SubjectWordField
-          key={index}
-          word={word}
-          placeholder={createPlaceholder(index, requiredCount)}
-          onChange={(value) => updateWord(index, value)}
-          onFocusChange={(isFocused) => handleFocusChange(index, isFocused)}
-          onEmptyBackspace={
-            isCountAdjustable && index > 0 ? (): void => removeWord(index) : undefined
-          }
-          onRandomPick={
-            hasRandomPick
-              ? (): void => {
-                  if (!isRolling) {
-                    rollRandomWord(index)
-                  }
-                }
-              : undefined
-          }
-        />
-      ))}
-    </div>
-  )
-}
-
-interface SubjectWordFieldProps {
-  word: string
-  placeholder: string
-  onChange: (value: string) => void
-  onFocusChange: (isFocused: boolean) => void
-  onEmptyBackspace?: () => void
-  onRandomPick?: () => void
-}
-
-function SubjectWordField({
-  word,
-  placeholder,
-  onChange,
-  onFocusChange,
-  onEmptyBackspace,
-  onRandomPick,
-}: SubjectWordFieldProps): ReactElement {
-  const {
-    rootRef,
-    suggestionRef,
-    isFocused,
-    handleFocus,
-    handleBlur,
-    focusSuggestion,
-    focusField,
-    leave,
-  } = useSuggestionFocus(onFocusChange)
-
-  function leaveField(): void {
-    leave()
-    focusNextElement(rootRef.current)
-  }
-
-  function selectSuggestion(value: string): void {
-    onChange(value)
-    leaveField()
-  }
-
-  const wordField = (
-    <WordField
-      value={word}
-      isEditable
-      placeholder={placeholder}
-      onChange={onChange}
-      onEnter={leaveField}
-      onEmptyBackspace={onEmptyBackspace}
-      onArrowDown={focusSuggestion}
-    />
-  )
-
-  return (
-    <div ref={rootRef} onFocus={handleFocus} onBlur={handleBlur}>
-      {onRandomPick ? (
-        <fieldset role="group" className={cx('group')}>
-          {wordField}
-          <button
-            className={cx('random-button')}
-            type="button"
-            tabIndex={-1}
-            aria-label="랜덤 단어"
-            onClick={onRandomPick}
-          >
-            🎲
-          </button>
-        </fieldset>
-      ) : (
-        wordField
-      )}
-      <WordSuggestion
-        ref={suggestionRef}
-        keyword={word}
-        n={16}
-        isVisible={isFocused}
-        onSelect={selectSuggestion}
-        onExitUp={focusField}
-      />
+      {words.map((_, index) => createField(index, createPlaceholder(index, requiredCount)))}
     </div>
   )
 }

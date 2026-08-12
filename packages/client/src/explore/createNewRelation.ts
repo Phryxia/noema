@@ -64,6 +64,14 @@ export function createNewRelation(
         word3Id: question.word3Id,
         selection: requireSelection(answer.selection),
       }
+    case 'NamedAssociation':
+      return {
+        ...comment,
+        type: question.type,
+        word1Id: question.word1Id,
+        word2Id: question.word2Id,
+        word3Id: question.word3Id,
+      }
   }
 }
 

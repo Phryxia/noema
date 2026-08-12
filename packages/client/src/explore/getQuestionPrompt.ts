@@ -16,6 +16,8 @@ export function getQuestionPrompt(question: NewQuestion): string {
       return '다음 단어를 보고 연상되는 단어를 적으세요.'
     case 'TernaryIsolation':
       return '다음 세 단어 중 가장 이질적인 단어를 고르세요.'
+    case 'NamedAssociation':
+      return '두 단어와 둘을 잇는 관계를 나타내는 단어를 적으세요.'
   }
 }
 

@@ -72,10 +72,17 @@ function toQnaEntry(
     id: relation.relationId,
     type: relation.type,
     createdAt: relation.createdAt,
-    words,
+    words: getDisplayWords(relation, words),
     answer: buildAnswer(relation, words, wordMap, sentenceMap),
     comment: relation.comment ? resolveText(relation.comment, wordMap, sentenceMap) : null,
   }
+}
+
+function getDisplayWords(relation: Relation, words: ResolvedWord[]): ResolvedWord[] {
+  if (relation.type === 'NamedAssociation') {
+    return words.slice(0, 2)
+  }
+  return words
 }
 
 function buildAnswer(
@@ -89,6 +96,9 @@ function buildAnswer(
   }
   if (relation.type === 'TernaryIsolation') {
     return { kind: 'selection', word: words[relation.selection - 1] }
+  }
+  if (relation.type === 'NamedAssociation') {
+    return { kind: 'selection', word: words[2] }
   }
   const answer = getRelationAnswer(relation)
   if (!answer) {

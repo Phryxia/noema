@@ -51,6 +51,13 @@ export interface TernaryIsolationRelation extends RelationBase, TernaryWords {
   selection: 1 | 2 | 3
 }
 
+/**
+ * `word1`과 `word2` 사이에 `word3`의 유향관계가 있음
+ */
+export interface NamedAssociationRelation extends RelationBase, TernaryWords {
+  type: 'NamedAssociation'
+}
+
 export type Relation =
   | WordExplainRelation
   | WordsUsageRelation
@@ -59,6 +66,7 @@ export type Relation =
   | BinarySimilarityRelation
   | BinaryAssociationRelation
   | TernaryIsolationRelation
+  | NamedAssociationRelation
 
 export type NewRelation = DistributiveOmit<Relation, keyof Omit<RelationBase, 'comment'>>
 

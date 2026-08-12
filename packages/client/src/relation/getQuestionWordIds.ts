@@ -10,7 +10,7 @@ export function getQuestionWordIds(relation: Relation): number[] {
   if (relation.type === 'BinaryAssociation') {
     return [relation.word1Id]
   }
-  if (relation.type === 'TernaryIsolation') {
+  if (relation.type === 'TernaryIsolation' || relation.type === 'NamedAssociation') {
     return [relation.word1Id, relation.word2Id, relation.word3Id]
   }
   return [relation.word1Id, relation.word2Id]

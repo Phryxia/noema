@@ -37,4 +37,5 @@ export const SubjectWordSpecs: Record<QuestionType, SubjectWordSpec> = {
   BinarySimilarity: { count: 2, minCount: 2 },
   BinaryAssociation: { count: 1, minCount: 1 },
   TernaryIsolation: { count: 3, minCount: 3 },
+  NamedAssociation: { count: 3, minCount: 3 },
 }

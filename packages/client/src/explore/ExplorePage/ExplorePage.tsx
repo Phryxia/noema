@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ExploreForm } from '../ExploreForm/ExploreForm'
 import { QuestionTypeSelector } from '../QuestionTypeSelector/QuestionTypeSelector'
 import { UsageWordCountControl } from '../UsageWordCountControl/UsageWordCountControl'
-import { MIN_WORD_COUNT, WORD_COUNT_QUERY_KEY } from '../consts'
+import { ExploreQuestionTypes, MIN_WORD_COUNT, WORD_COUNT_QUERY_KEY } from '../consts'
 import { useExplore } from '../useExplore'
 import { getWordCount } from '../../word/getWordCount'
 
@@ -13,7 +13,7 @@ export function ExplorePage(): ReactElement {
     queryFn: getWordCount,
   })
   const hasEnoughWords = !!wordCount && wordCount >= MIN_WORD_COUNT
-  const explore = useExplore(hasEnoughWords)
+  const explore = useExplore(hasEnoughWords, { availableTypes: ExploreQuestionTypes })
 
   if (isPending) {
     return <article aria-busy="true" />
@@ -27,6 +27,7 @@ export function ExplorePage(): ReactElement {
     <article>
       <h2>탐색</h2>
       <QuestionTypeSelector
+        availableTypes={ExploreQuestionTypes}
         checkedTypes={explore.checkedTypes}
         onChange={explore.setCheckedTypes}
       />

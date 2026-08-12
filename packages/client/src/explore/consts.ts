@@ -24,7 +24,12 @@ export const QuestionTypeOptions: Option<QuestionType>[] = [
   { value: 'BinarySimilarity', label: '이항 유사성' },
   { value: 'BinaryAssociation', label: '연상' },
   { value: 'TernaryIsolation', label: '삼항 격리' },
+  { value: 'NamedAssociation', label: '관계 짓기' },
 ]
+
+export const ExploreQuestionTypes: QuestionType[] = QuestionTypeOptions.map(
+  ({ value }) => value,
+).filter((type) => type !== 'NamedAssociation')
 
 export interface SimilarityLevel {
   label: string

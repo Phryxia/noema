@@ -9,6 +9,7 @@ import type { NewQuestion, Question } from '../question/types'
 import { createSentence, getSentence } from '../sentence/sentence.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
+import { assertNotDuplicateNamedAssociation } from './assertNotDuplicateNamedAssociation'
 import { TEACH_SOURCE_PREFIX } from './consts'
 import { createRelationQuestion } from './createRelationQuestion'
 import { getRelationAnswer } from './getRelationAnswer'
@@ -31,6 +32,7 @@ export async function updateRelation({
   comment,
 }: UpdateRelationParams): Promise<void> {
   const { relationId, questionId, createdAt, type } = relation
+  await assertNotDuplicateNamedAssociation(type, words, relationId)
 
   const wordIds: number[] = []
   for (const word of words.filter(Boolean)) {

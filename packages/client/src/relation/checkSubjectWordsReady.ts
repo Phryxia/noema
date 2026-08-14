@@ -6,5 +6,8 @@ export function checkSubjectWordsReady(type: QuestionType, words: string[]): boo
   if (filledWords.length < SubjectWordSpecs[type].minCount) {
     return false
   }
+  if (type === 'NamedAssociation') {
+    return true
+  }
   return new Set(filledWords).size === filledWords.length
 }

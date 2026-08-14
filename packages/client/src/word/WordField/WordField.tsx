@@ -12,6 +12,7 @@ interface WordFieldProps {
   placeholder?: string
   onChange: (value: string) => void
   onEnter?: () => void
+  onEscape?: () => void
   onEmptyBackspace?: () => void
   onArrowDown?: () => void
   onFocus?: () => void
@@ -24,6 +25,7 @@ export function WordField({
   placeholder,
   onChange,
   onEnter,
+  onEscape,
   onEmptyBackspace,
   onArrowDown,
   onFocus,
@@ -40,6 +42,11 @@ export function WordField({
     if (onArrowDown && event.key === 'ArrowDown') {
       event.preventDefault()
       onArrowDown()
+      return
+    }
+    if (onEscape && event.key === 'Escape') {
+      event.preventDefault()
+      onEscape()
       return
     }
     if (!onEnter || event.key !== 'Enter') {

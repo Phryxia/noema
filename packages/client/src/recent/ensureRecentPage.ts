@@ -1,4 +1,5 @@
 import type { QueryClient, QueryKey } from '@tanstack/react-query'
+import { PAGE_CACHE_MS } from './consts'
 import { getRecentPage } from './recent.service'
 import type { RecentPage, RecentRange, RecentSource } from './types'
 
@@ -29,8 +30,8 @@ export async function ensureRecentPage<TEntry, TRow>(
   const previous = await queryClient.ensureQueryData({
     queryKey: createPageQueryKey(queryKeyPrefix, range, page - 1),
     queryFn: () => ensureRecentPage(query, page - 1),
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: PAGE_CACHE_MS,
+    gcTime: PAGE_CACHE_MS,
   })
   if (!previous.nextCursor) {
     return { entries: [], nextCursor: null }

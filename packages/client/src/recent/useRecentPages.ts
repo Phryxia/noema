@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { computePagination } from './computePagination'
+import { PAGE_CACHE_MS } from './consts'
 import type { Pagination } from './computePagination'
 import { createPageQueryKey, ensureRecentPage } from './ensureRecentPage'
 import type { RecentRange, RecentSource } from './types'
@@ -36,8 +37,8 @@ export function useRecentPages<TEntry, TRow>({
     queryKey: createPageQueryKey(queryKeyPrefix, range, currentPage),
     queryFn: () =>
       ensureRecentPage({ queryClient, source, queryKeyPrefix, range }, currentPage),
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: PAGE_CACHE_MS,
+    gcTime: PAGE_CACHE_MS,
     retry: false,
   })
 
@@ -47,19 +48,12 @@ export function useRecentPages<TEntry, TRow>({
     }
   }, [data])
 
-  useEffect(() => {
-    return (): void => {
-      queryClient.removeQueries({ queryKey: [queryKeyPrefix] })
-    }
-  }, [queryClient, queryKeyPrefix])
-
   function goToPage(page: number): void {
     setCurrentPage(page)
     setLoadedPageCount((count) => Math.max(count, page))
   }
 
   function search(nextRange: RecentRange): void {
-    queryClient.removeQueries({ queryKey: [queryKeyPrefix] })
     setRange(nextRange)
     setCurrentPage(1)
     setLoadedPageCount(1)

@@ -1,0 +1,6 @@
+.group {
+  button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}

@@ -3,6 +3,10 @@ import { useState } from 'react'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
 import { useSuggestionFocus } from '../../word/useSuggestionFocus'
+import classnames from 'classnames/bind'
+import styles from './QnaSearchForm.module.css'
+
+const cx = classnames.bind(styles)
 
 interface QnaSearchFormProps {
   onSearch: (query: string) => void
@@ -52,7 +56,7 @@ export function QnaSearchForm({ onSearch, onCancel }: QnaSearchFormProps): React
 
   return (
     <div ref={rootRef} onFocus={handleFocus} onBlur={handleBlur}>
-      <fieldset role="group">
+      <fieldset role="group" className={cx('group')}>
         <WordField
           value={input}
           isEditable

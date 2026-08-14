@@ -98,24 +98,26 @@ export function WordSuggestion({
   }
 
   return (
-    <article ref={ref} className={cx('root')} onMouseDown={(event) => event.preventDefault()}>
-      <ul className={cx('list')} onKeyDown={handleListKeyDown}>
-        {lexes?.map((lexis) => (
-          <li key={lexis.nodeId} className={cx('item')}>
-            <WordSuggestionLabel word={lexis.value} onSelect={onSelect} />
-            {isDeletable && (
-              <button
-                type="button"
-                className={cx('deleteButton')}
-                onClick={() => requestDelete(lexis)}
-              >
-                x
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
-    </article>
+    <div className={cx('anchor')}>
+      <article ref={ref} className={cx('root')} onMouseDown={(event) => event.preventDefault()}>
+        <ul className={cx('list')} onKeyDown={handleListKeyDown}>
+          {lexes?.map((lexis) => (
+            <li key={lexis.nodeId} className={cx('item')}>
+              <WordSuggestionLabel word={lexis.value} onSelect={onSelect} />
+              {isDeletable && (
+                <button
+                  type="button"
+                  className={cx('deleteButton')}
+                  onClick={() => requestDelete(lexis)}
+                >
+                  x
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </article>
+    </div>
   )
 }
 

@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { WordField } from '../../word/WordField/WordField'
 import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
 import { useSuggestionFocus } from '../../word/useSuggestionFocus'
@@ -9,13 +9,19 @@ import styles from './QnaSearchForm.module.css'
 const cx = classnames.bind(styles)
 
 interface QnaSearchFormProps {
+  query: string
   onSearch: (query: string) => void
   onCancel: () => void
 }
 
-export function QnaSearchForm({ onSearch, onCancel }: QnaSearchFormProps): ReactElement {
-  const [input, setInput] = useState('')
-  const [isSuggestionMuted, setIsSuggestionMuted] = useState(false)
+export function QnaSearchForm({ query, onSearch, onCancel }: QnaSearchFormProps): ReactElement {
+  const [input, setInput] = useState(query)
+  const [isSuggestionMuted, setIsSuggestionMuted] = useState(!!query)
+
+  useEffect(() => {
+    setInput(query)
+    setIsSuggestionMuted(!!query)
+  }, [query])
   const {
     rootRef,
     suggestionRef,

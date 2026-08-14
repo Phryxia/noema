@@ -36,6 +36,7 @@ export function QnaTable({ entries }: QnaTableProps): ReactElement {
               navigate({
                 to: '/relation/$relationId',
                 params: { relationId: String(entry.id) },
+                search: true,
               })
             }
           />

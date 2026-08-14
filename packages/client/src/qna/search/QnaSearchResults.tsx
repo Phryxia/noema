@@ -16,8 +16,18 @@ export function QnaSearchResults({ query }: QnaSearchResultsProps): ReactElement
   }
   return (
     <>
-      <QnaSearchSection key={`exact-${query}`} title="정확히 일치" state={exact} />
-      <QnaSearchSection key={`partial-${query}`} title="부분 일치" state={partial} />
+      <QnaSearchSection
+        key={`exact-${query}`}
+        title="정확히 일치"
+        state={exact}
+        isLoaderVisible
+      />
+      <QnaSearchSection
+        key={`partial-${query}`}
+        title="부분 일치"
+        state={partial}
+        isLoaderVisible={!exact.isPending}
+      />
     </>
   )
 }

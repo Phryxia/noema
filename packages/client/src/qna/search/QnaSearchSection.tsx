@@ -8,14 +8,22 @@ import { QnaTable } from '../QnaTable'
 interface QnaSearchSectionProps {
   title: string
   state: QnaSearchSectionState
+  isLoaderVisible: boolean
 }
 
-export function QnaSearchSection({ title, state }: QnaSearchSectionProps): ReactElement | null {
+export function QnaSearchSection({
+  title,
+  state,
+  isLoaderVisible,
+}: QnaSearchSectionProps): ReactElement | null {
   const { entries, isPending, error } = state
   const totalPages = Math.max(1, Math.ceil(entries.length / RECENT_PAGE_SIZE))
   const { currentPage, pagination, goToPage } = useExploredPagination(totalPages)
 
   if (isPending) {
+    if (!isLoaderVisible) {
+      return null
+    }
     return <p aria-busy="true" />
   }
   if (error) {

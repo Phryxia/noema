@@ -20,6 +20,7 @@ export const ANSWER_INPUT_SELECTOR = [
 export const QuestionTypeOptions: Option<QuestionType>[] = [
   { value: 'WordExplain', label: '단어 설명' },
   { value: 'WordsUsage', label: '예문 만들기' },
+  { value: 'UnaryProperty', label: '속성' },
   { value: 'BinaryCommon', label: '이항 공통점' },
   { value: 'BinaryDifference', label: '이항 차이점' },
   { value: 'BinarySimilarity', label: '이항 유사성' },

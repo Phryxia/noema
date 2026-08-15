@@ -7,7 +7,7 @@ export function getQuestionWordIds(relation: Relation): number[] {
   if (relation.type === 'WordsUsage') {
     return relation.wordIds
   }
-  if (relation.type === 'BinaryAssociation') {
+  if (relation.type === 'UnaryProperty' || relation.type === 'BinaryAssociation') {
     return [relation.word1Id]
   }
   if (relation.type === 'TernaryComposition') {

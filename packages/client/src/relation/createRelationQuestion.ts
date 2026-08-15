@@ -6,6 +6,8 @@ export function createRelationQuestion(type: QuestionType, wordIds: number[]): N
       return { type, wordId: wordIds[0] }
     case 'WordsUsage':
       return { type, wordIds }
+    case 'UnaryProperty':
+      return { type, wordId: wordIds[0] }
     case 'BinaryCommon':
       return { type, word1Id: wordIds[0], word2Id: wordIds[1] }
     case 'BinaryDifference':

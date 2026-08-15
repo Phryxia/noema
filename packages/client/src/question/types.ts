@@ -1,6 +1,7 @@
 export type QuestionType =
   | 'WordExplain'
   | 'WordsUsage'
+  | 'UnaryProperty'
   | 'BinaryCommon'
   | 'BinaryDifference'
   | 'BinarySimilarity'
@@ -31,6 +32,11 @@ export interface WordExplainQuestion extends QuestionBase {
 export interface WordsUsageQuestion extends QuestionBase {
   type: 'WordsUsage'
   wordIds: number[]
+}
+
+export interface UnaryPropertyQuestion extends QuestionBase {
+  type: 'UnaryProperty'
+  wordId: number
 }
 
 export interface BinaryCommonQuestion extends QuestionBase, BinaryWords {
@@ -66,6 +72,7 @@ export interface NamedAssociationQuestion extends QuestionBase, TernaryWords {
 export type Question =
   | WordExplainQuestion
   | WordsUsageQuestion
+  | UnaryPropertyQuestion
   | BinaryCommonQuestion
   | BinaryDifferenceQuestion
   | BinarySimilarityQuestion

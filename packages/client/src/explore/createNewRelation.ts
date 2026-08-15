@@ -29,6 +29,13 @@ export function createNewRelation(
         wordIds: question.wordIds,
         answer: answerTarget,
       }
+    case 'UnaryProperty':
+      return {
+        ...comment,
+        type: question.type,
+        word1Id: question.wordId,
+        word2Id: requireWordTarget(answerTarget).id,
+      }
     case 'BinaryCommon':
       return {
         ...comment,

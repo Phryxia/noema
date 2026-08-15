@@ -47,6 +47,19 @@ describe('collectSearchTargets', () => {
     ])
   })
 
+  it('UnaryProperty의 word2는 answer가 아니라 word2 타깃이다', () => {
+    const relation: Relation = {
+      ...createBase(),
+      type: 'UnaryProperty',
+      word1Id: 1,
+      word2Id: 2,
+    }
+    expect(collectSearchTargets(relation, WordMap, SentenceMap)).toEqual([
+      { field: 'word1', textType: 'word', value: '사과' },
+      { field: 'word2', textType: 'word', value: '배' },
+    ])
+  })
+
   it('BinaryCommon에서 word1, word2, 문장형 answer 타깃을 만든다', () => {
     const relation: Relation = {
       ...createBase(),

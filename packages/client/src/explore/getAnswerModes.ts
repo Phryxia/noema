@@ -6,7 +6,7 @@ export function getAnswerModes(type: QuestionType): TextWriterMode[] {
   if (type === 'WordExplain' || type === 'WordsUsage') {
     return SentenceOnlyModes
   }
-  if (type === 'BinaryAssociation') {
+  if (type === 'UnaryProperty' || type === 'BinaryAssociation') {
     return WordOnlyModes
   }
   return TextWriterModes

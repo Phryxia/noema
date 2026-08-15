@@ -27,6 +27,13 @@ export interface WordsUsageRelation extends RelationBase {
   answer: WordOrSentence | null
 }
 
+/**
+ * `word1`이 `word2`의 속성을 가짐
+ */
+export interface UnaryPropertyRelation extends RelationBase, BinaryWords {
+  type: 'UnaryProperty'
+}
+
 export interface BinaryCommonRelation extends RelationBase, BinaryWords {
   type: 'BinaryCommon'
   answer: WordOrSentence | null
@@ -68,6 +75,7 @@ export interface NamedAssociationRelation extends RelationBase, TernaryWords {
 export type Relation =
   | WordExplainRelation
   | WordsUsageRelation
+  | UnaryPropertyRelation
   | BinaryCommonRelation
   | BinaryDifferenceRelation
   | BinarySimilarityRelation

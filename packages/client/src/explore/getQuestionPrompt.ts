@@ -6,6 +6,8 @@ export function getQuestionPrompt(question: NewQuestion): string {
       return '다음 단어의 뜻을 적으세요.'
     case 'WordsUsage':
       return getUsagePrompt(question.wordIds.length)
+    case 'UnaryProperty':
+      return '다음 단어가 갖는 속성을 적으세요.'
     case 'BinaryCommon':
       return '다음 두 단어의 공통점을 적으세요.'
     case 'BinaryDifference':

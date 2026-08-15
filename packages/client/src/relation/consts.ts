@@ -34,6 +34,7 @@ export interface SubjectWordSpec {
 export const SubjectWordSpecs: Record<QuestionType, SubjectWordSpec> = {
   WordExplain: { count: 1, minCount: 1 },
   WordsUsage: { count: 2, minCount: 1, isCountAdjustable: true },
+  UnaryProperty: { count: 1, minCount: 1 },
   BinaryCommon: { count: 2, minCount: 2 },
   BinaryDifference: { count: 2, minCount: 2 },
   BinarySimilarity: { count: 2, minCount: 2 },

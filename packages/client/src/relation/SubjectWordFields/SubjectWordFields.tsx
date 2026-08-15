@@ -3,17 +3,17 @@ import { useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { useMutation } from '@tanstack/react-query'
 import { SubjectWordField } from './SubjectWordField'
+import { FieldEdge, FieldRow } from '../FieldRow/FieldRow'
 import { getRandomWords } from '../../word/getRandomWords'
-import classnames from 'classnames/bind'
-import styles from './SubjectWordFields.module.css'
 
-const cx = classnames.bind(styles)
+export type SubjectWordLayout = 'directed' | 'composition'
 
 interface SubjectWordFieldsProps {
   words: string[]
   requiredCount: number
   isCountAdjustable?: boolean
-  isDirected?: boolean
+  layout?: SubjectWordLayout
+  placeholders?: string[]
   hasRandomPick?: boolean
   onChange: Dispatch<SetStateAction<string[]>>
 }
@@ -22,7 +22,8 @@ export function SubjectWordFields({
   words,
   requiredCount,
   isCountAdjustable,
-  isDirected,
+  layout,
+  placeholders,
   hasRandomPick,
   onChange,
 }: SubjectWordFieldsProps): ReactElement {
@@ -70,7 +71,7 @@ export function SubjectWordFields({
       <SubjectWordField
         key={index}
         word={words[index]}
-        placeholder={placeholder}
+        placeholder={placeholders?.[index] ?? placeholder}
         onChange={(value) => updateWord(index, value)}
         onFocusChange={(isFocused) => handleFocusChange(index, isFocused)}
         onEmptyBackspace={
@@ -89,19 +90,25 @@ export function SubjectWordFields({
     )
   }
 
-  if (isDirected) {
+  if (layout === 'directed') {
     return (
-      <div ref={rootRef} className={cx('directed')}>
+      <FieldRow ref={rootRef}>
         {createField(0, '단어 1')}
-        <span className={cx('edge')} aria-hidden>
-          ──
-        </span>
+        <FieldEdge>──</FieldEdge>
         {createField(2, '관계')}
-        <span className={cx('edge')} aria-hidden>
-          ──▶
-        </span>
+        <FieldEdge>──▶</FieldEdge>
         {createField(1, '단어 2')}
-      </div>
+      </FieldRow>
+    )
+  }
+
+  if (layout === 'composition') {
+    return (
+      <FieldRow ref={rootRef} weight={2}>
+        {createField(0, '단어 1')}
+        <FieldEdge>+</FieldEdge>
+        {createField(1, '단어 2')}
+      </FieldRow>
     )
   }
 

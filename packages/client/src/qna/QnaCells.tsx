@@ -40,6 +40,18 @@ export function AnswerCell({ answer, keyword }: AnswerCellProps): ReactElement {
   if (answer.kind === 'selection') {
     return <WordLink word={answer.word} keyword={keyword} />
   }
+  if (answer.kind === 'composition') {
+    return (
+      <>
+        {answer.words.map((word, index) => (
+          <Fragment key={index}>
+            {index > 0 && ' + '}
+            <WordLink word={word} keyword={keyword} />
+          </Fragment>
+        ))}
+      </>
+    )
+  }
   return <ResolvedTextLink text={answer.text} keyword={keyword} />
 }
 

@@ -1,5 +1,6 @@
 import { getQuestionWordIds } from '../relation/getQuestionWordIds'
 import { getRelationAnswer } from '../relation/getRelationAnswer'
+import { getRelationAnswerWordIds } from '../relation/getRelationAnswerWordIds'
 import type { Relation, WordOrSentence } from '../relation/types'
 import { getSentence } from '../sentence/sentence.service'
 import { getWordValues } from '../word/getWordValues'
@@ -19,6 +20,7 @@ export function collectWordIds(relations: Relation[]): number[] {
   const ids = new Set<number>()
   for (const relation of relations) {
     getQuestionWordIds(relation).forEach((id) => ids.add(id))
+    getRelationAnswerWordIds(relation).forEach((id) => ids.add(id))
     getTextRefs(relation).forEach((ref) => {
       if (ref.type === 'word') {
         ids.add(ref.id)
@@ -99,6 +101,12 @@ function buildAnswer(
   }
   if (relation.type === 'NamedAssociation') {
     return { kind: 'selection', word: words[2] }
+  }
+  if (relation.type === 'TernaryComposition') {
+    return {
+      kind: 'composition',
+      words: getRelationAnswerWordIds(relation).map((id) => toResolvedWord(id, wordMap)),
+    }
   }
   const answer = getRelationAnswer(relation)
   if (!answer) {

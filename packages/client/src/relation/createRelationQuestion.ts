@@ -14,6 +14,8 @@ export function createRelationQuestion(type: QuestionType, wordIds: number[]): N
       return { type, word1Id: wordIds[0], word2Id: wordIds[1] }
     case 'BinaryAssociation':
       return { type, wordId: wordIds[0] }
+    case 'TernaryComposition':
+      return { type, word3Id: wordIds[0] }
     case 'TernaryIsolation':
       return { type, word1Id: wordIds[0], word2Id: wordIds[1], word3Id: wordIds[2] }
     case 'NamedAssociation':

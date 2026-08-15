@@ -25,7 +25,7 @@ function pickOne<T>(items: T[]): T {
 }
 
 function pickWordCount(type: QuestionType, usageWordCount: number): number {
-  if (type === 'WordExplain' || type === 'BinaryAssociation') {
+  if (type === 'WordExplain' || type === 'BinaryAssociation' || type === 'TernaryComposition') {
     return 1
   }
   if (type === 'WordsUsage') {
@@ -44,6 +44,8 @@ function createNewQuestion(type: QuestionType, lexes: Lexis[]): NewQuestion {
       return { type, wordId: word1.nodeId }
     case 'BinaryAssociation':
       return { type, wordId: word1.nodeId }
+    case 'TernaryComposition':
+      return { type, word3Id: word1.nodeId }
     case 'WordsUsage':
       return { type, wordIds: lexes.map(({ nodeId }) => nodeId) }
     case 'TernaryIsolation':

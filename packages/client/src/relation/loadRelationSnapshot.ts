@@ -6,6 +6,7 @@ import { SubjectWordSpecs } from './consts'
 import { getQuestionWordIds } from './getQuestionWordIds'
 import { getRelation } from './getRelation'
 import { getRelationAnswer } from './getRelationAnswer'
+import { getRelationAnswerWordIds } from './getRelationAnswerWordIds'
 import { resizeWords } from './resizeWords'
 import type { Relation, WordOrSentence } from './types'
 
@@ -38,6 +39,9 @@ async function createAnswerDraft(relation: Relation): Promise<AnswerDraft> {
   }
   if (relation.type === 'TernaryIsolation') {
     return { ...EmptyAnswer, selection: relation.selection }
+  }
+  if (relation.type === 'TernaryComposition') {
+    return { ...EmptyAnswer, words: await getWordValues(getRelationAnswerWordIds(relation)) }
   }
   return { ...EmptyAnswer, ...(await createTextDraft(getRelationAnswer(relation))) }
 }

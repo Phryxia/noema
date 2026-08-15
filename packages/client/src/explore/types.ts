@@ -16,6 +16,7 @@ export interface AnswerDraft {
   text: string
   similarity: Similarity | null
   selection: 1 | 2 | 3 | null
+  words: string[]
 }
 
 export interface CommentDraft {

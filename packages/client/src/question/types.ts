@@ -6,6 +6,7 @@ export type QuestionType =
   | 'BinarySimilarity'
   | 'BinaryAssociation'
   | 'TernaryIsolation'
+  | 'TernaryComposition'
   | 'NamedAssociation'
 
 export interface QuestionBase {
@@ -53,6 +54,11 @@ export interface TernaryIsolationQuestion extends QuestionBase, TernaryWords {
   type: 'TernaryIsolation'
 }
 
+export interface TernaryCompositionQuestion extends QuestionBase {
+  type: 'TernaryComposition'
+  word3Id: number
+}
+
 export interface NamedAssociationQuestion extends QuestionBase, TernaryWords {
   type: 'NamedAssociation'
 }
@@ -65,6 +71,7 @@ export type Question =
   | BinarySimilarityQuestion
   | BinaryAssociationQuestion
   | TernaryIsolationQuestion
+  | TernaryCompositionQuestion
   | NamedAssociationQuestion
 
 export type NewQuestion = DistributiveOmit<Question, keyof QuestionBase>

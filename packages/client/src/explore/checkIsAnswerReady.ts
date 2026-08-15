@@ -8,6 +8,9 @@ export function checkIsAnswerReady(question: NewQuestion, answer: AnswerDraft): 
   if (question.type === 'TernaryIsolation') {
     return answer.selection !== null
   }
+  if (question.type === 'TernaryComposition') {
+    return answer.words.length === 2 && answer.words.every(Boolean)
+  }
   if (
     question.type === 'WordsUsage' ||
     question.type === 'BinaryCommon' ||

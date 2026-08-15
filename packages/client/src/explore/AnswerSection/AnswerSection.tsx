@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react'
+import type { ReactElement, SetStateAction } from 'react'
 import { useRef } from 'react'
 import { ChoiceGroup } from '../ChoiceGroup/ChoiceGroup'
 import type { Choice } from '../ChoiceGroup/ChoiceGroup'
@@ -6,6 +6,7 @@ import { TextWriterField } from '../TextWriterField/TextWriterField'
 import { SimilarityLevels } from '../consts'
 import { getAnswerMode, getAnswerModes } from '../getAnswerModes'
 import type { AnswerDraft, QuestionDraft } from '../types'
+import { SubjectWordFields } from '../../relation/SubjectWordFields/SubjectWordFields'
 import type { Similarity } from '../../relation/types'
 import { focusNextElement } from '../../utils/focusNextElement'
 
@@ -40,6 +41,19 @@ export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): 
     )
   }
 
+  if (draft.question.type === 'TernaryComposition') {
+    return (
+      <SubjectWordFields
+        words={answer.words}
+        requiredCount={2}
+        layout="composition"
+        onChange={(update) =>
+          onChange({ ...answer, words: resolveWords(update, answer.words) })
+        }
+      />
+    )
+  }
+
   return (
     <div ref={rootRef}>
       <TextWriterField
@@ -53,6 +67,10 @@ export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): 
       />
     </div>
   )
+}
+
+function resolveWords(update: SetStateAction<string[]>, words: string[]): string[] {
+  return typeof update === 'function' ? update(words) : update
 }
 
 function createSelectionChoices({ lexes }: QuestionDraft): Choice<1 | 2 | 3>[] {

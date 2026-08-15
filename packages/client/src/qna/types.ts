@@ -15,6 +15,7 @@ export type QnaAnswer =
   | { kind: 'skip' }
   | { kind: 'similarity'; similarity: Similarity }
   | { kind: 'selection'; word: ResolvedWord }
+  | { kind: 'composition'; words: ResolvedWord[] }
 
 export type ResolvedText =
   { type: 'word'; word: ResolvedWord } | { type: 'sentence'; sentenceId: number; value: string }

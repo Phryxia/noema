@@ -25,6 +25,7 @@ export const QuestionTypeOptions: Option<QuestionType>[] = [
   { value: 'BinarySimilarity', label: '이항 유사성' },
   { value: 'BinaryAssociation', label: '연상' },
   { value: 'TernaryIsolation', label: '삼항 격리' },
+  { value: 'TernaryComposition', label: '삼항 합성' },
   { value: 'NamedAssociation', label: '관계 짓기' },
 ]
 
@@ -50,6 +51,7 @@ export const EmptyAnswer: AnswerDraft = {
   text: '',
   similarity: null,
   selection: null,
+  words: ['', ''],
 }
 
 export const EmptyComment: CommentDraft = { mode: '단어', text: '' }

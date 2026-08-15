@@ -1,4 +1,3 @@
-import { assertNotDuplicateNamedAssociation } from './assertNotDuplicateNamedAssociation'
 import { TEACH_SOURCE_PREFIX } from './consts'
 import { createRelationQuestion } from './createRelationQuestion'
 import { submitAnswer } from '../explore/submitAnswer'
@@ -19,8 +18,6 @@ export async function submitRelation({
   answer,
   comment,
 }: SubmitRelationParams): Promise<void> {
-  await assertNotDuplicateNamedAssociation(type, words)
-
   const wordIds: number[] = []
   for (const word of words.filter(Boolean)) {
     wordIds.push(await createWord(word))

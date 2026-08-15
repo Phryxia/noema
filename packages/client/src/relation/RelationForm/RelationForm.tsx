@@ -1,4 +1,5 @@
 import type { FormEvent, ReactElement } from 'react'
+import { FieldEdge, FieldRow } from '../FieldRow/FieldRow'
 import { RelationActions } from '../RelationActions/RelationActions'
 import { SubjectWordFields } from '../SubjectWordFields/SubjectWordFields'
 import { SubjectWordSpecs } from '../consts'
@@ -33,23 +34,50 @@ export function RelationForm({ editor, hasRandomPick }: RelationFormProps): Reac
     save()
   }
 
+  const subjectWordFields = (
+    <SubjectWordFields
+      words={words}
+      requiredCount={SubjectWordSpecs[type].minCount}
+      isCountAdjustable={SubjectWordSpecs[type].isCountAdjustable}
+      layout={SubjectWordSpecs[type].layout}
+      placeholders={SubjectWordSpecs[type].placeholders}
+      hasRandomPick={hasRandomPick}
+      onChange={editor.setWords}
+    />
+  )
+
+  function renderAnswer(): ReactElement | null {
+    if (type === 'NamedAssociation') {
+      return null
+    }
+    if (type === 'TernaryIsolation' && !isWordsReady) {
+      return <p>대상 단어를 먼저 입력하세요</p>
+    }
+    return <AnswerSection draft={draft} answer={answer} onChange={editor.setAnswer} />
+  }
+
+  function renderQuestion(): ReactElement {
+    if (type === 'TernaryComposition') {
+      return (
+        <FieldRow>
+          {subjectWordFields}
+          <FieldEdge>=</FieldEdge>
+          {renderAnswer()}
+        </FieldRow>
+      )
+    }
+    return (
+      <>
+        {subjectWordFields}
+        {renderAnswer()}
+      </>
+    )
+  }
+
   return (
     <form ref={editor.formRef} onSubmit={handleSubmit}>
       <p>{getQuestionPrompt(draft.question)}</p>
-      <SubjectWordFields
-        words={words}
-        requiredCount={SubjectWordSpecs[type].minCount}
-        isCountAdjustable={SubjectWordSpecs[type].isCountAdjustable}
-        isDirected={type === 'NamedAssociation'}
-        hasRandomPick={hasRandomPick}
-        onChange={editor.setWords}
-      />
-      {type !== 'NamedAssociation' &&
-        (type === 'TernaryIsolation' && !isWordsReady ? (
-          <p>대상 단어를 먼저 입력하세요</p>
-        ) : (
-          <AnswerSection draft={draft} answer={answer} onChange={editor.setAnswer} />
-        ))}
+      {renderQuestion()}
       <h6>참고사항</h6>
       <TextWriterField
         name="commentMode"

@@ -1,6 +1,7 @@
 import { QUESTIONS_STORE, RELATIONS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
+import { createAnswerWordIds } from '../explore/createAnswerWordIds'
 import { createNewRelation } from '../explore/createNewRelation'
 import { createSource } from '../explore/createSource'
 import { getAnswerMode } from '../explore/getAnswerModes'
@@ -9,10 +10,11 @@ import type { NewQuestion, Question } from '../question/types'
 import { createSentence, getSentence } from '../sentence/sentence.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
-import { assertNotDuplicateNamedAssociation } from './assertNotDuplicateNamedAssociation'
+import { assertNotDuplicateTernaryRelation } from './assertNotDuplicateTernaryRelation'
 import { TEACH_SOURCE_PREFIX } from './consts'
 import { createRelationQuestion } from './createRelationQuestion'
 import { getRelationAnswer } from './getRelationAnswer'
+import { getTernaryWordIds } from './getTernaryWordIds'
 import type { NewRelation, Relation, WordOrSentence } from './types'
 
 type StoredRelation = NewRelation &
@@ -32,13 +34,17 @@ export async function updateRelation({
   comment,
 }: UpdateRelationParams): Promise<void> {
   const { relationId, questionId, createdAt, type } = relation
-  await assertNotDuplicateNamedAssociation(type, words, relationId)
-
   const wordIds: number[] = []
   for (const word of words.filter(Boolean)) {
     wordIds.push(await createWord(word))
   }
   const question = createRelationQuestion(type, wordIds)
+  const answerWordIds = await createAnswerWordIds(answer)
+  await assertNotDuplicateTernaryRelation(
+    type,
+    getTernaryWordIds(question, answerWordIds),
+    relationId,
+  )
   await putQuestion(question, questionId)
 
   const source = createSource(questionId, TEACH_SOURCE_PREFIX)
@@ -56,7 +62,11 @@ export async function updateRelation({
   )
 
   await putRelation({
-    ...createNewRelation(question, answer, answerTarget, commentTarget),
+    ...createNewRelation(question, answer, {
+      answer: answerTarget,
+      answerWordIds,
+      comment: commentTarget,
+    }),
     relationId,
     questionId,
     createdAt,

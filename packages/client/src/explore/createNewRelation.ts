@@ -2,11 +2,16 @@ import type { AnswerDraft } from './types'
 import type { NewQuestion } from '../question/types'
 import type { NewRelation, Similarity, WordOrSentence } from '../relation/types'
 
+export interface RelationTargets {
+  answer: WordOrSentence | null
+  answerWordIds: number[]
+  comment: WordOrSentence | null
+}
+
 export function createNewRelation(
   question: NewQuestion,
   answer: AnswerDraft,
-  answerTarget: WordOrSentence | null,
-  commentTarget: WordOrSentence | null,
+  { answer: answerTarget, answerWordIds, comment: commentTarget }: RelationTargets,
 ): NewRelation {
   const comment = commentTarget ? { comment: commentTarget } : {}
   switch (question.type) {
@@ -64,6 +69,10 @@ export function createNewRelation(
         word3Id: question.word3Id,
         selection: requireSelection(answer.selection),
       }
+    case 'TernaryComposition': {
+      const [word1Id, word2Id] = requireAnswerWordIds(answerWordIds)
+      return { ...comment, type: question.type, word1Id, word2Id, word3Id: question.word3Id }
+    }
     case 'NamedAssociation':
       return {
         ...comment,
@@ -73,6 +82,14 @@ export function createNewRelation(
         word3Id: question.word3Id,
       }
   }
+}
+
+function requireAnswerWordIds(wordIds: number[]): [number, number] {
+  const [word1Id, word2Id] = wordIds
+  if (word1Id === undefined || word2Id === undefined) {
+    throw new Error('두 단어를 입력해야 합니다')
+  }
+  return [word1Id, word2Id]
 }
 
 function requireTarget(target: WordOrSentence | null): WordOrSentence {

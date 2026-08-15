@@ -52,6 +52,13 @@ export interface TernaryIsolationRelation extends RelationBase, TernaryWords {
 }
 
 /**
+ * `word3 = word1 + word2` (의미적 또는 문법적 합성)
+ */
+export interface TernaryCompositionRelation extends RelationBase, TernaryWords {
+  type: 'TernaryComposition'
+}
+
+/**
  * `word1`과 `word2` 사이에 `word3`의 유향관계가 있음
  */
 export interface NamedAssociationRelation extends RelationBase, TernaryWords {
@@ -66,6 +73,7 @@ export type Relation =
   | BinarySimilarityRelation
   | BinaryAssociationRelation
   | TernaryIsolationRelation
+  | TernaryCompositionRelation
   | NamedAssociationRelation
 
 export type NewRelation = DistributiveOmit<Relation, keyof Omit<RelationBase, 'comment'>>

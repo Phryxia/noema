@@ -120,6 +120,21 @@ describe('collectSearchTargets', () => {
     ])
   })
 
+  it('TernaryComposition의 세 단어는 word1, word2, word3 타깃이다', () => {
+    const relation: Relation = {
+      ...createBase(),
+      type: 'TernaryComposition',
+      word1Id: 1,
+      word2Id: 2,
+      word3Id: 3,
+    }
+    expect(collectSearchTargets(relation, WordMap, SentenceMap)).toEqual([
+      { field: 'word1', textType: 'word', value: '사과' },
+      { field: 'word2', textType: 'word', value: '배' },
+      { field: 'word3', textType: 'word', value: '포도' },
+    ])
+  })
+
   it('삭제되어 빈 문자열로 해석되는 단어와 문장은 타깃에서 제외한다', () => {
     const relation: Relation = {
       ...createBase(),

@@ -27,6 +27,8 @@ export interface SubjectWordSpec {
   count: number
   minCount: number
   isCountAdjustable?: boolean
+  layout?: 'directed'
+  placeholders?: string[]
 }
 
 export const SubjectWordSpecs: Record<QuestionType, SubjectWordSpec> = {
@@ -37,5 +39,6 @@ export const SubjectWordSpecs: Record<QuestionType, SubjectWordSpec> = {
   BinarySimilarity: { count: 2, minCount: 2 },
   BinaryAssociation: { count: 1, minCount: 1 },
   TernaryIsolation: { count: 3, minCount: 3 },
-  NamedAssociation: { count: 3, minCount: 3 },
+  TernaryComposition: { count: 1, minCount: 1, placeholders: ['단어 3'] },
+  NamedAssociation: { count: 3, minCount: 3, layout: 'directed' },
 }

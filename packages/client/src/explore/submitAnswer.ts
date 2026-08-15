@@ -1,4 +1,5 @@
 import { createNewRelation } from './createNewRelation'
+import { createAnswerWordIds } from './createAnswerWordIds'
 import { createSource, EXPLORE_SOURCE_PREFIX } from './createSource'
 import { getAnswerMode } from './getAnswerModes'
 import type { AnswerDraft, CommentDraft } from './types'
@@ -6,6 +7,8 @@ import { QUESTIONS_STORE, RELATIONS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import type { NewQuestion } from '../question/types'
+import { assertNotDuplicateTernaryRelation } from '../relation/assertNotDuplicateTernaryRelation'
+import { getTernaryWordIds } from '../relation/getTernaryWordIds'
 import type { NewRelation, Relation, WordOrSentence } from '../relation/types'
 import { createSentence } from '../sentence/sentence.service'
 import { recordCreation } from '../statistic/statistic.service'
@@ -25,6 +28,12 @@ export async function submitAnswer({
   comment,
   sourcePrefix,
 }: SubmitAnswerParams): Promise<void> {
+  const answerWordIds = await createAnswerWordIds(answer)
+  await assertNotDuplicateTernaryRelation(
+    question.type,
+    getTernaryWordIds(question, answerWordIds),
+  )
+
   const createdAt = new Date()
   const questionId = await createQuestion(question, createdAt)
   const source = createSource(questionId, sourcePrefix ?? EXPLORE_SOURCE_PREFIX)
@@ -34,7 +43,11 @@ export async function submitAnswer({
     source,
   )
   const commentTarget = await createTarget(comment.mode, comment.text, source)
-  const newRelation = createNewRelation(question, answer, answerTarget, commentTarget)
+  const newRelation = createNewRelation(question, answer, {
+    answer: answerTarget,
+    answerWordIds,
+    comment: commentTarget,
+  })
   await createRelation(newRelation, questionId, createdAt)
 }
 

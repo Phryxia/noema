@@ -6,7 +6,7 @@ import { QnaSearchForm } from './search/QnaSearchForm'
 import { QnaSearchResults } from './search/QnaSearchResults'
 import { RecentListSection } from '../recent/RecentListPage/RecentListSection'
 
-const routeApi = getRouteApi('/qna')
+const routeApi = getRouteApi('/relations/w2w')
 
 export function QnaPage(): ReactElement {
   const { q } = routeApi.useSearch()

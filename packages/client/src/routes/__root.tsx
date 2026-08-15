@@ -22,7 +22,7 @@ function RootLayout(): ReactElement {
                   <Link to="/relation/new">알려주기</Link>
                 </li>
                 <li>
-                  <Link to="/qna">관계</Link>
+                  <Link to="/relations/w2w">관계</Link>
                 </li>
                 <li>
                   <Link to="/tools">도구</Link>

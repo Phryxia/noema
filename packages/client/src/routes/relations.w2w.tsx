@@ -5,7 +5,7 @@ interface QnaSearchParams {
   q?: string
 }
 
-export const Route = createFileRoute('/qna')({
+export const Route = createFileRoute('/relations/w2w')({
   component: QnaPage,
   validateSearch: (search: Record<string, unknown>): QnaSearchParams => {
     if (typeof search.q === 'string' && search.q) {

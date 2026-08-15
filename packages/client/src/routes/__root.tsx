@@ -25,6 +25,9 @@ function RootLayout(): ReactElement {
                   <Link to="/qna">관계</Link>
                 </li>
                 <li>
+                  <Link to="/tools">도구</Link>
+                </li>
+                <li>
                   <Link to="/lab/embedding">실험</Link>
                 </li>
                 <li>

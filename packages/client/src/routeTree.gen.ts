@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as QnaRouteImport } from './routes/qna'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as DocumentDocumentIdRouteImport } from './routes/document.$documentId'
 import { Route as LabEmbeddingRouteImport } from './routes/lab.embedding'
 import { Route as RecentDocumentsRouteImport } from './routes/recent.documents'
@@ -41,6 +42,11 @@ const QnaRoute = QnaRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsRoute = ToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentDocumentIdRoute = DocumentDocumentIdRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
+  '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
+  '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/qna': typeof QnaRoute
   '/settings': typeof SettingsRoute
+  '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
   '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/qna'
     | '/settings'
+    | '/tools'
     | '/document/$documentId'
     | '/lab/embedding'
     | '/recent/documents'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/qna'
     | '/settings'
+    | '/tools'
     | '/document/$documentId'
     | '/lab/embedding'
     | '/recent/documents'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/qna'
     | '/settings'
+    | '/tools'
     | '/document/$documentId'
     | '/lab/embedding'
     | '/recent/documents'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   QnaRoute: typeof QnaRoute
   SettingsRoute: typeof SettingsRoute
+  ToolsRoute: typeof ToolsRoute
   DocumentDocumentIdRoute: typeof DocumentDocumentIdRoute
   LabEmbeddingRoute: typeof LabEmbeddingRoute
   RecentDocumentsRoute: typeof RecentDocumentsRoute
@@ -227,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/document/$documentId': {
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   QnaRoute: QnaRoute,
   SettingsRoute: SettingsRoute,
+  ToolsRoute: ToolsRoute,
   DocumentDocumentIdRoute: DocumentDocumentIdRoute,
   LabEmbeddingRoute: LabEmbeddingRoute,
   RecentDocumentsRoute: RecentDocumentsRoute,

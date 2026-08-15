@@ -27,7 +27,7 @@ export async function submitAnswer({
   answer,
   comment,
   sourcePrefix,
-}: SubmitAnswerParams): Promise<void> {
+}: SubmitAnswerParams): Promise<number> {
   const answerWordIds = await createAnswerWordIds(answer)
   await assertNotDuplicateTernaryRelation(
     question.type,
@@ -48,7 +48,7 @@ export async function submitAnswer({
     answerWordIds,
     comment: commentTarget,
   })
-  await createRelation(newRelation, questionId, createdAt)
+  return createRelation(newRelation, questionId, createdAt)
 }
 
 async function createQuestion(question: NewQuestion, createdAt: Date): Promise<number> {
@@ -79,7 +79,7 @@ async function createRelation(
   newRelation: NewRelation,
   questionId: number,
   createdAt: Date,
-): Promise<void> {
+): Promise<number> {
   const db = await openNoemaDB()
   const transaction = db.transaction(RELATIONS_STORE, 'readwrite')
   const relation: NewRelation & Pick<Relation, 'questionId' | 'createdAt'> = {
@@ -87,7 +87,10 @@ async function createRelation(
     questionId,
     createdAt,
   }
-  transaction.objectStore(RELATIONS_STORE).add(relation)
+  const relationId = (await awaitRequest<IDBValidKey>(
+    transaction.objectStore(RELATIONS_STORE).add(relation),
+  )) as number
   await awaitTransaction(transaction)
   recordCreation(db, 'relationCount')
+  return relationId
 }

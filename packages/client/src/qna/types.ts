@@ -1,13 +1,17 @@
 import type { QuestionType } from '../question/types'
 import type { Similarity } from '../relation/types'
 
-export interface QnaEntry {
-  id: number
+export interface QnaRowEntry {
+  id: number | null
   type: QuestionType
   createdAt: Date
   words: ResolvedWord[]
   answer: QnaAnswer
   comment: ResolvedText | null
+}
+
+export interface QnaEntry extends QnaRowEntry {
+  id: number
 }
 
 export type QnaAnswer =

@@ -1,7 +1,8 @@
 import type { ReactElement } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { QnaSearchSection } from '../../qna/search/QnaSearchSection'
+import { QnaTable } from '../../qna/QnaTable'
 import { searchExactQnaEntries } from '../../qna/search/qnaSearch.service'
+import { PagedSection } from '../../shared/PagedSection'
 import { WORD_RELATIONS_CACHE_MS, WORD_RELATIONS_QUERY_KEY } from '../consts'
 
 interface WordRelationsProps {
@@ -18,12 +19,12 @@ export function WordRelations({ word }: WordRelationsProps): ReactElement {
   })
 
   return (
-    <QnaSearchSection
+    <PagedSection
       title="연관 관계"
       state={{ entries: data ?? [], isPending, error }}
-      keyword={word}
       isLoaderVisible
       emptyMessage="연관된 관계가 없습니다."
+      renderTable={(pageEntries) => <QnaTable entries={pageEntries} keyword={word} />}
     />
   )
 }

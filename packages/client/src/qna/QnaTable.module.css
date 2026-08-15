@@ -10,10 +10,6 @@
 
   --warning-color: #d9822b;
 
-  .navigable {
-    cursor: pointer;
-  }
-
   .success td {
     background-color: color-mix(in srgb, var(--pico-ins-color) 20%, transparent);
   }

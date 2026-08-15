@@ -1,25 +1,29 @@
-import type { ReactElement } from 'react'
-import { useExploredPagination } from './useExploredPagination'
-import type { QnaSearchSectionState } from './useQnaSearch'
-import { PageNavigator } from '../../recent/RecentListPage/PageNavigator'
-import { RECENT_PAGE_SIZE } from '../../recent/consts'
-import { QnaTable } from '../QnaTable'
+import type { ReactElement, ReactNode } from 'react'
+import { PageNavigator } from '../recent/RecentListPage/PageNavigator'
+import { RECENT_PAGE_SIZE } from '../recent/consts'
+import { useExploredPagination } from '../qna/search/useExploredPagination'
 
-interface QnaSearchSectionProps {
-  title: string
-  state: QnaSearchSectionState
-  keyword: string
-  isLoaderVisible: boolean
-  emptyMessage?: string
+export interface PagedState<TEntry> {
+  entries: TEntry[]
+  isPending: boolean
+  error: Error | null
 }
 
-export function QnaSearchSection({
+interface PagedSectionProps<TEntry> {
+  title: string
+  state: PagedState<TEntry>
+  isLoaderVisible: boolean
+  emptyMessage?: string
+  renderTable: (pageEntries: TEntry[]) => ReactNode
+}
+
+export function PagedSection<TEntry>({
   title,
   state,
-  keyword,
   isLoaderVisible,
   emptyMessage,
-}: QnaSearchSectionProps): ReactElement | null {
+  renderTable,
+}: PagedSectionProps<TEntry>): ReactElement | null {
   const { entries, isPending, error } = state
   const totalPages = Math.max(1, Math.ceil(entries.length / RECENT_PAGE_SIZE))
   const { currentPage, pagination, goToPage } = useExploredPagination(totalPages)
@@ -31,7 +35,7 @@ export function QnaSearchSection({
     return <p aria-busy="true" />
   }
   if (error) {
-    return <p role="alert">검색 결과를 불러오지 못했습니다. {error.message}</p>
+    return <p role="alert">목록을 불러오지 못했습니다. {error.message}</p>
   }
   if (!entries.length) {
     if (!emptyMessage) {
@@ -52,7 +56,7 @@ export function QnaSearchSection({
   return (
     <section>
       <h3>{title}</h3>
-      <QnaTable entries={pageEntries} keyword={keyword} />
+      {renderTable(pageEntries)}
       <PageNavigator currentPage={currentPage} pagination={pagination} onChange={goToPage} />
     </section>
   )

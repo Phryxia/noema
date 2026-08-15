@@ -1,7 +1,7 @@
-import type { MouseEvent, ReactElement, ReactNode } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import type { ReactElement, ReactNode } from 'react'
 import classnames from 'classnames/bind'
 import { formatMinute } from '../recent/utils'
+import { RelationRow } from '../relation/RelationRow/RelationRow'
 import { getQuestionTypeLabel } from './labels'
 import { AnswerCell, CommentCell, QuestionCell } from './QnaCells'
 import type { QnaRowEntry } from './types'
@@ -29,20 +29,6 @@ export function QnaTable<T extends QnaRowEntry>({
   noteColumn,
   getRowTone,
 }: QnaTableProps<T>): ReactElement {
-  const navigate = useNavigate()
-
-  function createSelectHandler(relationId: number | null): (() => void) | null {
-    if (relationId === null) {
-      return null
-    }
-    return () =>
-      navigate({
-        to: '/relation/$relationId',
-        params: { relationId: String(relationId) },
-        search: true,
-      })
-  }
-
   return (
     <table className={cx('root')}>
       <thead>
@@ -68,7 +54,6 @@ export function QnaTable<T extends QnaRowEntry>({
               )
             }
             tone={getRowTone?.(entry)}
-            onSelect={createSelectHandler(entry.id)}
           />
         ))}
       </tbody>
@@ -81,19 +66,11 @@ interface QnaRowProps {
   keyword?: string
   note: ReactNode
   tone?: QnaRowTone
-  onSelect: (() => void) | null
 }
 
-function QnaRow({ entry, keyword, note, tone, onSelect }: QnaRowProps): ReactElement {
-  function handleClick(event: MouseEvent<HTMLTableRowElement>): void {
-    if (!onSelect || (event.target as HTMLElement).closest('a')) {
-      return
-    }
-    onSelect()
-  }
-
+function QnaRow({ entry, keyword, note, tone }: QnaRowProps): ReactElement {
   return (
-    <tr className={cx(tone, { navigable: !!onSelect })} onClick={handleClick}>
+    <RelationRow relationId={entry.id} className={cx(tone)}>
       <td className={cx('type')}>{getQuestionTypeLabel(entry.type)}</td>
       <td className={cx('question')}>
         <QuestionCell words={entry.words} keyword={keyword} />
@@ -103,6 +80,6 @@ function QnaRow({ entry, keyword, note, tone, onSelect }: QnaRowProps): ReactEle
       </td>
       <td className={cx('comment')}>{note}</td>
       <td className={cx('date')}>{formatMinute(entry.createdAt)}</td>
-    </tr>
+    </RelationRow>
   )
 }

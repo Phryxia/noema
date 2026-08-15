@@ -35,7 +35,7 @@ export function WordEditor({
     handleBlur,
     focusSuggestion,
     focusField,
-  } = useSuggestionFocus<HTMLFormElement>()
+  } = useSuggestionFocus()
   const replacementRef = useRef<string | null>(null)
 
   const { draft, setDraft, canSave, save, remove } = useWriterForm({
@@ -72,20 +72,22 @@ export function WordEditor({
 
   return (
     <>
-      <form ref={rootRef} onSubmit={handleSubmit} onFocus={handleFocus} onBlur={handleBlur}>
-        <WordField
-          value={draft.value}
-          isEditable
-          onChange={(value) => setDraft({ value })}
-          onArrowDown={focusSuggestion}
-        />
-        <WordSuggestion
-          ref={suggestionRef}
-          keyword={draft.value}
-          n={16}
-          isVisible={isFocused}
-          onExitUp={focusField}
-        />
+      <form onSubmit={handleSubmit}>
+        <div ref={rootRef} onFocus={handleFocus} onBlur={handleBlur}>
+          <WordField
+            value={draft.value}
+            isEditable
+            onChange={(value) => setDraft({ value })}
+            onArrowDown={focusSuggestion}
+          />
+          <WordSuggestion
+            ref={suggestionRef}
+            keyword={draft.value}
+            n={16}
+            isVisible={isFocused}
+            onExitUp={focusField}
+          />
+        </div>
         <WriterActions
           isEditing
           canSave={canSave}

@@ -11,9 +11,10 @@ const cx = classnames.bind(styles)
 
 interface QnaTableProps {
   entries: QnaEntry[]
+  keyword?: string
 }
 
-export function QnaTable({ entries }: QnaTableProps): ReactElement {
+export function QnaTable({ entries, keyword }: QnaTableProps): ReactElement {
   const navigate = useNavigate()
 
   return (
@@ -32,6 +33,7 @@ export function QnaTable({ entries }: QnaTableProps): ReactElement {
           <QnaRow
             key={entry.id}
             entry={entry}
+            keyword={keyword}
             onSelect={() =>
               navigate({
                 to: '/relation/$relationId',
@@ -48,10 +50,11 @@ export function QnaTable({ entries }: QnaTableProps): ReactElement {
 
 interface QnaRowProps {
   entry: QnaEntry
+  keyword?: string
   onSelect: () => void
 }
 
-function QnaRow({ entry, onSelect }: QnaRowProps): ReactElement {
+function QnaRow({ entry, keyword, onSelect }: QnaRowProps): ReactElement {
   function handleClick(event: MouseEvent<HTMLTableRowElement>): void {
     if ((event.target as HTMLElement).closest('a')) {
       return
@@ -63,13 +66,13 @@ function QnaRow({ entry, onSelect }: QnaRowProps): ReactElement {
     <tr className={cx('row')} onClick={handleClick}>
       <td className={cx('type')}>{getQuestionTypeLabel(entry.type)}</td>
       <td className={cx('question')}>
-        <QuestionCell words={entry.words} />
+        <QuestionCell words={entry.words} keyword={keyword} />
       </td>
       <td className={cx('answer')}>
-        <AnswerCell answer={entry.answer} />
+        <AnswerCell answer={entry.answer} keyword={keyword} />
       </td>
       <td className={cx('comment')}>
-        <CommentCell comment={entry.comment} />
+        <CommentCell comment={entry.comment} keyword={keyword} />
       </td>
       <td className={cx('date')}>{formatMinute(entry.createdAt)}</td>
     </tr>

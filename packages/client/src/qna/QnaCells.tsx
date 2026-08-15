@@ -3,20 +3,22 @@ import type { ReactElement } from 'react'
 import { Link } from '@tanstack/react-router'
 import { VALUE_PREVIEW_LENGTH } from '../recent/consts'
 import { createPreview } from '../recent/utils'
+import { HighlightedText } from '../shared/HighlightedText'
 import { getSimilarityLabel } from './labels'
 import type { QnaAnswer, ResolvedText, ResolvedWord } from './types'
 
 interface QuestionCellProps {
   words: ResolvedWord[]
+  keyword?: string
 }
 
-export function QuestionCell({ words }: QuestionCellProps): ReactElement {
+export function QuestionCell({ words, keyword }: QuestionCellProps): ReactElement {
   return (
     <>
       {words.map((word, index) => (
         <Fragment key={index}>
           {index > 0 && ', '}
-          <WordLink word={word} />
+          <WordLink word={word} keyword={keyword} />
         </Fragment>
       ))}
     </>
@@ -25,9 +27,10 @@ export function QuestionCell({ words }: QuestionCellProps): ReactElement {
 
 interface AnswerCellProps {
   answer: QnaAnswer
+  keyword?: string
 }
 
-export function AnswerCell({ answer }: AnswerCellProps): ReactElement {
+export function AnswerCell({ answer, keyword }: AnswerCellProps): ReactElement {
   if (answer.kind === 'skip') {
     return <>회피</>
   }
@@ -35,51 +38,57 @@ export function AnswerCell({ answer }: AnswerCellProps): ReactElement {
     return <>{getSimilarityLabel(answer.similarity)}</>
   }
   if (answer.kind === 'selection') {
-    return <WordLink word={answer.word} />
+    return <WordLink word={answer.word} keyword={keyword} />
   }
-  return <ResolvedTextLink text={answer.text} />
+  return <ResolvedTextLink text={answer.text} keyword={keyword} />
 }
 
 interface CommentCellProps {
   comment: ResolvedText | null
+  keyword?: string
 }
 
-export function CommentCell({ comment }: CommentCellProps): ReactElement {
+export function CommentCell({ comment, keyword }: CommentCellProps): ReactElement {
   if (!comment) {
     return <></>
   }
-  return <ResolvedTextLink text={comment} />
+  return <ResolvedTextLink text={comment} keyword={keyword} />
 }
 
 interface WordLinkProps {
   word: ResolvedWord
+  keyword?: string
 }
 
-function WordLink({ word }: WordLinkProps): ReactElement {
+function WordLink({ word, keyword }: WordLinkProps): ReactElement {
   if (!word.value) {
     return <>(삭제됨)</>
   }
   return (
     <Link to="/word/$word" params={{ word: word.value }}>
-      {word.value}
+      <HighlightedText text={word.value} keyword={keyword} />
     </Link>
   )
 }
 
 interface ResolvedTextLinkProps {
   text: ResolvedText
+  keyword?: string
 }
 
-function ResolvedTextLink({ text }: ResolvedTextLinkProps): ReactElement {
+function ResolvedTextLink({ text, keyword }: ResolvedTextLinkProps): ReactElement {
   if (text.type === 'word') {
-    return <WordLink word={text.word} />
+    return <WordLink word={text.word} keyword={keyword} />
   }
   if (!text.value) {
     return <>(삭제됨)</>
   }
   return (
     <Link to="/sentence/$sentenceId" params={{ sentenceId: String(text.sentenceId) }}>
-      {createPreview(text.value, VALUE_PREVIEW_LENGTH)}
+      <HighlightedText
+        text={createPreview(text.value, VALUE_PREVIEW_LENGTH)}
+        keyword={keyword}
+      />
     </Link>
   )
 }

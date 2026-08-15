@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { WORD_NODE_QUERY_KEY } from '../word/consts'
 import { getWordNode } from '../word/word.service'
 import { WordEditor } from '../word/WordEditor/WordEditor'
+import { WordRelations } from '../word/WordRelations/WordRelations'
 import { MetaFields } from '../meta/MetaFields/MetaFields'
 
 export const Route = createFileRoute('/word/$word')({
@@ -42,6 +43,7 @@ function WordPage(): ReactElement {
         onRenamed={(newValue) => navigate({ to: '/word/$word', params: { word: newValue } })}
         onDeleted={() => navigate({ to: '/' })}
       />
+      <WordRelations key={word} word={word} />
     </article>
   )
 }

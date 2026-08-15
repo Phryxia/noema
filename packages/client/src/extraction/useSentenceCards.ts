@@ -10,12 +10,15 @@ import {
   updateCardValue,
 } from './sentenceCardList'
 import type { SentenceCard, SentenceCardList } from './sentenceCardList'
+import { computeArrivalCaret } from './SentenceCard/arrowNavigation'
+import type { ArrowNavigation } from './SentenceCard/arrowNavigation'
 
 export interface SentenceCards {
   cards: SentenceCard[]
   changeCard: (id: number, value: string) => void
   mergeWithPrevious: (id: number) => void
   removeCard: (id: number) => void
+  focusAdjacentCard: (id: number, navigation: ArrowNavigation) => void
   registerTextarea: (id: number, element: HTMLTextAreaElement | null) => void
 }
 
@@ -96,5 +99,28 @@ export function useSentenceCards(getInitialValues: () => string[]): SentenceCard
     [focusCard],
   )
 
-  return { cards: listCards(list), changeCard, mergeWithPrevious, removeCard, registerTextarea }
+  const focusAdjacentCard = useCallback(
+    (id: number, navigation: ArrowNavigation) => {
+      const card = listRef.current.nodes.get(id)
+      const targetId = navigation.direction === 'next' ? card?.nextId : card?.prevId
+      if (targetId === null || targetId === undefined) {
+        return
+      }
+      const element = textareasRef.current.get(targetId)
+      if (!element) {
+        return
+      }
+      focusCard(targetId, computeArrivalCaret(element, navigation))
+    },
+    [focusCard],
+  )
+
+  return {
+    cards: listCards(list),
+    changeCard,
+    mergeWithPrevious,
+    removeCard,
+    focusAdjacentCard,
+    registerTextarea,
+  }
 }

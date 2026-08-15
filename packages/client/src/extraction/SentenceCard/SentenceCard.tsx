@@ -1,6 +1,8 @@
 import type { KeyboardEvent, ReactElement } from 'react'
 import { memo, useRef } from 'react'
 import { SentenceField } from '../../sentence/SentenceField/SentenceField'
+import { computeArrowNavigation } from './arrowNavigation'
+import type { ArrowNavigation } from './arrowNavigation'
 
 const CARD_ROWS = 1
 
@@ -12,6 +14,7 @@ interface SentenceCardProps {
   onChange: (id: number, value: string) => void
   onMergeWithPrevious: (id: number) => void
   onRemove: (id: number) => void
+  onNavigate: (id: number, navigation: ArrowNavigation) => void
   onRegister: (id: number, element: HTMLTextAreaElement | null) => void
 }
 
@@ -21,6 +24,7 @@ export const SentenceCard = memo(function SentenceCard({
   onChange,
   onMergeWithPrevious,
   onRemove,
+  onNavigate,
   onRegister,
 }: SentenceCardProps): ReactElement {
   const pendingBackspace = useRef<PendingBackspace>(null)
@@ -30,6 +34,12 @@ export const SentenceCard = memo(function SentenceCard({
       return
     }
     pendingBackspace.current = computePendingBackspace(event, value)
+    const navigation = computeArrowNavigation(event)
+    if (!navigation) {
+      return
+    }
+    event.preventDefault()
+    onNavigate(id, navigation)
   }
 
   function handleKeyUp(event: KeyboardEvent<HTMLTextAreaElement>): void {

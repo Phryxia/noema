@@ -17,8 +17,14 @@ interface SentenceExtractorProps {
 }
 
 export function SentenceExtractor({ document }: SentenceExtractorProps): ReactElement {
-  const { cards, changeCard, mergeWithPrevious, removeCard, registerTextarea } =
-    useSentenceCards(() => extractSentences(document.value))
+  const {
+    cards,
+    changeCard,
+    mergeWithPrevious,
+    removeCard,
+    focusAdjacentCard,
+    registerTextarea,
+  } = useSentenceCards(() => extractSentences(document.value))
   const queryClient = useQueryClient()
   const { mutate: submit, isPending: isSubmitting } = useMutation({
     mutationFn: () =>
@@ -42,6 +48,8 @@ export function SentenceExtractor({ document }: SentenceExtractorProps): ReactEl
           분할: 쪼갤 자리에서 Enter를 3번 누른다.
           <br />
           삭제: 빈 카드에서 Backspace를 누른다.
+          <br />
+          이동: 카드의 끝/처음/마지막 행/첫 행에서 화살표 키를 누른다.
         </small>
       </p>
       <div className={cx('cards')}>
@@ -53,6 +61,7 @@ export function SentenceExtractor({ document }: SentenceExtractorProps): ReactEl
             onChange={changeCard}
             onMergeWithPrevious={mergeWithPrevious}
             onRemove={removeCard}
+            onNavigate={focusAdjacentCard}
             onRegister={registerTextarea}
           />
         ))}

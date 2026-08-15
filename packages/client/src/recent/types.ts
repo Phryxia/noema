@@ -1,6 +1,6 @@
 export interface RecentSource<TEntry = RecentEntry, TRow = TEntry> {
   storeName: string
-  toEntry: (id: number, stored: unknown) => TRow
+  toEntry: (id: number, stored: unknown) => TRow | null
   hydrate?: (rows: TRow[]) => Promise<TEntry[]>
 }
 

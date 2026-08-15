@@ -1,8 +1,8 @@
-import type { Relation, WordOrSentence } from '../../relation/types'
+import type { WordRelation, WordOrSentence } from '../../relation/types'
 import type { SearchField, SearchTarget } from './types'
 
 export function collectSearchTargets(
-  relation: Relation,
+  relation: WordRelation,
   wordMap: Map<number, string>,
   sentenceMap: Map<number, string>,
 ): SearchTarget[] {
@@ -14,7 +14,7 @@ export function collectSearchTargets(
 }
 
 function collectQuestionWordTargets(
-  relation: Relation,
+  relation: WordRelation,
   wordMap: Map<number, string>,
 ): SearchTarget[] {
   if (relation.type === 'WordExplain') {
@@ -34,7 +34,7 @@ function collectQuestionWordTargets(
 }
 
 function collectTextTargets(
-  relation: Relation,
+  relation: WordRelation,
   wordMap: Map<number, string>,
   sentenceMap: Map<number, string>,
 ): SearchTarget[] {

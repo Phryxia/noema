@@ -15,13 +15,13 @@ import { TEACH_SOURCE_PREFIX } from './consts'
 import { createRelationQuestion } from './createRelationQuestion'
 import { getRelationAnswer } from './getRelationAnswer'
 import { getTernaryWordIds } from './getTernaryWordIds'
-import type { NewRelation, Relation, WordOrSentence } from './types'
+import type { NewRelation, WordRelation, WordOrSentence } from './types'
 
 type StoredRelation = NewRelation &
-  Pick<Relation, 'relationId' | 'questionId' | 'createdAt' | 'modifiedAt'>
+  Pick<WordRelation, 'relationId' | 'questionId' | 'createdAt' | 'modifiedAt'>
 
 export interface UpdateRelationParams {
-  relation: Relation
+  relation: WordRelation
   words: string[]
   answer: AnswerDraft
   comment: CommentDraft

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { computeExactMatches, computePartialMatches } from './computeSearchMatches'
 import type { QnaSearchSpace } from './types'
-import type { Relation } from '../../relation/types'
+import type { WordRelation } from '../../relation/types'
 
-function createSpace(relations: Relation[], words: [number, string][]): QnaSearchSpace {
+function createSpace(relations: WordRelation[], words: [number, string][]): QnaSearchSpace {
   return { relations, wordMap: new Map(words), sentenceMap: new Map() }
 }
 
@@ -12,7 +12,7 @@ function createAssociation(
   word1Id: number,
   word2Id: number,
   createdAt = 0,
-): Relation {
+): WordRelation {
   return {
     relationId,
     questionId: relationId,
@@ -23,7 +23,7 @@ function createAssociation(
   }
 }
 
-function getIds(relations: Relation[]): number[] {
+function getIds(relations: WordRelation[]): number[] {
   return relations.map((relation) => relation.relationId)
 }
 
@@ -50,7 +50,7 @@ describe('computeExactMatches', () => {
   })
 
   it('단어형 answer 일치가 문장형 answer 일치보다 앞선다', () => {
-    const wordAnswer: Relation = {
+    const wordAnswer: WordRelation = {
       relationId: 1,
       questionId: 1,
       createdAt: new Date(0),
@@ -58,7 +58,7 @@ describe('computeExactMatches', () => {
       wordId: 2,
       answer: { type: 'word', id: 1 },
     }
-    const sentenceAnswer: Relation = {
+    const sentenceAnswer: WordRelation = {
       relationId: 2,
       questionId: 2,
       createdAt: new Date(0),

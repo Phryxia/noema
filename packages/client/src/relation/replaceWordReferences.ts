@@ -1,7 +1,7 @@
 import { RELATIONS_STORE } from '../db/consts'
 import { awaitRequest } from '../db/utils'
 import { CompoundWordIndexNames, NumericWordIndexNames } from './consts'
-import type { Relation, WordOrSentence } from './types'
+import type { WordRelation, WordOrSentence } from './types'
 
 export async function replaceWordReferences(
   transaction: IDBTransaction,
@@ -9,7 +9,7 @@ export async function replaceWordReferences(
   toId: number,
 ): Promise<void> {
   const relationStore = transaction.objectStore(RELATIONS_STORE)
-  const targets = new Map<number, Relation>()
+  const targets = new Map<number, WordRelation>()
 
   for (const indexName of NumericWordIndexNames) {
     await collectRelations(relationStore.index(indexName), fromId, targets)
@@ -27,13 +27,13 @@ export async function replaceWordReferences(
 async function collectRelations(
   index: IDBIndex,
   key: IDBValidKey,
-  targets: Map<number, Relation>,
+  targets: Map<number, WordRelation>,
 ): Promise<void> {
-  const relations = await awaitRequest<Relation[]>(index.getAll(key))
+  const relations = await awaitRequest<WordRelation[]>(index.getAll(key))
   relations.forEach((relation) => targets.set(relation.relationId, relation))
 }
 
-function replaceIdsInRelation(relation: Relation, fromId: number, toId: number): void {
+function replaceIdsInRelation(relation: WordRelation, fromId: number, toId: number): void {
   if ('wordId' in relation && relation.wordId === fromId) {
     relation.wordId = toId
   }

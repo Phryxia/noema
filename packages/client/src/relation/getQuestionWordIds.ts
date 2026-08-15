@@ -1,6 +1,6 @@
-import type { Relation } from './types'
+import type { WordRelation } from './types'
 
-export function getQuestionWordIds(relation: Relation): number[] {
+export function getQuestionWordIds(relation: WordRelation): number[] {
   if (relation.type === 'WordExplain') {
     return [relation.wordId]
   }

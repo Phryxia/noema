@@ -9,7 +9,7 @@ import { awaitRequest, awaitTransaction } from '../db/utils'
 import type { NewQuestion } from '../question/types'
 import { assertNotDuplicateTernaryRelation } from '../relation/assertNotDuplicateTernaryRelation'
 import { getTernaryWordIds } from '../relation/getTernaryWordIds'
-import type { NewRelation, Relation, WordOrSentence } from '../relation/types'
+import type { NewRelation, WordRelation, WordOrSentence } from '../relation/types'
 import { createSentence } from '../sentence/sentence.service'
 import { recordCreation } from '../statistic/statistic.service'
 import { createWord } from '../word/word.service'
@@ -82,7 +82,7 @@ async function createRelation(
 ): Promise<number> {
   const db = await openNoemaDB()
   const transaction = db.transaction(RELATIONS_STORE, 'readwrite')
-  const relation: NewRelation & Pick<Relation, 'questionId' | 'createdAt'> = {
+  const relation: NewRelation & Pick<WordRelation, 'questionId' | 'createdAt'> = {
     ...newRelation,
     questionId,
     createdAt,

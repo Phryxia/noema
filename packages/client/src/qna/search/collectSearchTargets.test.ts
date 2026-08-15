@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { collectSearchTargets } from './collectSearchTargets'
-import type { Relation } from '../../relation/types'
+import type { WordRelation } from '../../relation/types'
 
 const WordMap = new Map([
   [1, '사과'],
@@ -19,7 +19,7 @@ function createBase(relationId = 1): {
 
 describe('collectSearchTargets', () => {
   it('WordExplain에서 word, 단어형 answer, 문장형 comment 타깃을 만든다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'WordExplain',
       wordId: 1,
@@ -34,7 +34,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('WordsUsage의 wordIds 원소마다 word 타깃을 만들고 answer가 null이면 answer 타깃이 없다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'WordsUsage',
       wordIds: [1, 2, 3],
@@ -48,7 +48,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('UnaryProperty의 word2는 answer가 아니라 word2 타깃이다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'UnaryProperty',
       word1Id: 1,
@@ -61,7 +61,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('BinaryCommon에서 word1, word2, 문장형 answer 타깃을 만든다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'BinaryCommon',
       word1Id: 1,
@@ -76,7 +76,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('BinarySimilarity의 similarity는 타깃이 되지 않는다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'BinarySimilarity',
       word1Id: 1,
@@ -90,7 +90,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('BinaryAssociation의 word2는 answer가 아니라 word2 타깃이다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'BinaryAssociation',
       word1Id: 1,
@@ -103,7 +103,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('TernaryIsolation의 selection은 별도 타깃을 만들지 않는다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'TernaryIsolation',
       word1Id: 1,
@@ -119,7 +119,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('NamedAssociation의 word3(관계 이름)는 word3 타깃이다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'NamedAssociation',
       word1Id: 1,
@@ -134,7 +134,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('TernaryComposition의 세 단어는 word1, word2, word3 타깃이다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'TernaryComposition',
       word1Id: 1,
@@ -149,7 +149,7 @@ describe('collectSearchTargets', () => {
   })
 
   it('삭제되어 빈 문자열로 해석되는 단어와 문장은 타깃에서 제외한다', () => {
-    const relation: Relation = {
+    const relation: WordRelation = {
       ...createBase(),
       type: 'WordExplain',
       wordId: 99,

@@ -20,6 +20,7 @@ import { Route as RecentSentencesRouteImport } from './routes/recent.sentences'
 import { Route as RecentWordsRouteImport } from './routes/recent.words'
 import { Route as RelationRelationIdRouteImport } from './routes/relation.$relationId'
 import { Route as RelationNewRouteImport } from './routes/relation.new'
+import { Route as RelationsD2sRouteImport } from './routes/relations.d2s'
 import { Route as RelationsW2wRouteImport } from './routes/relations.w2w'
 import { Route as SentenceSentenceIdRouteImport } from './routes/sentence.$sentenceId'
 import { Route as WordWordRouteImport } from './routes/word.$word'
@@ -79,6 +80,11 @@ const RelationNewRoute = RelationNewRouteImport.update({
   path: '/relation/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RelationsD2sRoute = RelationsD2sRouteImport.update({
+  id: '/relations/d2s',
+  path: '/relations/d2s',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RelationsW2wRoute = RelationsW2wRouteImport.update({
   id: '/relations/w2w',
   path: '/relations/w2w',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/recent/words': typeof RecentWordsRoute
   '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
+  '/relations/d2s': typeof RelationsD2sRoute
   '/relations/w2w': typeof RelationsW2wRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/recent/words': typeof RecentWordsRoute
   '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
+  '/relations/d2s': typeof RelationsD2sRoute
   '/relations/w2w': typeof RelationsW2wRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/recent/words': typeof RecentWordsRoute
   '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
+  '/relations/d2s': typeof RelationsD2sRoute
   '/relations/w2w': typeof RelationsW2wRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/recent/words'
     | '/relation/$relationId'
     | '/relation/new'
+    | '/relations/d2s'
     | '/relations/w2w'
     | '/sentence/$sentenceId'
     | '/word/$word'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/recent/words'
     | '/relation/$relationId'
     | '/relation/new'
+    | '/relations/d2s'
     | '/relations/w2w'
     | '/sentence/$sentenceId'
     | '/word/$word'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/recent/words'
     | '/relation/$relationId'
     | '/relation/new'
+    | '/relations/d2s'
     | '/relations/w2w'
     | '/sentence/$sentenceId'
     | '/word/$word'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   RecentWordsRoute: typeof RecentWordsRoute
   RelationRelationIdRoute: typeof RelationRelationIdRoute
   RelationNewRoute: typeof RelationNewRoute
+  RelationsD2sRoute: typeof RelationsD2sRoute
   RelationsW2wRoute: typeof RelationsW2wRoute
   SentenceSentenceIdRoute: typeof SentenceSentenceIdRoute
   WordWordRoute: typeof WordWordRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RelationNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/relations/d2s': {
+      id: '/relations/d2s'
+      path: '/relations/d2s'
+      fullPath: '/relations/d2s'
+      preLoaderRoute: typeof RelationsD2sRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/relations/w2w': {
       id: '/relations/w2w'
       path: '/relations/w2w'
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecentWordsRoute: RecentWordsRoute,
   RelationRelationIdRoute: RelationRelationIdRoute,
   RelationNewRoute: RelationNewRoute,
+  RelationsD2sRoute: RelationsD2sRoute,
   RelationsW2wRoute: RelationsW2wRoute,
   SentenceSentenceIdRoute: SentenceSentenceIdRoute,
   WordWordRoute: WordWordRoute,

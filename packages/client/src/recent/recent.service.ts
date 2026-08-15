@@ -59,7 +59,7 @@ interface RecentRowPage<TRow> {
 function readPage<TRow>(
   request: IDBRequest<IDBCursorWithValue | null>,
   from: RecentCursor | null,
-  toEntry: (id: number, stored: unknown) => TRow,
+  toEntry: (id: number, stored: unknown) => TRow | null,
 ): Promise<RecentRowPage<TRow>> {
   return new Promise<RecentRowPage<TRow>>((resolve, reject) => {
     const rows: TRow[] = []
@@ -81,7 +81,10 @@ function readPage<TRow>(
         resolve({ rows, nextCursor: toCursor(cursor) })
         return
       }
-      rows.push(toEntry(cursor.primaryKey as number, cursor.value))
+      const row = toEntry(cursor.primaryKey as number, cursor.value)
+      if (row !== null) {
+        rows.push(row)
+      }
       cursor.continue()
     }
 

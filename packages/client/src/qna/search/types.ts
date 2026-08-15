@@ -1,4 +1,4 @@
-import type { Relation } from '../../relation/types'
+import type { WordRelation } from '../../relation/types'
 
 export type SearchField = 'word' | 'word1' | 'word2' | 'word3' | 'answer' | 'comment'
 
@@ -11,7 +11,7 @@ export interface SearchTarget {
 }
 
 export interface QnaSearchSpace {
-  relations: Relation[]
+  relations: WordRelation[]
   wordMap: Map<number, string>
   sentenceMap: Map<number, string>
 }

@@ -1,3 +1,5 @@
+import { hydrateD2sEntries } from '../d2s/hydrateD2sEntries'
+import type { D2sEntry } from '../d2s/types'
 import { EmptyAnswer, EmptyComment } from '../explore/consts'
 import type { AnswerDraft, CommentDraft } from '../explore/types'
 import { getSentence } from '../sentence/sentence.service'
@@ -8,13 +10,22 @@ import { getRelation } from './getRelation'
 import { getRelationAnswer } from './getRelationAnswer'
 import { getRelationAnswerWordIds } from './getRelationAnswerWordIds'
 import { resizeWords } from './resizeWords'
-import type { Relation, WordOrSentence } from './types'
+import type { DocumentToSentenceRelation, WordOrSentence, WordRelation } from './types'
 
-export interface RelationSnapshot {
-  relation: Relation
+export type RelationSnapshot = WordRelationSnapshot | DocumentToSentenceSnapshot
+
+export interface WordRelationSnapshot {
+  kind: 'word'
+  relation: WordRelation
   words: string[]
   answer: AnswerDraft
   comment: CommentDraft
+}
+
+export interface DocumentToSentenceSnapshot {
+  kind: 'd2s'
+  relation: DocumentToSentenceRelation
+  entry: D2sEntry
 }
 
 export async function loadRelationSnapshot(
@@ -24,8 +35,13 @@ export async function loadRelationSnapshot(
   if (!relation) {
     return null
   }
+  if (relation.type === 'DocumentToSentence') {
+    const [entry] = await hydrateD2sEntries([relation])
+    return { kind: 'd2s', relation, entry }
+  }
   const values = await getWordValues(getQuestionWordIds(relation))
   return {
+    kind: 'word',
     relation,
     words: resizeWords(values, Math.max(values.length, SubjectWordSpecs[relation.type].count)),
     answer: await createAnswerDraft(relation),
@@ -33,7 +49,7 @@ export async function loadRelationSnapshot(
   }
 }
 
-async function createAnswerDraft(relation: Relation): Promise<AnswerDraft> {
+async function createAnswerDraft(relation: WordRelation): Promise<AnswerDraft> {
   if (relation.type === 'BinarySimilarity') {
     return { ...EmptyAnswer, similarity: relation.similarity }
   }

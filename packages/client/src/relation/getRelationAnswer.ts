@@ -1,6 +1,6 @@
-import type { Relation, WordOrSentence } from './types'
+import type { WordRelation, WordOrSentence } from './types'
 
-export function getRelationAnswer(relation: Relation): WordOrSentence | null {
+export function getRelationAnswer(relation: WordRelation): WordOrSentence | null {
   if (relation.type === 'UnaryProperty' || relation.type === 'BinaryAssociation') {
     return { type: 'word', id: relation.word2Id }
   }

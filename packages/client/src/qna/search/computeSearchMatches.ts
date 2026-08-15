@@ -1,14 +1,14 @@
 import { collectSearchTargets } from './collectSearchTargets'
 import { comparePartialTargets, getSearchTargetRank } from './compareSearchTargets'
 import type { QnaSearchSpace, SearchTarget } from './types'
-import type { Relation } from '../../relation/types'
+import type { WordRelation } from '../../relation/types'
 
 interface RelationMatch {
-  relation: Relation
+  relation: WordRelation
   target: SearchTarget
 }
 
-export function computeExactMatches(space: QnaSearchSpace, query: string): Relation[] {
+export function computeExactMatches(space: QnaSearchSpace, query: string): WordRelation[] {
   const matches = collectMatches(space, (targets) => findBestExactTarget(targets, query))
   matches.sort(
     (a, b) =>
@@ -17,7 +17,7 @@ export function computeExactMatches(space: QnaSearchSpace, query: string): Relat
   return matches.map((match) => match.relation)
 }
 
-export function computePartialMatches(space: QnaSearchSpace, query: string): Relation[] {
+export function computePartialMatches(space: QnaSearchSpace, query: string): WordRelation[] {
   const matches = collectMatches(space, (targets) => {
     if (findBestExactTarget(targets, query)) {
       return null

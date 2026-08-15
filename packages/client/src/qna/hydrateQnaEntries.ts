@@ -1,12 +1,12 @@
 import { getQuestionWordIds } from '../relation/getQuestionWordIds'
 import { getRelationAnswer } from '../relation/getRelationAnswer'
 import { getRelationAnswerWordIds } from '../relation/getRelationAnswerWordIds'
-import type { Relation, WordOrSentence } from '../relation/types'
-import { getSentence } from '../sentence/sentence.service'
+import type { WordRelation, WordOrSentence } from '../relation/types'
+import { resolveSentenceMap } from '../sentence/resolveSentenceMap'
 import { getWordValues } from '../word/getWordValues'
 import type { QnaAnswer, QnaEntry, ResolvedText, ResolvedWord } from './types'
 
-export async function hydrateQnaEntries(relations: Relation[]): Promise<QnaEntry[]> {
+export async function hydrateQnaEntries(relations: WordRelation[]): Promise<QnaEntry[]> {
   const wordIds = collectWordIds(relations)
   const sentenceIds = collectSentenceIds(relations)
   const [wordMap, sentenceMap] = await Promise.all([
@@ -16,7 +16,7 @@ export async function hydrateQnaEntries(relations: Relation[]): Promise<QnaEntry
   return relations.map((relation) => toQnaEntry(relation, wordMap, sentenceMap))
 }
 
-export function collectWordIds(relations: Relation[]): number[] {
+export function collectWordIds(relations: WordRelation[]): number[] {
   const ids = new Set<number>()
   for (const relation of relations) {
     getQuestionWordIds(relation).forEach((id) => ids.add(id))
@@ -30,7 +30,7 @@ export function collectWordIds(relations: Relation[]): number[] {
   return Array.from(ids)
 }
 
-export function collectSentenceIds(relations: Relation[]): number[] {
+export function collectSentenceIds(relations: WordRelation[]): number[] {
   const ids = new Set<number>()
   for (const relation of relations) {
     getTextRefs(relation).forEach((ref) => {
@@ -42,7 +42,7 @@ export function collectSentenceIds(relations: Relation[]): number[] {
   return Array.from(ids)
 }
 
-function getTextRefs(relation: Relation): WordOrSentence[] {
+function getTextRefs(relation: WordRelation): WordOrSentence[] {
   const refs: WordOrSentence[] = []
   const answer = getRelationAnswer(relation)
   if (answer) {
@@ -59,13 +59,8 @@ export async function resolveWordMap(wordIds: number[]): Promise<Map<number, str
   return new Map(wordIds.map((id, index) => [id, values[index]]))
 }
 
-export async function resolveSentenceMap(sentenceIds: number[]): Promise<Map<number, string>> {
-  const sentences = await Promise.all(sentenceIds.map((id) => getSentence(id)))
-  return new Map(sentenceIds.map((id, index) => [id, sentences[index]?.value ?? '']))
-}
-
 function toQnaEntry(
-  relation: Relation,
+  relation: WordRelation,
   wordMap: Map<number, string>,
   sentenceMap: Map<number, string>,
 ): QnaEntry {
@@ -80,7 +75,7 @@ function toQnaEntry(
   }
 }
 
-function getDisplayWords(relation: Relation, words: ResolvedWord[]): ResolvedWord[] {
+function getDisplayWords(relation: WordRelation, words: ResolvedWord[]): ResolvedWord[] {
   if (relation.type === 'NamedAssociation') {
     return words.slice(0, 2)
   }
@@ -88,7 +83,7 @@ function getDisplayWords(relation: Relation, words: ResolvedWord[]): ResolvedWor
 }
 
 function buildAnswer(
-  relation: Relation,
+  relation: WordRelation,
   words: ResolvedWord[],
   wordMap: Map<number, string>,
   sentenceMap: Map<number, string>,

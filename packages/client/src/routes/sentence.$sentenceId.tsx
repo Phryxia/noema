@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { SentenceDocuments } from '../d2s/SentenceDocuments/SentenceDocuments'
 import { SENTENCE_QUERY_KEY } from '../sentence/consts'
 import { getSentence } from '../sentence/sentence.service'
 import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
@@ -40,6 +41,7 @@ function SentencePage(): ReactElement {
         sentence={sentence}
         onDelete={() => navigate({ to: '/' })}
       />
+      <SentenceDocuments key={sentence.sentenceId} sentenceId={sentence.sentenceId} />
     </article>
   )
 }

@@ -1,10 +1,11 @@
 import type { ReactElement } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { D2sRelationPage } from '../d2s/D2sRelationPage/D2sRelationPage'
 import { RELATION_QUERY_KEY } from '../relation/consts'
 import { deleteRelation } from '../relation/deleteRelation'
 import { loadRelationSnapshot } from '../relation/loadRelationSnapshot'
-import type { RelationSnapshot } from '../relation/loadRelationSnapshot'
+import type { WordRelationSnapshot } from '../relation/loadRelationSnapshot'
 import { RelationPage } from '../relation/RelationPage/RelationPage'
 import { updateRelation } from '../relation/updateRelation'
 import { useRelationEditor } from '../relation/useRelationEditor'
@@ -26,11 +27,14 @@ function RelationDetailPage(): ReactElement {
   if (!snapshot) {
     return <article>존재하지 않는 관계: {relationId}</article>
   }
+  if (snapshot.kind === 'd2s') {
+    return <D2sRelationPage key={relationId} snapshot={snapshot} />
+  }
   return <RelationEditor key={relationId} snapshot={snapshot} />
 }
 
 interface RelationEditorProps {
-  snapshot: RelationSnapshot
+  snapshot: WordRelationSnapshot
 }
 
 function RelationEditor({ snapshot }: RelationEditorProps): ReactElement {

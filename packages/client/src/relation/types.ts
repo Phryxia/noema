@@ -9,19 +9,28 @@ export type Similarity = -1 | -0.5 | 0 | 0.5 | 1
 
 export interface RelationBase {
   relationId: number
-  questionId: number
   createdAt: Date
   modifiedAt?: Date
+}
+
+export interface WordRelationBase extends RelationBase {
+  questionId: number
   comment?: WordOrSentence
 }
 
-export interface WordExplainRelation extends RelationBase {
+export interface DocumentToSentenceRelation extends RelationBase {
+  type: 'DocumentToSentence'
+  documentId: number
+  sentenceId: number
+}
+
+export interface WordExplainRelation extends WordRelationBase {
   type: 'WordExplain'
   wordId: number
   answer: WordOrSentence
 }
 
-export interface WordsUsageRelation extends RelationBase {
+export interface WordsUsageRelation extends WordRelationBase {
   type: 'WordsUsage'
   wordIds: number[]
   answer: WordOrSentence | null
@@ -30,30 +39,30 @@ export interface WordsUsageRelation extends RelationBase {
 /**
  * `word1`이 `word2`의 속성을 가짐
  */
-export interface UnaryPropertyRelation extends RelationBase, BinaryWords {
+export interface UnaryPropertyRelation extends WordRelationBase, BinaryWords {
   type: 'UnaryProperty'
 }
 
-export interface BinaryCommonRelation extends RelationBase, BinaryWords {
+export interface BinaryCommonRelation extends WordRelationBase, BinaryWords {
   type: 'BinaryCommon'
   answer: WordOrSentence | null
 }
 
-export interface BinaryDifferenceRelation extends RelationBase, BinaryWords {
+export interface BinaryDifferenceRelation extends WordRelationBase, BinaryWords {
   type: 'BinaryDifference'
   answer: WordOrSentence | null
 }
 
-export interface BinarySimilarityRelation extends RelationBase, BinaryWords {
+export interface BinarySimilarityRelation extends WordRelationBase, BinaryWords {
   type: 'BinarySimilarity'
   similarity: Similarity
 }
 
-export interface BinaryAssociationRelation extends RelationBase, BinaryWords {
+export interface BinaryAssociationRelation extends WordRelationBase, BinaryWords {
   type: 'BinaryAssociation'
 }
 
-export interface TernaryIsolationRelation extends RelationBase, TernaryWords {
+export interface TernaryIsolationRelation extends WordRelationBase, TernaryWords {
   type: 'TernaryIsolation'
   selection: 1 | 2 | 3
 }
@@ -61,18 +70,18 @@ export interface TernaryIsolationRelation extends RelationBase, TernaryWords {
 /**
  * `word3 = word1 + word2` (의미적 또는 문법적 합성)
  */
-export interface TernaryCompositionRelation extends RelationBase, TernaryWords {
+export interface TernaryCompositionRelation extends WordRelationBase, TernaryWords {
   type: 'TernaryComposition'
 }
 
 /**
  * `word1`과 `word2` 사이에 `word3`의 유향관계가 있음
  */
-export interface NamedAssociationRelation extends RelationBase, TernaryWords {
+export interface NamedAssociationRelation extends WordRelationBase, TernaryWords {
   type: 'NamedAssociation'
 }
 
-export type Relation =
+export type WordRelation =
   | WordExplainRelation
   | WordsUsageRelation
   | UnaryPropertyRelation
@@ -84,6 +93,11 @@ export type Relation =
   | TernaryCompositionRelation
   | NamedAssociationRelation
 
-export type NewRelation = DistributiveOmit<Relation, keyof Omit<RelationBase, 'comment'>>
+export type Relation = WordRelation | DocumentToSentenceRelation
+
+export type NewRelation = DistributiveOmit<
+  WordRelation,
+  keyof Omit<WordRelationBase, 'comment'>
+>
 
 type DistributiveOmit<T, K extends keyof never> = T extends unknown ? Omit<T, K> : never

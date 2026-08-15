@@ -1,4 +1,4 @@
-import { RELATIONS_STORE } from '../db/consts'
+import { RELATIONS_STORE, SENTENCE_ID_INDEX } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest } from '../db/utils'
 import { CompoundWordIndexNames, NumericWordIndexNames } from './consts'
@@ -13,6 +13,9 @@ export async function countReferencingRelations(ref: WordOrSentence): Promise<nu
     for (const indexName of NumericWordIndexNames) {
       await collectRelationIds(relationStore.index(indexName), ref.id, relationIds)
     }
+  }
+  if (ref.type === 'sentence') {
+    await collectRelationIds(relationStore.index(SENTENCE_ID_INDEX), ref.id, relationIds)
   }
   for (const indexName of CompoundWordIndexNames) {
     await collectRelationIds(relationStore.index(indexName), [ref.type, ref.id], relationIds)

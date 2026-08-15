@@ -2,29 +2,14 @@ import { RECENT_SENTENCES_STORE, SENTENCES_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
+import { RECENT_SENTENCES_SIZE } from './consts'
+import { addSentences } from './sentenceTx'
 import type { RecentSentence, Sentence } from './types'
 
-const RECENT_SENTENCES_SIZE = 4
-
 export async function createSentence(value: string, source: string): Promise<number> {
-  if (!value) {
-    throw new Error('빈 문자열은 문장이 될 수 없다')
-  }
   const db = await openNoemaDB()
   const transaction = db.transaction([SENTENCES_STORE, RECENT_SENTENCES_STORE], 'readwrite')
-  const sentenceStore = transaction.objectStore(SENTENCES_STORE)
-
-  const createdAt = new Date()
-  const sentenceId = (await awaitRequest<IDBValidKey>(
-    sentenceStore.add(source ? { value, createdAt, source } : { value, createdAt }),
-  )) as number
-
-  const recentStore = transaction.objectStore(RECENT_SENTENCES_STORE)
-  const next = await awaitRequest<number>(recentStore.get('next'))
-  const recentSentence: RecentSentence = { sentenceId, value, createdAt }
-  recentStore.put(recentSentence, next)
-  recentStore.put((next + 1) % RECENT_SENTENCES_SIZE, 'next')
-
+  const [sentenceId] = await addSentences(transaction, [value], source, new Date())
   await awaitTransaction(transaction)
   recordCreation(db, 'sentenceCount')
   return sentenceId

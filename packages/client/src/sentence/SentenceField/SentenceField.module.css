@@ -11,5 +11,11 @@
     scrollbar-gutter: stable;
     font-family: var(--font-mono);
     tab-size: 4;
+
+    &.compact {
+      min-height: 0;
+      resize: none;
+      field-sizing: content;
+    }
   }
 }

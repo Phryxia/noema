@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { DOCUMENT_QUERY_KEY } from '../document/consts'
 import { getDocument } from '../document/document.service'
+import { DocumentSentences } from '../document/DocumentSentences/DocumentSentences'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
 import { MetaFields } from '../meta/MetaFields/MetaFields'
 
@@ -40,6 +41,7 @@ function DocumentPage(): ReactElement {
         document={target}
         onDelete={() => navigate({ to: '/' })}
       />
+      <DocumentSentences key={target.documentId} document={target} />
     </article>
   )
 }

@@ -18,8 +18,8 @@ export async function getTotals(): Promise<Totals> {
   return readTotals(db.transaction(TotalStoreNames))
 }
 
-export function recordCreation(db: IDBDatabase, kind: CountKind): void {
-  recordCountChange(db, kind, 1)
+export function recordCreation(db: IDBDatabase, kind: CountKind, amount: number = 1): void {
+  recordCountChange(db, kind, amount)
 }
 
 export function recordDeletion(db: IDBDatabase, kind: CountKind): void {

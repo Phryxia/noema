@@ -1,0 +1,11 @@
+.success td {
+  background-color: color-mix(in srgb, var(--pico-ins-color) 20%, transparent);
+}
+
+.warning td {
+  background-color: color-mix(in srgb, #d9822b 25%, transparent);
+}
+
+.error td {
+  background-color: color-mix(in srgb, var(--pico-del-color) 20%, transparent);
+}

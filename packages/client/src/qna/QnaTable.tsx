@@ -2,6 +2,8 @@ import type { ReactElement, ReactNode } from 'react'
 import classnames from 'classnames/bind'
 import { formatMinute } from '../recent/utils'
 import { RelationRow } from '../relation/RelationRow/RelationRow'
+import { getRowToneClassName } from '../shared/getRowToneClassName'
+import type { RowTone } from '../shared/getRowToneClassName'
 import { getQuestionTypeLabel } from './labels'
 import { AnswerCell, CommentCell, QuestionCell } from './QnaCells'
 import type { QnaRowEntry } from './types'
@@ -9,7 +11,7 @@ import styles from './QnaTable.module.css'
 
 const cx = classnames.bind(styles)
 
-export type QnaRowTone = 'success' | 'warning' | 'error'
+export type QnaRowTone = RowTone
 
 export interface QnaNoteColumn<T> {
   header: string
@@ -70,7 +72,7 @@ interface QnaRowProps {
 
 function QnaRow({ entry, keyword, note, tone }: QnaRowProps): ReactElement {
   return (
-    <RelationRow relationId={entry.id} className={cx(tone)}>
+    <RelationRow relationId={entry.id} className={getRowToneClassName(tone)}>
       <td className={cx('type')}>{getQuestionTypeLabel(entry.type)}</td>
       <td className={cx('question')}>
         <QuestionCell words={entry.words} keyword={keyword} />

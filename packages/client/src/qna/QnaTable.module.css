@@ -8,20 +8,6 @@
     text-overflow: ellipsis;
   }
 
-  --warning-color: #d9822b;
-
-  .success td {
-    background-color: color-mix(in srgb, var(--pico-ins-color) 20%, transparent);
-  }
-
-  .warning td {
-    background-color: color-mix(in srgb, var(--warning-color) 25%, transparent);
-  }
-
-  .error td {
-    background-color: color-mix(in srgb, var(--pico-del-color) 20%, transparent);
-  }
-
   .type {
     width: 1%;
   }

@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import classnames from 'classnames/bind'
 import { ExtractionExpression } from './ExtractionExpression'
-import { TruncatedLink, WordItem } from './RefLinks'
+import { RefItem } from './RefLinks'
 import { UsageExpression } from './UsageExpression'
 import type { ResolvedToken } from '../types'
 import styles from './RelationExpression.module.css'
@@ -38,8 +38,5 @@ function ExpressionToken({ token, keyword }: ExpressionTokenProps): ReactElement
   if (token.kind === 'extraction') {
     return <ExtractionExpression token={token} keyword={keyword} />
   }
-  if (token.kind === 'word') {
-    return <WordItem token={token} keyword={keyword} />
-  }
-  return <TruncatedLink token={token} keyword={keyword} />
+  return <RefItem token={token} keyword={keyword} />
 }

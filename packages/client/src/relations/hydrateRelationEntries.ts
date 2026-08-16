@@ -51,10 +51,7 @@ function getTokenRefs(token: ExpressionToken): Ref[] {
     ]
   }
   if (token.kind === 'extraction') {
-    return [
-      { kind: 'sentence', id: token.sentenceId },
-      { kind: 'document', id: token.documentId },
-    ]
+    return [token.child, token.parent]
   }
   return [token]
 }
@@ -95,8 +92,8 @@ function resolveTokens(token: ExpressionToken, maps: ResolvedMaps): ResolvedToke
     return [
       {
         kind: 'extraction',
-        sentence: resolveRef({ kind: 'sentence', id: token.sentenceId }, maps),
-        document: resolveRef({ kind: 'document', id: token.documentId }, maps),
+        child: resolveRef(token.child, maps),
+        parent: resolveRef(token.parent, maps),
       },
     ]
   }

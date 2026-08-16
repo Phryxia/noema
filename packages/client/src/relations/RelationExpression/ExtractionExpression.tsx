@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
 import classnames from 'classnames/bind'
-import { TruncatedLink } from './RefLinks'
+import { RefItem } from './RefLinks'
 import type { ResolvedExtractionToken } from '../types'
 import styles from './RelationExpression.module.css'
 
@@ -17,12 +17,12 @@ export function ExtractionExpression({
 }: ExtractionExpressionProps): ReactElement {
   return (
     <>
-      <span className={cx('sentenceArea')}>
-        <TruncatedLink token={token.sentence} keyword={keyword} />
+      <span className={cx('childArea')}>
+        <RefItem token={token.child} keyword={keyword} />
       </span>
-      <span className={cx('documentArea')}>
+      <span className={cx('parentArea')}>
         <span className={cx('text')}>from </span>
-        <TruncatedLink token={token.document} keyword={keyword} />
+        <RefItem token={token.parent} keyword={keyword} />
       </span>
     </>
   )

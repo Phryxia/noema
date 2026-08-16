@@ -25,6 +25,13 @@ export function WordItem({ token, keyword }: RefLinkProps): ReactElement {
   )
 }
 
+export function RefItem({ token, keyword }: RefLinkProps): ReactElement {
+  if (token.kind === 'word') {
+    return <WordItem token={token} keyword={keyword} />
+  }
+  return <TruncatedLink token={token} keyword={keyword} />
+}
+
 export function TruncatedLink({ token, keyword }: RefLinkProps): ReactElement {
   if (!token.value) {
     return <span className={cx('text', 'muted')}>{DELETED_LABEL}</span>

@@ -96,6 +96,30 @@ describe('computeRelationExpression', () => {
         documentId: 4,
         sentenceId: 7,
       }),
-    ).toEqual([{ kind: 'extraction', sentenceId: 7, documentId: 4 }])
+    ).toEqual([
+      {
+        kind: 'extraction',
+        child: { kind: 'sentence', id: 7 },
+        parent: { kind: 'document', id: 4 },
+      },
+    ])
+  })
+
+  it('단어 추출은 단어를 문장에서 뽑은 extraction 토큰이다', () => {
+    expect(
+      computeRelationExpression({
+        relationId: 2,
+        createdAt: new Date(0),
+        type: 'SentenceToWord',
+        sentenceId: 7,
+        wordId: 3,
+      }),
+    ).toEqual([
+      {
+        kind: 'extraction',
+        child: { kind: 'word', id: 3 },
+        parent: { kind: 'sentence', id: 7 },
+      },
+    ])
   })
 })

@@ -25,17 +25,17 @@
   text-overflow: ellipsis;
 }
 
-.sentenceArea,
-.documentArea {
+.childArea,
+.parentArea {
   display: flex;
   min-width: 0;
   overflow: hidden;
 }
 
-.sentenceArea {
+.childArea {
   flex: 0 0 70%;
 }
 
-.documentArea {
+.parentArea {
   flex: 0 0 30%;
 }

@@ -2,6 +2,8 @@ import { hydrateD2sEntries } from '../d2s/hydrateD2sEntries'
 import type { D2sEntry } from '../d2s/types'
 import { EmptyAnswer, EmptyComment } from '../explore/consts'
 import type { AnswerDraft, CommentDraft } from '../explore/types'
+import { hydrateS2wEntries } from '../s2w/hydrateS2wEntries'
+import type { S2wEntry } from '../s2w/types'
 import { getSentence } from '../sentence/sentence.service'
 import { getWordValues } from '../word/getWordValues'
 import { SubjectWordSpecs } from './consts'
@@ -10,9 +12,15 @@ import { getRelation } from './getRelation'
 import { getRelationAnswer } from './getRelationAnswer'
 import { getRelationAnswerWordIds } from './getRelationAnswerWordIds'
 import { resizeWords } from './resizeWords'
-import type { DocumentToSentenceRelation, WordOrSentence, WordRelation } from './types'
+import type {
+  DocumentToSentenceRelation,
+  SentenceToWordRelation,
+  WordOrSentence,
+  WordRelation,
+} from './types'
 
-export type RelationSnapshot = WordRelationSnapshot | DocumentToSentenceSnapshot
+export type RelationSnapshot =
+  WordRelationSnapshot | DocumentToSentenceSnapshot | SentenceToWordSnapshot
 
 export interface WordRelationSnapshot {
   kind: 'word'
@@ -28,6 +36,12 @@ export interface DocumentToSentenceSnapshot {
   entry: D2sEntry
 }
 
+export interface SentenceToWordSnapshot {
+  kind: 's2w'
+  relation: SentenceToWordRelation
+  entry: S2wEntry
+}
+
 export async function loadRelationSnapshot(
   relationId: number,
 ): Promise<RelationSnapshot | null> {
@@ -38,6 +52,10 @@ export async function loadRelationSnapshot(
   if (relation.type === 'DocumentToSentence') {
     const [entry] = await hydrateD2sEntries([relation])
     return { kind: 'd2s', relation, entry }
+  }
+  if (relation.type === 'SentenceToWord') {
+    const [entry] = await hydrateS2wEntries([relation])
+    return { kind: 's2w', relation, entry }
   }
   const values = await getWordValues(getQuestionWordIds(relation))
   return {

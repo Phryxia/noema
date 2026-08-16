@@ -2,6 +2,7 @@ import { QUESTIONS_STORE, RELATIONS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitTransaction } from '../db/utils'
 import { recordDeletion } from '../statistic/statistic.service'
+import { checkIsWordRelation } from './checkIsWordRelation'
 import { getRelation } from './getRelation'
 import type { Relation } from './types'
 
@@ -14,7 +15,7 @@ export async function deleteRelation(relationId: number): Promise<void> {
   const db = await openNoemaDB()
   const transaction = db.transaction(getStoreNames(relation), 'readwrite')
   transaction.objectStore(RELATIONS_STORE).delete(relationId)
-  if (relation.type !== 'DocumentToSentence') {
+  if (checkIsWordRelation(relation)) {
     transaction.objectStore(QUESTIONS_STORE).delete(relation.questionId)
   }
 
@@ -23,8 +24,8 @@ export async function deleteRelation(relationId: number): Promise<void> {
 }
 
 function getStoreNames(relation: Relation): string[] {
-  if (relation.type === 'DocumentToSentence') {
-    return [RELATIONS_STORE]
+  if (checkIsWordRelation(relation)) {
+    return [RELATIONS_STORE, QUESTIONS_STORE]
   }
-  return [RELATIONS_STORE, QUESTIONS_STORE]
+  return [RELATIONS_STORE]
 }

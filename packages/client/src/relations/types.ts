@@ -46,12 +46,12 @@ export type UsageSegment = TextToken | ResolvedRefToken
 
 export interface ExtractionToken {
   kind: 'extraction'
-  sentenceId: number
-  documentId: number
+  child: RefToken
+  parent: RefToken
 }
 
 export interface ResolvedExtractionToken {
   kind: 'extraction'
-  sentence: ResolvedRefToken
-  document: ResolvedRefToken
+  child: ResolvedRefToken
+  parent: ResolvedRefToken
 }

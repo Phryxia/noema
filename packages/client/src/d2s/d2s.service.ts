@@ -1,7 +1,7 @@
 import { DOCUMENT_ID_INDEX, RELATIONS_STORE, SENTENCE_ID_INDEX } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest } from '../db/utils'
-import type { DocumentToSentenceRelation } from '../relation/types'
+import type { DocumentToSentenceRelation, Relation } from '../relation/types'
 
 export function getDocumentToSentenceRelationsByDocument(
   documentId: number,
@@ -24,5 +24,10 @@ async function getRelationsByIndex(
   }
   const db = await openNoemaDB()
   const relationStore = db.transaction(RELATIONS_STORE).objectStore(RELATIONS_STORE)
-  return awaitRequest<DocumentToSentenceRelation[]>(relationStore.index(indexName).getAll(key))
+  const relations = await awaitRequest<Relation[]>(relationStore.index(indexName).getAll(key))
+  return relations.filter(checkIsDocumentToSentence)
+}
+
+function checkIsDocumentToSentence(relation: Relation): relation is DocumentToSentenceRelation {
+  return relation.type === 'DocumentToSentence'
 }

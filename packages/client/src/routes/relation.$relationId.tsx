@@ -9,6 +9,7 @@ import type { WordRelationSnapshot } from '../relation/loadRelationSnapshot'
 import { RelationPage } from '../relation/RelationPage/RelationPage'
 import { updateRelation } from '../relation/updateRelation'
 import { useRelationEditor } from '../relation/useRelationEditor'
+import { S2wRelationPage } from '../s2w/S2wRelationPage/S2wRelationPage'
 
 export const Route = createFileRoute('/relation/$relationId')({
   component: RelationDetailPage,
@@ -29,6 +30,9 @@ function RelationDetailPage(): ReactElement {
   }
   if (snapshot.kind === 'd2s') {
     return <D2sRelationPage key={relationId} snapshot={snapshot} />
+  }
+  if (snapshot.kind === 's2w') {
+    return <S2wRelationPage key={relationId} snapshot={snapshot} />
   }
   return <RelationEditor key={relationId} snapshot={snapshot} />
 }

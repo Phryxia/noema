@@ -24,6 +24,12 @@ export interface DocumentToSentenceRelation extends RelationBase {
   sentenceId: number
 }
 
+export interface SentenceToWordRelation extends RelationBase {
+  type: 'SentenceToWord'
+  sentenceId: number
+  wordId: number
+}
+
 export interface WordExplainRelation extends WordRelationBase {
   type: 'WordExplain'
   wordId: number
@@ -93,7 +99,7 @@ export type WordRelation =
   | TernaryCompositionRelation
   | NamedAssociationRelation
 
-export type Relation = WordRelation | DocumentToSentenceRelation
+export type Relation = WordRelation | DocumentToSentenceRelation | SentenceToWordRelation
 
 export type NewRelation = DistributiveOmit<
   WordRelation,

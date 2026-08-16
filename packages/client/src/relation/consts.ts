@@ -10,6 +10,8 @@ import {
 import type { QuestionType } from '../question/types'
 
 export const RELATION_QUERY_KEY = 'relation'
+
+export const NonWordRelationTypes = new Set(['DocumentToSentence', 'SentenceToWord'])
 export const TEACH_SOURCE_PREFIX = 'Taught via NOEMA system teaching'
 export const TEACH_TYPE_STORAGE_KEY = 'teach/type'
 

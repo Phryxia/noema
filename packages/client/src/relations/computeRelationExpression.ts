@@ -29,7 +29,20 @@ type TernaryRelation =
 export function computeRelationExpression(relation: Relation): ExpressionToken[] {
   if (relation.type === 'DocumentToSentence') {
     return [
-      { kind: 'extraction', sentenceId: relation.sentenceId, documentId: relation.documentId },
+      {
+        kind: 'extraction',
+        child: { kind: 'sentence', id: relation.sentenceId },
+        parent: { kind: 'document', id: relation.documentId },
+      },
+    ]
+  }
+  if (relation.type === 'SentenceToWord') {
+    return [
+      {
+        kind: 'extraction',
+        child: { kind: 'word', id: relation.wordId },
+        parent: { kind: 'sentence', id: relation.sentenceId },
+      },
     ]
   }
   if (relation.type === 'WordExplain') {

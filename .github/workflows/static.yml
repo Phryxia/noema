@@ -40,6 +40,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build-gh-page
+      - name: Copy SPA fallback
+        run: cp docs/index.html docs/404.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

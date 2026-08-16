@@ -7,7 +7,7 @@
     "dev:server": "npm --workspace=server run dev",
     "preview": "npm --workspace=client run preview",
     "build": "npm --workspace=client run build && npm --workspace=server run build",
-    "build-gh-page": "npm --workspace=client run build -- --outDir ../../docs --emptyOutDir",
+    "build-gh-page": "npm --workspace=client run build -- --base=/noema/ --outDir ../../docs --emptyOutDir",
     "test": "npm --workspace=client run test && npm --workspace=server run test",
     "generate-db": "npm --workspace=server run generate-db"
   },

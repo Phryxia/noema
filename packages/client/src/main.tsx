@@ -18,7 +18,7 @@ import { routeTree } from './routeTree.gen'
 
 registerSW({ immediate: true })
 
-const router = createRouter({ routeTree })
+const router = createRouter({ routeTree, basepath: import.meta.env.BASE_URL })
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onSuccess: (_data, _variables, _context, mutation): void => {

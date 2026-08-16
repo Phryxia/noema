@@ -36,12 +36,15 @@ function SentencePage(): ReactElement {
         ]}
       />
       <SentenceWriter
-        key={sentence.sentenceId}
+        key={`writer-${sentence.sentenceId}`}
         isEditable
         sentence={sentence}
         onDelete={() => navigate({ to: '/' })}
       />
-      <SentenceDocuments key={sentence.sentenceId} sentenceId={sentence.sentenceId} />
+      <SentenceDocuments
+        key={`documents-${sentence.sentenceId}`}
+        sentenceId={sentence.sentenceId}
+      />
     </article>
   )
 }

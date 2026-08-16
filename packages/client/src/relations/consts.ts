@@ -1,3 +1,5 @@
 export const RELATION_PAGES_QUERY_KEY = 'relationPages'
 export const D2S_TYPE_LABEL = '문장 추출'
-export const SKIP_LABEL = '회피'
+export const SKIP_LABEL = '(답변 회피)'
+export const DELETED_LABEL = '(삭제됨)'
+export const USAGE_WORDS_LABEL = ', 원 단어: '

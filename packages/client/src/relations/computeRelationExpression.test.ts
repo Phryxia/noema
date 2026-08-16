@@ -3,6 +3,7 @@ import { computeRelationExpression } from './computeRelationExpression'
 import type { ExpressionToken } from './types'
 
 const base = { relationId: 1, questionId: 1, createdAt: new Date(0) }
+const skip: ExpressionToken = { kind: 'text', value: '(답변 회피)', isMuted: true }
 
 function word(wordId: number): ExpressionToken {
   return { kind: 'word', id: wordId }
@@ -13,7 +14,7 @@ function text(value: string): ExpressionToken {
 }
 
 describe('computeRelationExpression', () => {
-  it('단어 설명과 예문 만들기는 단어들을 +로 잇고 답을 붙인다', () => {
+  it('단어 설명은 단어와 답을 잇는다', () => {
     expect(
       computeRelationExpression({
         ...base,
@@ -22,6 +23,17 @@ describe('computeRelationExpression', () => {
         answer: { type: 'sentence', id: 9 },
       }),
     ).toEqual([word(1), text(': '), { kind: 'sentence', id: 9 }])
+  })
+
+  it('예문 만들기는 문장 답이면 usage 토큰 하나, 아니면 답과 원 단어를 나열한다', () => {
+    expect(
+      computeRelationExpression({
+        ...base,
+        type: 'WordsUsage',
+        wordIds: [1, 2],
+        answer: { type: 'sentence', id: 9 },
+      }),
+    ).toEqual([{ kind: 'usage', sentenceId: 9, wordIds: [1, 2] }])
     expect(
       computeRelationExpression({
         ...base,
@@ -29,7 +41,7 @@ describe('computeRelationExpression', () => {
         wordIds: [1, 2, 3],
         answer: null,
       }),
-    ).toEqual([word(1), text(' + '), word(2), text(' + '), word(3), text(': '), text('회피')])
+    ).toEqual([skip, text(', 원 단어: '), word(1), text(', '), word(2), text(', '), word(3)])
   })
 
   it('이항 유형은 기호로 잇는다', () => {
@@ -49,7 +61,7 @@ describe('computeRelationExpression', () => {
     ).toEqual([word(1), text(' ∩ '), word(2), text(' = '), word(5)])
     expect(
       computeRelationExpression({ ...base, type: 'BinaryDifference', ...words, answer: null }),
-    ).toEqual([word(1), text(' ↔ '), word(2), text(' = '), text('회피')])
+    ).toEqual([word(1), text(' ↔ '), word(2), text(' = '), skip])
     expect(
       computeRelationExpression({ ...base, type: 'BinarySimilarity', ...words, similarity: 1 }),
     ).toEqual([text('|'), word(1), text(' - '), word(2), text('| = '), text('매우 비슷')])
@@ -68,14 +80,14 @@ describe('computeRelationExpression', () => {
     ).toEqual([word(3), text(' = '), word(1), text(' + '), word(2)])
     expect(computeRelationExpression({ ...base, type: 'NamedAssociation', ...words })).toEqual([
       word(1),
-      text(' -'),
+      text(' ──'),
       word(3),
-      text('→ '),
+      text('─→ '),
       word(2),
     ])
   })
 
-  it('문장 추출은 문장 @ 문서다', () => {
+  it('문장 추출은 extraction 토큰 하나다', () => {
     expect(
       computeRelationExpression({
         relationId: 1,
@@ -84,6 +96,6 @@ describe('computeRelationExpression', () => {
         documentId: 4,
         sentenceId: 7,
       }),
-    ).toEqual([{ kind: 'sentence', id: 7 }, text(' @ '), { kind: 'document', id: 4 }])
+    ).toEqual([{ kind: 'extraction', sentenceId: 7, documentId: 4 }])
   })
 })

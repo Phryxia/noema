@@ -1,4 +1,5 @@
 import { SKIP_LABEL } from './consts'
+import { createUsageFallbackTokens } from './createUsageFallbackTokens'
 import type { ExpressionToken } from './types'
 import { getSimilarityLabel } from '../qna/labels'
 import type {
@@ -11,7 +12,6 @@ import type {
   TernaryCompositionRelation,
   TernaryIsolationRelation,
   UnaryPropertyRelation,
-  WordExplainRelation,
   WordOrSentence,
   WordsUsageRelation,
 } from '../relation/types'
@@ -29,12 +29,13 @@ type TernaryRelation =
 export function computeRelationExpression(relation: Relation): ExpressionToken[] {
   if (relation.type === 'DocumentToSentence') {
     return [
-      { kind: 'sentence', id: relation.sentenceId },
-      text(' @ '),
-      { kind: 'document', id: relation.documentId },
+      { kind: 'extraction', sentenceId: relation.sentenceId, documentId: relation.documentId },
     ]
   }
-  if (relation.type === 'WordExplain' || relation.type === 'WordsUsage') {
+  if (relation.type === 'WordExplain') {
+    return [word(relation.wordId), text(': '), toAnswerToken(relation.answer)]
+  }
+  if (relation.type === 'WordsUsage') {
     return computeUsageExpression(relation)
   }
   if ('word3Id' in relation) {
@@ -43,11 +44,11 @@ export function computeRelationExpression(relation: Relation): ExpressionToken[]
   return computeBinaryExpression(relation)
 }
 
-function computeUsageExpression(
-  relation: WordExplainRelation | WordsUsageRelation,
-): ExpressionToken[] {
-  const wordIds = relation.type === 'WordExplain' ? [relation.wordId] : relation.wordIds
-  return [...joinWords(wordIds, ' + '), text(': '), toAnswerToken(relation.answer)]
+function computeUsageExpression(relation: WordsUsageRelation): ExpressionToken[] {
+  if (relation.answer?.type === 'sentence') {
+    return [{ kind: 'usage', sentenceId: relation.answer.id, wordIds: relation.wordIds }]
+  }
+  return createUsageFallbackTokens(toAnswerToken(relation.answer), relation.wordIds)
 }
 
 function computeBinaryExpression(relation: BinaryRelation): ExpressionToken[] {
@@ -88,18 +89,12 @@ function computeTernaryExpression(relation: TernaryRelation): ExpressionToken[] 
   if (relation.type === 'TernaryComposition') {
     return [word3, text(' = '), word1, text(' + '), word2]
   }
-  return [word1, text(' -'), word3, text('→ '), word2]
-}
-
-function joinWords(wordIds: number[], separator: string): ExpressionToken[] {
-  return wordIds.flatMap((wordId, index) =>
-    index > 0 ? [text(separator), word(wordId)] : [word(wordId)],
-  )
+  return [word1, text(' ──'), word3, text('─→ '), word2]
 }
 
 function toAnswerToken(answer: WordOrSentence | null): ExpressionToken {
   if (!answer) {
-    return text(SKIP_LABEL)
+    return { kind: 'text', value: SKIP_LABEL, isMuted: true }
   }
   if (answer.type === 'word') {
     return word(answer.id)

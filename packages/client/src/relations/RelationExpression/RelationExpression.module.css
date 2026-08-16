@@ -13,10 +13,29 @@
   white-space: pre;
 }
 
+.muted {
+  color: var(--pico-muted-color);
+}
+
 .truncated {
   flex: 0 1 auto;
-  min-width: 5rem;
+  min-width: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.sentenceArea,
+.documentArea {
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sentenceArea {
+  flex: 0 0 70%;
+}
+
+.documentArea {
+  flex: 0 0 30%;
 }

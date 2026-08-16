@@ -7,13 +7,15 @@ export interface RelationEntry {
   expression: ResolvedToken[]
 }
 
-export type ResolvedToken = TextToken | ResolvedRefToken
+export type ResolvedToken =
+  TextToken | ResolvedRefToken | ResolvedUsageToken | ResolvedExtractionToken
 
-export type ExpressionToken = TextToken | RefToken
+export type ExpressionToken = TextToken | RefToken | UsageToken | ExtractionToken
 
 export interface TextToken {
   kind: 'text'
   value: string
+  isMuted?: boolean
 }
 
 export interface RefToken {
@@ -26,3 +28,30 @@ export interface ResolvedRefToken extends RefToken {
 }
 
 export type RefKind = 'word' | 'sentence' | 'document'
+
+export interface UsageToken {
+  kind: 'usage'
+  sentenceId: number
+  wordIds: number[]
+}
+
+export interface ResolvedUsageToken {
+  kind: 'usage'
+  sentenceId: number
+  value: string
+  segments: UsageSegment[]
+}
+
+export type UsageSegment = TextToken | ResolvedRefToken
+
+export interface ExtractionToken {
+  kind: 'extraction'
+  sentenceId: number
+  documentId: number
+}
+
+export interface ResolvedExtractionToken {
+  kind: 'extraction'
+  sentence: ResolvedRefToken
+  document: ResolvedRefToken
+}

@@ -7,8 +7,8 @@ import {
   WORD_SUGGESTION_QUERY_KEY,
 } from './consts'
 import { invalidateStatisticQueries } from '../statistic/utils'
-import { QNA_PAGES_QUERY_KEY } from '../qna/QnaRelationSource'
 import { QNA_SEARCH_QUERY_KEY } from '../qna/search/consts'
+import { RELATION_PAGES_QUERY_KEY } from '../relations/consts'
 
 export function invalidateWordQueries(queryClient: QueryClient): void {
   invalidateStatisticQueries(queryClient)
@@ -20,7 +20,7 @@ export function invalidateWordQueries(queryClient: QueryClient): void {
 
 export function invalidateWordAndQnaQueries(queryClient: QueryClient): void {
   invalidateWordQueries(queryClient)
-  queryClient.invalidateQueries({ queryKey: [QNA_PAGES_QUERY_KEY] })
+  queryClient.invalidateQueries({ queryKey: [RELATION_PAGES_QUERY_KEY] })
   queryClient.invalidateQueries({ queryKey: [QNA_SEARCH_QUERY_KEY] })
   queryClient.invalidateQueries({ queryKey: [WORD_RELATIONS_QUERY_KEY] })
 }

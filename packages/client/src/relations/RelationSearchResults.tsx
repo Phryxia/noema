@@ -1,14 +1,14 @@
 import type { ReactElement } from 'react'
-import { useQnaSearch } from './useQnaSearch'
-import { PagedSection } from '../../shared/PagedSection'
-import { QnaTable } from '../QnaTable'
+import { RelationsTable } from './RelationsTable'
+import { useRelationSearch } from './useRelationSearch'
+import { PagedSection } from '../shared/PagedSection'
 
-interface QnaSearchResultsProps {
+interface RelationSearchResultsProps {
   query: string
 }
 
-export function QnaSearchResults({ query }: QnaSearchResultsProps): ReactElement {
-  const { exact, partial } = useQnaSearch(query)
+export function RelationSearchResults({ query }: RelationSearchResultsProps): ReactElement {
+  const { exact, partial } = useRelationSearch(query)
   const isSettled = !exact.isPending && !partial.isPending && !exact.error && !partial.error
   const isAllEmpty = isSettled && !exact.entries.length && !partial.entries.length
 
@@ -22,14 +22,14 @@ export function QnaSearchResults({ query }: QnaSearchResultsProps): ReactElement
         title="정확히 일치"
         state={exact}
         isLoaderVisible
-        renderTable={(pageEntries) => <QnaTable entries={pageEntries} keyword={query} />}
+        renderTable={(pageEntries) => <RelationsTable entries={pageEntries} keyword={query} />}
       />
       <PagedSection
         key={`partial-${query}`}
         title="부분 일치"
         state={partial}
         isLoaderVisible={!exact.isPending}
-        renderTable={(pageEntries) => <QnaTable entries={pageEntries} keyword={query} />}
+        renderTable={(pageEntries) => <RelationsTable entries={pageEntries} keyword={query} />}
       />
     </>
   )

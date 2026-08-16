@@ -67,12 +67,12 @@ export function CommentCell({ comment, keyword }: CommentCellProps): ReactElemen
   return <ResolvedTextLink text={comment} keyword={keyword} />
 }
 
-interface WordLinkProps {
+export interface WordLinkProps {
   word: ResolvedWord
   keyword?: string
 }
 
-function WordLink({ word, keyword }: WordLinkProps): ReactElement {
+export function WordLink({ word, keyword }: WordLinkProps): ReactElement {
   if (!word.value) {
     return <>(삭제됨)</>
   }

@@ -47,7 +47,7 @@ function RelationEditor({ snapshot }: RelationEditorProps): ReactElement {
     isResetOnSave: false,
     persist: (values) => updateRelation({ relation, ...values }),
     remove: () => deleteRelation(relation.relationId),
-    onRemoved: () => navigate({ to: '/relations/w2w', search: true }),
+    onRemoved: () => navigate({ to: '/relations', search: true }),
   })
 
   return (

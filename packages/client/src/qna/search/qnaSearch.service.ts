@@ -15,13 +15,17 @@ import {
 import type { QnaEntry } from '../types'
 
 export async function searchExactQnaEntries(query: string): Promise<QnaEntry[]> {
-  const space = await loadQnaSearchSpace()
-  return hydrateQnaEntries(computeExactMatches(space, query))
+  return hydrateQnaEntries(await searchExactRelations(query))
 }
 
-export async function searchPartialQnaEntries(query: string): Promise<QnaEntry[]> {
+export async function searchExactRelations(query: string): Promise<WordRelation[]> {
   const space = await loadQnaSearchSpace()
-  return hydrateQnaEntries(computePartialMatches(space, query))
+  return computeExactMatches(space, query)
+}
+
+export async function searchPartialRelations(query: string): Promise<WordRelation[]> {
+  const space = await loadQnaSearchSpace()
+  return computePartialMatches(space, query)
 }
 
 async function loadQnaSearchSpace(): Promise<QnaSearchSpace> {

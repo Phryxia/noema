@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as RelationsRouteImport } from './routes/relations'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as DocumentDocumentIdRouteImport } from './routes/document.$documentId'
@@ -20,8 +21,6 @@ import { Route as RecentSentencesRouteImport } from './routes/recent.sentences'
 import { Route as RecentWordsRouteImport } from './routes/recent.words'
 import { Route as RelationRelationIdRouteImport } from './routes/relation.$relationId'
 import { Route as RelationNewRouteImport } from './routes/relation.new'
-import { Route as RelationsD2sRouteImport } from './routes/relations.d2s'
-import { Route as RelationsW2wRouteImport } from './routes/relations.w2w'
 import { Route as SentenceSentenceIdRouteImport } from './routes/sentence.$sentenceId'
 import { Route as WordWordRouteImport } from './routes/word.$word'
 
@@ -33,6 +32,11 @@ const IndexRoute = IndexRouteImport.update({
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelationsRoute = RelationsRouteImport.update({
+  id: '/relations',
+  path: '/relations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -80,16 +84,6 @@ const RelationNewRoute = RelationNewRouteImport.update({
   path: '/relation/new',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RelationsD2sRoute = RelationsD2sRouteImport.update({
-  id: '/relations/d2s',
-  path: '/relations/d2s',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RelationsW2wRoute = RelationsW2wRouteImport.update({
-  id: '/relations/w2w',
-  path: '/relations/w2w',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SentenceSentenceIdRoute = SentenceSentenceIdRouteImport.update({
   id: '/sentence/$sentenceId',
   path: '/sentence/$sentenceId',
@@ -104,6 +98,7 @@ const WordWordRoute = WordWordRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/relations': typeof RelationsRoute
   '/settings': typeof SettingsRoute
   '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
@@ -113,14 +108,13 @@ export interface FileRoutesByFullPath {
   '/recent/words': typeof RecentWordsRoute
   '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
-  '/relations/d2s': typeof RelationsD2sRoute
-  '/relations/w2w': typeof RelationsW2wRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/relations': typeof RelationsRoute
   '/settings': typeof SettingsRoute
   '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
@@ -130,8 +124,6 @@ export interface FileRoutesByTo {
   '/recent/words': typeof RecentWordsRoute
   '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
-  '/relations/d2s': typeof RelationsD2sRoute
-  '/relations/w2w': typeof RelationsW2wRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -139,6 +131,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/relations': typeof RelationsRoute
   '/settings': typeof SettingsRoute
   '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
@@ -148,8 +141,6 @@ export interface FileRoutesById {
   '/recent/words': typeof RecentWordsRoute
   '/relation/$relationId': typeof RelationRelationIdRoute
   '/relation/new': typeof RelationNewRoute
-  '/relations/d2s': typeof RelationsD2sRoute
-  '/relations/w2w': typeof RelationsW2wRoute
   '/sentence/$sentenceId': typeof SentenceSentenceIdRoute
   '/word/$word': typeof WordWordRoute
 }
@@ -158,6 +149,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/explore'
+    | '/relations'
     | '/settings'
     | '/tools'
     | '/document/$documentId'
@@ -167,14 +159,13 @@ export interface FileRouteTypes {
     | '/recent/words'
     | '/relation/$relationId'
     | '/relation/new'
-    | '/relations/d2s'
-    | '/relations/w2w'
     | '/sentence/$sentenceId'
     | '/word/$word'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/explore'
+    | '/relations'
     | '/settings'
     | '/tools'
     | '/document/$documentId'
@@ -184,14 +175,13 @@ export interface FileRouteTypes {
     | '/recent/words'
     | '/relation/$relationId'
     | '/relation/new'
-    | '/relations/d2s'
-    | '/relations/w2w'
     | '/sentence/$sentenceId'
     | '/word/$word'
   id:
     | '__root__'
     | '/'
     | '/explore'
+    | '/relations'
     | '/settings'
     | '/tools'
     | '/document/$documentId'
@@ -201,8 +191,6 @@ export interface FileRouteTypes {
     | '/recent/words'
     | '/relation/$relationId'
     | '/relation/new'
-    | '/relations/d2s'
-    | '/relations/w2w'
     | '/sentence/$sentenceId'
     | '/word/$word'
   fileRoutesById: FileRoutesById
@@ -210,6 +198,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExploreRoute: typeof ExploreRoute
+  RelationsRoute: typeof RelationsRoute
   SettingsRoute: typeof SettingsRoute
   ToolsRoute: typeof ToolsRoute
   DocumentDocumentIdRoute: typeof DocumentDocumentIdRoute
@@ -219,8 +208,6 @@ export interface RootRouteChildren {
   RecentWordsRoute: typeof RecentWordsRoute
   RelationRelationIdRoute: typeof RelationRelationIdRoute
   RelationNewRoute: typeof RelationNewRoute
-  RelationsD2sRoute: typeof RelationsD2sRoute
-  RelationsW2wRoute: typeof RelationsW2wRoute
   SentenceSentenceIdRoute: typeof SentenceSentenceIdRoute
   WordWordRoute: typeof WordWordRoute
 }
@@ -239,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relations': {
+      id: '/relations'
+      path: '/relations'
+      fullPath: '/relations'
+      preLoaderRoute: typeof RelationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -304,20 +298,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RelationNewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/relations/d2s': {
-      id: '/relations/d2s'
-      path: '/relations/d2s'
-      fullPath: '/relations/d2s'
-      preLoaderRoute: typeof RelationsD2sRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/relations/w2w': {
-      id: '/relations/w2w'
-      path: '/relations/w2w'
-      fullPath: '/relations/w2w'
-      preLoaderRoute: typeof RelationsW2wRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sentence/$sentenceId': {
       id: '/sentence/$sentenceId'
       path: '/sentence/$sentenceId'
@@ -338,6 +318,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExploreRoute: ExploreRoute,
+  RelationsRoute: RelationsRoute,
   SettingsRoute: SettingsRoute,
   ToolsRoute: ToolsRoute,
   DocumentDocumentIdRoute: DocumentDocumentIdRoute,
@@ -347,8 +328,6 @@ const rootRouteChildren: RootRouteChildren = {
   RecentWordsRoute: RecentWordsRoute,
   RelationRelationIdRoute: RelationRelationIdRoute,
   RelationNewRoute: RelationNewRoute,
-  RelationsD2sRoute: RelationsD2sRoute,
-  RelationsW2wRoute: RelationsW2wRoute,
   SentenceSentenceIdRoute: SentenceSentenceIdRoute,
   WordWordRoute: WordWordRoute,
 }

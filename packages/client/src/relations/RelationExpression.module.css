@@ -1,0 +1,22 @@
+.root {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.text,
+.word {
+  flex: none;
+}
+
+.text {
+  white-space: pre;
+}
+
+.truncated {
+  flex: 0 1 auto;
+  min-width: 5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

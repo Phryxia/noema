@@ -21,7 +21,7 @@ export function D2sRelationPage({ snapshot }: D2sRelationPageProps): ReactElemen
     meta: { successMessage: '관계를 삭제했습니다' },
     onSuccess: () => {
       invalidateRelationQueries(queryClient)
-      navigate({ to: '/relations/d2s' })
+      navigate({ to: '/relations', search: true })
     },
   })
 

@@ -1,25 +1,23 @@
-export interface SentenceCard {
+export interface Card {
   id: number
   value: string
   prevId: number | null
   nextId: number | null
 }
 
-export interface SentenceCardList {
+export interface CardList {
   headId: number | null
-  nodes: Map<number, SentenceCard>
+  nodes: Map<number, Card>
   nextId: number
 }
 
 export interface SplitResult {
-  list: SentenceCardList
+  list: CardList
   insertedIds: number[]
 }
 
-const SPLIT_SEPARATOR = '\n\n\n'
-
-export function createSentenceCardList(values: string[]): SentenceCardList {
-  const nodes = new Map<number, SentenceCard>()
+export function createCardList(values: string[]): CardList {
+  const nodes = new Map<number, Card>()
   values.forEach((value, index) => {
     nodes.set(index, {
       id: index,
@@ -31,8 +29,8 @@ export function createSentenceCardList(values: string[]): SentenceCardList {
   return { headId: values.length ? 0 : null, nodes, nextId: values.length }
 }
 
-export function listCards(list: SentenceCardList): SentenceCard[] {
-  const cards: SentenceCard[] = []
+export function listCards(list: CardList): Card[] {
+  const cards: Card[] = []
   let cursor = list.headId
   while (cursor !== null) {
     const card = getCard(list, cursor)
@@ -42,17 +40,13 @@ export function listCards(list: SentenceCardList): SentenceCard[] {
   return cards
 }
 
-export function updateCardValue(
-  list: SentenceCardList,
-  id: number,
-  value: string,
-): SentenceCardList {
+export function updateCardValue(list: CardList, id: number, value: string): CardList {
   const nodes = new Map(list.nodes)
   nodes.set(id, { ...getCard(list, id), value })
   return { ...list, nodes }
 }
 
-export function mergeWithPrevious(list: SentenceCardList, id: number): SentenceCardList {
+export function mergeWithPrevious(list: CardList, id: number): CardList {
   const card = getCard(list, id)
   if (card.prevId === null) {
     return list
@@ -71,16 +65,16 @@ export function mergeWithPrevious(list: SentenceCardList, id: number): SentenceC
   return { ...list, nodes }
 }
 
-export function splitCard(list: SentenceCardList, id: number, pieces: string[]): SplitResult {
+export function splitCard(list: CardList, id: number, pieces: string[]): SplitResult {
   const [head = '', ...rest] = pieces
   const nodes = new Map(list.nodes)
   const card = getCard(list, id)
   let nextId = list.nextId
-  let previous: SentenceCard = { ...card, value: head }
+  let previous: Card = { ...card, value: head }
   const insertedIds: number[] = []
 
   for (const value of rest) {
-    const inserted: SentenceCard = {
+    const inserted: Card = {
       id: nextId,
       value,
       prevId: previous.id,
@@ -98,7 +92,7 @@ export function splitCard(list: SentenceCardList, id: number, pieces: string[]):
   return { list: { ...list, nodes, nextId }, insertedIds }
 }
 
-export function removeCard(list: SentenceCardList, id: number): SentenceCardList {
+export function removeCard(list: CardList, id: number): CardList {
   const card = getCard(list, id)
   const nodes = new Map(list.nodes)
   if (card.prevId !== null) {
@@ -111,20 +105,10 @@ export function removeCard(list: SentenceCardList, id: number): SentenceCardList
   return { ...list, headId: list.headId === id ? card.nextId : list.headId, nodes }
 }
 
-export function splitByTripleNewline(value: string): string[] | null {
-  if (!value.includes(SPLIT_SEPARATOR)) {
-    return null
-  }
-  return value
-    .split(SPLIT_SEPARATOR)
-    .map((piece) => piece.trim())
-    .filter(Boolean)
-}
-
-function getCard(list: SentenceCardList, id: number): SentenceCard {
+function getCard(list: CardList, id: number): Card {
   const card = list.nodes.get(id)
   if (!card) {
-    throw new Error(`존재하지 않는 문장 카드: ${id}`)
+    throw new Error(`존재하지 않는 카드: ${id}`)
   }
   return card
 }

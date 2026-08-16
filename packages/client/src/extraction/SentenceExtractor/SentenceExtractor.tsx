@@ -23,7 +23,7 @@ export function SentenceExtractor({ document }: SentenceExtractorProps): ReactEl
     mergeWithPrevious,
     removeCard,
     focusAdjacentCard,
-    registerTextarea,
+    registerElement,
   } = useSentenceCards(() => extractSentences(document.value))
   const queryClient = useQueryClient()
   const { mutate: submit, isPending: isSubmitting } = useMutation({
@@ -62,7 +62,7 @@ export function SentenceExtractor({ document }: SentenceExtractorProps): ReactEl
             onMergeWithPrevious={mergeWithPrevious}
             onRemove={removeCard}
             onNavigate={focusAdjacentCard}
-            onRegister={registerTextarea}
+            onRegister={registerElement}
           />
         ))}
       </div>

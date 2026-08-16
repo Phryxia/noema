@@ -2,11 +2,11 @@ import type { KeyboardEvent, ReactElement } from 'react'
 import { memo, useRef } from 'react'
 import { SentenceField } from '../../sentence/SentenceField/SentenceField'
 import { computeArrowNavigation } from './arrowNavigation'
-import type { ArrowNavigation } from './arrowNavigation'
+import type { ArrowNavigation } from '../arrowNavigation'
+import { computePendingBackspace } from '../computePendingBackspace'
+import type { PendingBackspace } from '../computePendingBackspace'
 
 const CARD_ROWS = 1
-
-type PendingBackspace = 'merge' | 'remove' | null
 
 interface SentenceCardProps {
   id: number
@@ -33,7 +33,7 @@ export const SentenceCard = memo(function SentenceCard({
     if (event.nativeEvent.isComposing) {
       return
     }
-    pendingBackspace.current = computePendingBackspace(event, value)
+    pendingBackspace.current = computePendingBackspace(event, event.currentTarget, value)
     const navigation = computeArrowNavigation(event)
     if (!navigation) {
       return
@@ -69,20 +69,3 @@ export const SentenceCard = memo(function SentenceCard({
     />
   )
 })
-
-function computePendingBackspace(
-  event: KeyboardEvent<HTMLTextAreaElement>,
-  value: string,
-): PendingBackspace {
-  if (event.key !== 'Backspace') {
-    return null
-  }
-  if (!value) {
-    return 'remove'
-  }
-  const { selectionStart, selectionEnd } = event.currentTarget
-  if (!selectionStart && !selectionEnd) {
-    return 'merge'
-  }
-  return null
-}

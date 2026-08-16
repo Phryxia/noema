@@ -1,4 +1,4 @@
-import type { KeyboardEvent, ReactElement } from 'react'
+import type { KeyboardEvent, ReactElement, Ref } from 'react'
 import { useRef, useState } from 'react'
 import { WhitespaceEcho } from '../../writer/WhitespaceEcho/WhitespaceEcho'
 import classnames from 'classnames/bind'
@@ -10,6 +10,8 @@ interface WordFieldProps {
   value: string
   isEditable: boolean
   placeholder?: string
+  isInline?: boolean
+  inputRef?: Ref<HTMLInputElement>
   onChange: (value: string) => void
   onEnter?: () => void
   onEscape?: () => void
@@ -17,12 +19,16 @@ interface WordFieldProps {
   onArrowDown?: () => void
   onFocus?: () => void
   onBlur?: () => void
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void
+  onKeyUp?: (event: KeyboardEvent<HTMLInputElement>) => void
 }
 
 export function WordField({
   value,
   isEditable,
   placeholder,
+  isInline,
+  inputRef,
   onChange,
   onEnter,
   onEscape,
@@ -30,11 +36,14 @@ export function WordField({
   onArrowDown,
   onFocus,
   onBlur,
+  onKeyDown,
+  onKeyUp,
 }: WordFieldProps): ReactElement {
   const [scrollLeft, setScrollLeft] = useState(0)
   const isBackspaceFromEmpty = useRef(false)
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
+    onKeyDown?.(event)
     if (event.nativeEvent.isComposing) {
       return
     }
@@ -57,6 +66,7 @@ export function WordField({
   }
 
   function handleKeyUp(event: KeyboardEvent<HTMLInputElement>): void {
+    onKeyUp?.(event)
     if (event.key !== 'Backspace' || event.nativeEvent.isComposing) {
       return
     }
@@ -69,8 +79,9 @@ export function WordField({
   }
 
   return (
-    <div className={cx('inputWrapper')}>
+    <div className={cx('inputWrapper', { inline: isInline })}>
       <input
+        ref={inputRef}
         className={cx('input')}
         type="text"
         value={value}

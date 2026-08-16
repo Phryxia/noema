@@ -3,6 +3,28 @@ import { awaitRequest } from '../db/utils'
 import { ROOT_NODE_ID } from './consts'
 import type { RecentWord, TrieNode } from './types'
 
+export interface AddedWord {
+  nodeId: number
+  isCreated: boolean
+}
+
+export async function addWord(
+  transaction: IDBTransaction,
+  value: string,
+  createdAt: Date,
+): Promise<AddedWord> {
+  if (!value) {
+    throw new Error('빈 문자열은 단어가 될 수 없다')
+  }
+  const node = await insertWordPath(transaction, value)
+  if (node.createdAt) {
+    return { nodeId: node.nodeId, isCreated: false }
+  }
+  await markAsWord(transaction, node.nodeId, createdAt)
+  await pushRecentWord(transaction, { nodeId: node.nodeId, value, createdAt })
+  return { nodeId: node.nodeId, isCreated: true }
+}
+
 export async function insertWordPath(
   transaction: IDBTransaction,
   value: string,

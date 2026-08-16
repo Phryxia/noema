@@ -1,0 +1,6 @@
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--pico-spacing) / 4);
+  margin-bottom: var(--pico-spacing);
+}

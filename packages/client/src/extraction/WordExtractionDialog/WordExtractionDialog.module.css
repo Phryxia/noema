@@ -1,0 +1,15 @@
+.root {
+  font-family: var(--font-mono);
+
+  .word {
+    max-width: 0;
+    overflow: hidden;
+    white-space: pre;
+    text-overflow: ellipsis;
+  }
+
+  .outcome {
+    width: 1%;
+    white-space: nowrap;
+  }
+}

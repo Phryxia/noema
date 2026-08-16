@@ -3,38 +3,22 @@ import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import type { Lexis, RecentWord, TrieNode } from './types'
-import {
-  insertWordPath,
-  markAsWord,
-  pushRecentWord,
-  rewriteRecentSlots,
-  unmarkAndPrune,
-  walkToNode,
-} from './wordTx'
+import { addWord, rewriteRecentSlots, unmarkAndPrune, walkToNode } from './wordTx'
 
 export async function createWord(value: string): Promise<number> {
-  if (!value) {
-    throw new Error('빈 문자열은 단어가 될 수 없다')
-  }
   const db = await openNoemaDB()
   const transaction = db.transaction(
     [WORD_META_STORE, WORD_NODES_STORE, RECENT_WORDS_STORE],
     'readwrite',
   )
 
-  const node = await insertWordPath(transaction, value)
-  if (node.createdAt) {
-    await awaitTransaction(transaction)
-    return node.nodeId
-  }
-
-  const createdAt = new Date()
-  await markAsWord(transaction, node.nodeId, createdAt)
-  await pushRecentWord(transaction, { nodeId: node.nodeId, value, createdAt })
+  const { nodeId, isCreated } = await addWord(transaction, value, new Date())
 
   await awaitTransaction(transaction)
-  recordCreation(db, 'wordCount')
-  return node.nodeId
+  if (isCreated) {
+    recordCreation(db, 'wordCount')
+  }
+  return nodeId
 }
 
 export async function deleteWord(nodeId: number): Promise<void> {

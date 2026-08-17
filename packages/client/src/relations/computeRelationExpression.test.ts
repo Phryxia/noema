@@ -122,4 +122,22 @@ describe('computeRelationExpression', () => {
       },
     ])
   })
+
+  it('태그는 대상 참조와 단어 참조를 든 tag 토큰이다', () => {
+    expect(
+      computeRelationExpression({
+        relationId: 3,
+        createdAt: new Date(0),
+        type: 'Tag',
+        documentId: 4,
+        wordId: 3,
+      }),
+    ).toEqual([
+      {
+        kind: 'tag',
+        target: { kind: 'document', id: 4 },
+        word: { kind: 'word', id: 3 },
+      },
+    ])
+  })
 })

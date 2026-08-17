@@ -2,6 +2,7 @@ import type { ReactElement } from 'react'
 import classnames from 'classnames/bind'
 import { ExtractionExpression } from './ExtractionExpression'
 import { RefItem } from './RefLinks'
+import { TagExpression } from './TagExpression'
 import { UsageExpression } from './UsageExpression'
 import type { ResolvedToken } from '../types'
 import styles from './RelationExpression.module.css'
@@ -37,6 +38,9 @@ function ExpressionToken({ token, keyword }: ExpressionTokenProps): ReactElement
   }
   if (token.kind === 'extraction') {
     return <ExtractionExpression token={token} keyword={keyword} />
+  }
+  if (token.kind === 'tag') {
+    return <TagExpression token={token} keyword={keyword} />
   }
   return <RefItem token={token} keyword={keyword} />
 }

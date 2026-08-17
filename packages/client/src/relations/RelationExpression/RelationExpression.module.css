@@ -26,7 +26,8 @@
 }
 
 .childArea,
-.parentArea {
+.parentArea,
+.targetArea {
   display: flex;
   min-width: 0;
   overflow: hidden;
@@ -37,5 +38,9 @@
 }
 
 .parentArea {
+  flex: 0 0 30%;
+}
+
+.targetArea {
   flex: 0 0 30%;
 }

@@ -1,7 +1,8 @@
 import { SKIP_LABEL } from './consts'
 import { createUsageFallbackTokens } from './createUsageFallbackTokens'
-import type { ExpressionToken } from './types'
+import type { ExpressionToken, RefToken } from './types'
 import { getSimilarityLabel } from '../qna/labels'
+import { checkIsSentenceTag } from '../tag/checkIsSentenceTag'
 import type {
   BinaryAssociationRelation,
   BinaryCommonRelation,
@@ -9,6 +10,7 @@ import type {
   BinarySimilarityRelation,
   NamedAssociationRelation,
   Relation,
+  TagRelation,
   TernaryCompositionRelation,
   TernaryIsolationRelation,
   UnaryPropertyRelation,
@@ -42,6 +44,15 @@ export function computeRelationExpression(relation: Relation): ExpressionToken[]
         kind: 'extraction',
         child: { kind: 'word', id: relation.wordId },
         parent: { kind: 'sentence', id: relation.sentenceId },
+      },
+    ]
+  }
+  if (relation.type === 'Tag') {
+    return [
+      {
+        kind: 'tag',
+        target: toTagTarget(relation),
+        word: { kind: 'word', id: relation.wordId },
       },
     ]
   }
@@ -103,6 +114,13 @@ function computeTernaryExpression(relation: TernaryRelation): ExpressionToken[] 
     return [word3, text(' = '), word1, text(' + '), word2]
   }
   return [word1, text(' ──'), word3, text('─→ '), word2]
+}
+
+function toTagTarget(relation: TagRelation): RefToken {
+  if (checkIsSentenceTag(relation)) {
+    return { kind: 'sentence', id: relation.sentenceId }
+  }
+  return { kind: 'document', id: relation.documentId }
 }
 
 function toAnswerToken(answer: WordOrSentence | null): ExpressionToken {

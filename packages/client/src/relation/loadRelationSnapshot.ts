@@ -5,6 +5,8 @@ import type { AnswerDraft, CommentDraft } from '../explore/types'
 import { hydrateS2wEntries } from '../s2w/hydrateS2wEntries'
 import type { S2wEntry } from '../s2w/types'
 import { getSentence } from '../sentence/sentence.service'
+import { hydrateTagEntries } from '../tag/hydrateTagEntries'
+import type { TagEntry } from '../tag/types'
 import { getWordValues } from '../word/getWordValues'
 import { SubjectWordSpecs } from './consts'
 import { getQuestionWordIds } from './getQuestionWordIds'
@@ -15,12 +17,13 @@ import { resizeWords } from './resizeWords'
 import type {
   DocumentToSentenceRelation,
   SentenceToWordRelation,
+  TagRelation,
   WordOrSentence,
   WordRelation,
 } from './types'
 
 export type RelationSnapshot =
-  WordRelationSnapshot | DocumentToSentenceSnapshot | SentenceToWordSnapshot
+  WordRelationSnapshot | DocumentToSentenceSnapshot | SentenceToWordSnapshot | TagSnapshot
 
 export interface WordRelationSnapshot {
   kind: 'word'
@@ -42,6 +45,12 @@ export interface SentenceToWordSnapshot {
   entry: S2wEntry
 }
 
+export interface TagSnapshot {
+  kind: 'tag'
+  relation: TagRelation
+  entry: TagEntry
+}
+
 export async function loadRelationSnapshot(
   relationId: number,
 ): Promise<RelationSnapshot | null> {
@@ -56,6 +65,10 @@ export async function loadRelationSnapshot(
   if (relation.type === 'SentenceToWord') {
     const [entry] = await hydrateS2wEntries([relation])
     return { kind: 's2w', relation, entry }
+  }
+  if (relation.type === 'Tag') {
+    const [entry] = await hydrateTagEntries([relation])
+    return { kind: 'tag', relation, entry }
   }
   const values = await getWordValues(getQuestionWordIds(relation))
   return {

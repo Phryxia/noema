@@ -8,9 +8,9 @@ export interface RelationEntry {
 }
 
 export type ResolvedToken =
-  TextToken | ResolvedRefToken | ResolvedUsageToken | ResolvedExtractionToken
+  TextToken | ResolvedRefToken | ResolvedUsageToken | ResolvedExtractionToken | ResolvedTagToken
 
-export type ExpressionToken = TextToken | RefToken | UsageToken | ExtractionToken
+export type ExpressionToken = TextToken | RefToken | UsageToken | ExtractionToken | TagToken
 
 export interface TextToken {
   kind: 'text'
@@ -54,4 +54,16 @@ export interface ResolvedExtractionToken {
   kind: 'extraction'
   child: ResolvedRefToken
   parent: ResolvedRefToken
+}
+
+export interface TagToken {
+  kind: 'tag'
+  target: RefToken
+  word: RefToken
+}
+
+export interface ResolvedTagToken {
+  kind: 'tag'
+  target: ResolvedRefToken
+  word: ResolvedRefToken
 }

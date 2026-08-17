@@ -8,8 +8,9 @@ import { submitWordExtraction } from '../submitWordExtraction'
 import type { WordExtractionResult } from '../submitWordExtraction'
 import { useCards } from '../useCards'
 import { WordCard } from '../WordCard/WordCard'
-import { WordExtractionDialog } from '../WordExtractionDialog/WordExtractionDialog'
+import { getOutcomeLabel, OutcomeTones } from '../../relation/batch/getOutcomeLabel'
 import { invalidateRelationQueries } from '../../relation/utils'
+import { ResultDialog } from '../../shared/ResultDialog/ResultDialog'
 import type { Sentence } from '../../sentence/types'
 import { toast } from '../../toast/toast'
 import styles from './WordExtractor.module.css'
@@ -87,7 +88,17 @@ export function WordExtractor({ sentence, onClose }: WordExtractorProps): ReactE
       >
         {!isSubmitting && '제출'}
       </button>
-      {results && <WordExtractionDialog results={results} onClose={onClose} />}
+      {results && (
+        <ResultDialog
+          title="단어 추출 결과"
+          rows={results.map((result) => ({
+            value: result.value,
+            label: getOutcomeLabel(result.outcome),
+            tone: OutcomeTones[result.outcome.kind],
+          }))}
+          onClose={onClose}
+        />
+      )}
     </>
   )
 }

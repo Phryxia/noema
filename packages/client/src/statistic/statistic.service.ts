@@ -22,8 +22,8 @@ export function recordCreation(db: IDBDatabase, kind: CountKind, amount: number 
   recordCountChange(db, kind, amount)
 }
 
-export function recordDeletion(db: IDBDatabase, kind: CountKind): void {
-  recordCountChange(db, kind, -1)
+export function recordDeletion(db: IDBDatabase, kind: CountKind, amount: number = 1): void {
+  recordCountChange(db, kind, -amount)
 }
 
 export async function getCountLogs(unit: TimeUnit, mode: ChartMode): Promise<CountLog[]> {

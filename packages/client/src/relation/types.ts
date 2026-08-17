@@ -30,6 +30,21 @@ export interface SentenceToWordRelation extends RelationBase {
   wordId: number
 }
 
+interface TagRelationBase extends RelationBase {
+  type: 'Tag'
+  wordId: number
+}
+
+export interface SentenceTagRelation extends TagRelationBase {
+  sentenceId: number
+}
+
+export interface DocumentTagRelation extends TagRelationBase {
+  documentId: number
+}
+
+export type TagRelation = SentenceTagRelation | DocumentTagRelation
+
 export interface WordExplainRelation extends WordRelationBase {
   type: 'WordExplain'
   wordId: number
@@ -99,7 +114,8 @@ export type WordRelation =
   | TernaryCompositionRelation
   | NamedAssociationRelation
 
-export type Relation = WordRelation | DocumentToSentenceRelation | SentenceToWordRelation
+export type Relation =
+  WordRelation | DocumentToSentenceRelation | SentenceToWordRelation | TagRelation
 
 export type NewRelation = DistributiveOmit<
   WordRelation,

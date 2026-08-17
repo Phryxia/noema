@@ -9,6 +9,7 @@ import {
 import { invalidateStatisticQueries } from '../statistic/utils'
 import { QNA_SEARCH_QUERY_KEY } from '../qna/search/consts'
 import { RELATION_PAGES_QUERY_KEY } from '../relations/consts'
+import { invalidateTagQueries } from '../tag/utils'
 
 export function invalidateWordQueries(queryClient: QueryClient): void {
   invalidateStatisticQueries(queryClient)
@@ -23,4 +24,5 @@ export function invalidateWordAndQnaQueries(queryClient: QueryClient): void {
   queryClient.invalidateQueries({ queryKey: [RELATION_PAGES_QUERY_KEY] })
   queryClient.invalidateQueries({ queryKey: [QNA_SEARCH_QUERY_KEY] })
   queryClient.invalidateQueries({ queryKey: [WORD_RELATIONS_QUERY_KEY] })
+  invalidateTagQueries(queryClient)
 }

@@ -6,6 +6,8 @@ import { getDocument } from '../document/document.service'
 import { DocumentSentences } from '../document/DocumentSentences/DocumentSentences'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
 import { MetaFields } from '../meta/MetaFields/MetaFields'
+import { TAG_RELATIONS_QUERY_KEY } from '../tag/consts'
+import { getTagEntries } from '../tag/tag.service'
 
 export const Route = createFileRoute('/document/$documentId')({
   component: DocumentPage,
@@ -18,8 +20,12 @@ function DocumentPage(): ReactElement {
     queryKey: [DOCUMENT_QUERY_KEY, documentId],
     queryFn: () => getDocument(Number(documentId)),
   })
+  const { data: tags, isPending: isTagsPending } = useQuery({
+    queryKey: [TAG_RELATIONS_QUERY_KEY, 'document', documentId],
+    queryFn: () => getTagEntries({ type: 'document', id: Number(documentId) }),
+  })
 
-  if (isPending) {
+  if (isPending || isTagsPending) {
     return <article aria-busy="true" />
   }
   if (!target) {
@@ -39,6 +45,7 @@ function DocumentPage(): ReactElement {
         key={target.documentId}
         isEditable
         document={target}
+        tags={tags}
         onDelete={() => navigate({ to: '/' })}
       />
       <DocumentSentences key={target.documentId} document={target} />

@@ -1,8 +1,16 @@
 import type { DragEvent, FormEvent, KeyboardEvent, ReactElement } from 'react'
+import { useCallback } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
 import { SourceField } from '../../writer/SourceField/SourceField'
+import { checkIsBodyChanged } from '../../writer/checkIsBodyChanged'
 import { insertTabIfPressed } from '../../writer/insertTabIfPressed'
+import { invalidateRelationQueries } from '../../relation/utils'
+import { createInitialTagValues } from '../../tag/createInitialTagValues'
+import { submitTags } from '../../tag/submitTags'
+import { TagEditor } from '../../tag/TagEditor/TagEditor'
+import type { TagEntry, TagResult } from '../../tag/types'
+import { useTagResults } from '../../tag/useTagResults'
 import { createDocument, deleteDocument, updateDocument } from '../document.service'
 import { invalidateDocumentQueries } from '../utils'
 import type { Document } from '../types'
@@ -14,25 +22,50 @@ const cx = classnames.bind(styles)
 interface DocumentWriterProps {
   isEditable: boolean
   document?: Document
+  tags?: TagEntry[]
   onDelete?: () => void
+}
+
+interface DocumentDraft {
+  value: string
+  source: string
+  tags: string[]
 }
 
 export function DocumentWriter({
   isEditable,
   document,
+  tags = [],
   onDelete,
 }: DocumentWriterProps): ReactElement {
-  const { draft, setDraft, canSave, save, remove } = useWriterForm({
+  const initialTags = createInitialTagValues(tags)
+  const { showResults, dialog } = useTagResults()
+  const { draft, setDraft, resetKey, canSave, save, remove } = useWriterForm<
+    DocumentDraft,
+    TagResult[]
+  >({
     isEditable,
     isEditing: !!document,
-    initialDraft: { value: document?.value ?? '', source: document?.source ?? '' },
-    saveDraft: ({ value, source }): Promise<void> => submitDocument(document, value, source),
+    initialDraft: {
+      value: document?.value ?? '',
+      source: document?.source ?? '',
+      tags: initialTags,
+    },
+    saveDraft: (next): Promise<TagResult[]> => submitDocument(document, tags, next),
     saveSuccessMessage: '문서를 저장했습니다',
     deleteItem: document ? (): Promise<void> => deleteDocument(document.documentId) : undefined,
     deleteSuccessMessage: '문서를 삭제했습니다',
-    invalidateQueries: invalidateDocumentQueries,
+    invalidateQueries: (queryClient) => {
+      invalidateDocumentQueries(queryClient)
+      invalidateRelationQueries(queryClient)
+    },
+    onSaved: showResults,
     onDeleted: onDelete,
   })
+  const handleTagsChange = useCallback(
+    (nextTags: string[]) => setDraft((current) => ({ ...current, tags: nextTags })),
+    [setDraft],
+  )
 
   function handleSubmit(event: FormEvent): void {
     event.preventDefault()
@@ -56,7 +89,7 @@ export function DocumentWriter({
       return
     }
     event.preventDefault()
-    setDraft({ value: await file.text(), source: file.name })
+    setDraft({ ...draft, value: await file.text(), source: file.name })
   }
 
   return (
@@ -75,21 +108,38 @@ export function DocumentWriter({
         onDragOver={(event) => event.preventDefault()}
         onDrop={handleDrop}
       />
+      <TagEditor
+        key={resetKey}
+        initialValues={initialTags}
+        isEditable={isEditable}
+        onChange={handleTagsChange}
+      />
       {isEditable && (
         <WriterActions isEditing={!!document} canSave={canSave} onDelete={remove} />
       )}
+      {dialog}
     </form>
   )
 }
 
 async function submitDocument(
   document: Document | undefined,
-  value: string,
-  source: string,
-): Promise<void> {
-  if (document) {
-    await updateDocument(document.documentId, value, source)
-    return
+  tags: TagEntry[],
+  draft: DocumentDraft,
+): Promise<TagResult[]> {
+  const documentId = await saveDocument(document, draft)
+  return submitTags({ type: 'document', id: documentId }, tags, draft.tags)
+}
+
+async function saveDocument(
+  document: Document | undefined,
+  draft: DocumentDraft,
+): Promise<number> {
+  if (!document) {
+    return createDocument(draft.value, draft.source)
   }
-  await createDocument(value, source)
+  if (checkIsBodyChanged(draft, document)) {
+    await updateDocument(document.documentId, draft.value, draft.source)
+  }
+  return document.documentId
 }

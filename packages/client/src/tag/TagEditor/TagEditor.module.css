@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--pico-spacing) / 4);
+  margin-bottom: var(--pico-spacing);
+
+  .label {
+    font-family: var(--font-mono);
+    color: var(--pico-muted-color);
+  }
+}

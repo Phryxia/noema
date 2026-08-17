@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import type { ArrowNavigation } from './arrowNavigation'
 import {
@@ -119,8 +119,10 @@ export function useCards<TElement extends FocusableElement>(
     [focusCard, computeArrivalCaret],
   )
 
+  const cards = useMemo(() => listCards(list), [list])
+
   return {
-    cards: listCards(list),
+    cards,
     updateCard,
     splitCard,
     mergeWithPrevious,

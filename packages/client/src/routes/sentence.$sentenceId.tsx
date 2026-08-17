@@ -7,6 +7,8 @@ import { SENTENCE_QUERY_KEY } from '../sentence/consts'
 import { getSentence } from '../sentence/sentence.service'
 import { SentenceWriter } from '../sentence/SentenceWriter/SentenceWriter'
 import { MetaFields } from '../meta/MetaFields/MetaFields'
+import { TAG_RELATIONS_QUERY_KEY } from '../tag/consts'
+import { getTagEntries } from '../tag/tag.service'
 
 export const Route = createFileRoute('/sentence/$sentenceId')({
   component: SentencePage,
@@ -19,8 +21,12 @@ function SentencePage(): ReactElement {
     queryKey: [SENTENCE_QUERY_KEY, sentenceId],
     queryFn: () => getSentence(Number(sentenceId)),
   })
+  const { data: tags, isPending: isTagsPending } = useQuery({
+    queryKey: [TAG_RELATIONS_QUERY_KEY, 'sentence', sentenceId],
+    queryFn: () => getTagEntries({ type: 'sentence', id: Number(sentenceId) }),
+  })
 
-  if (isPending) {
+  if (isPending || isTagsPending) {
     return <article aria-busy="true" />
   }
   if (!sentence) {
@@ -40,6 +46,7 @@ function SentencePage(): ReactElement {
         key={`writer-${sentence.sentenceId}`}
         isEditable
         sentence={sentence}
+        tags={tags}
         onDelete={() => navigate({ to: '/' })}
       />
       <SentenceDocuments

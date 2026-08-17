@@ -1,19 +1,30 @@
-import { RELATIONS_STORE, SENTENCE_ID_INDEX } from '../db/consts'
+import { RELATIONS_STORE, SENTENCE_ID_INDEX, WORD_ID_INDEX } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest } from '../db/utils'
 import type { Relation, SentenceToWordRelation } from '../relation/types'
 
-export async function getSentenceToWordRelationsBySentence(
+export function getSentenceToWordRelationsBySentence(
   sentenceId: number,
 ): Promise<SentenceToWordRelation[]> {
-  if (!Number.isInteger(sentenceId)) {
+  return getRelationsByIndex(SENTENCE_ID_INDEX, sentenceId)
+}
+
+export function getSentenceToWordRelationsByWord(
+  wordId: number,
+): Promise<SentenceToWordRelation[]> {
+  return getRelationsByIndex(WORD_ID_INDEX, wordId)
+}
+
+async function getRelationsByIndex(
+  indexName: string,
+  key: number,
+): Promise<SentenceToWordRelation[]> {
+  if (!Number.isInteger(key)) {
     return []
   }
   const db = await openNoemaDB()
   const relationStore = db.transaction(RELATIONS_STORE).objectStore(RELATIONS_STORE)
-  const relations = await awaitRequest<Relation[]>(
-    relationStore.index(SENTENCE_ID_INDEX).getAll(sentenceId),
-  )
+  const relations = await awaitRequest<Relation[]>(relationStore.index(indexName).getAll(key))
   return relations.filter(checkIsSentenceToWord)
 }
 

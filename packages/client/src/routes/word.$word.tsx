@@ -6,6 +6,7 @@ import { getWordNode } from '../word/word.service'
 import { WordEditor } from '../word/WordEditor/WordEditor'
 import { WordRelations } from '../word/WordRelations/WordRelations'
 import { MetaFields } from '../meta/MetaFields/MetaFields'
+import { WordSentences } from '../s2w/WordSentences/WordSentences'
 import { WordTags } from '../tag/WordTags/WordTags'
 
 export const Route = createFileRoute('/word/$word')({
@@ -45,7 +46,8 @@ function WordPage(): ReactElement {
         onDeleted={() => navigate({ to: '/' })}
       />
       <WordRelations key={word} word={word} />
-      <WordTags key={node.nodeId} wordId={node.nodeId} />
+      <WordSentences key={`sentences-${node.nodeId}`} wordId={node.nodeId} />
+      <WordTags key={`tags-${node.nodeId}`} wordId={node.nodeId} />
     </article>
   )
 }

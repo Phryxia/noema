@@ -1,5 +1,5 @@
 import type { QueryClient, QueryKey } from '@tanstack/react-query'
-import { PAGE_CACHE_MS } from './consts'
+import { RECENT_PAGE_SIZE } from './consts'
 import { getRecentPage } from './recent.service'
 import type { RecentPage, RecentRange, RecentSource } from './types'
 
@@ -19,22 +19,23 @@ export function createPageQueryKey(
 }
 
 export async function ensureRecentPage<TEntry, TRow>(
-  query: RecentPageQuery<TEntry, TRow>,
+  { queryClient, source, queryKeyPrefix, range }: RecentPageQuery<TEntry, TRow>,
   page: number,
 ): Promise<RecentPage<TEntry>> {
-  const { queryClient, source, queryKeyPrefix, range } = query
   if (page <= 1) {
-    return getRecentPage(source, range, null)
+    return getRecentPage(source, range, { kind: 'offset', offset: 0 })
   }
-
-  const previous = await queryClient.ensureQueryData({
-    queryKey: createPageQueryKey(queryKeyPrefix, range, page - 1),
-    queryFn: () => ensureRecentPage(query, page - 1),
-    staleTime: PAGE_CACHE_MS,
-    gcTime: PAGE_CACHE_MS,
-  })
+  const previous = queryClient.getQueryData<RecentPage<TEntry>>(
+    createPageQueryKey(queryKeyPrefix, range, page - 1),
+  )
+  if (!previous) {
+    return getRecentPage(source, range, {
+      kind: 'offset',
+      offset: (page - 1) * RECENT_PAGE_SIZE,
+    })
+  }
   if (!previous.nextCursor) {
     return { entries: [], nextCursor: null }
   }
-  return getRecentPage(source, range, previous.nextCursor)
+  return getRecentPage(source, range, { kind: 'cursor', cursor: previous.nextCursor })
 }

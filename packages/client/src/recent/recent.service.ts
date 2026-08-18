@@ -1,7 +1,14 @@
 import { CREATED_AT_INDEX } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { RECENT_PAGE_SIZE } from './consts'
-import type { RecentCursor, RecentEntry, RecentPage, RecentRange, RecentSource } from './types'
+import type {
+  RecentCursor,
+  RecentEntry,
+  RecentPage,
+  RecentRange,
+  RecentSource,
+  RecentStart,
+} from './types'
 
 interface StoredEntry {
   value: string
@@ -12,7 +19,7 @@ interface StoredEntry {
 export async function getRecentPage<TEntry, TRow>(
   { storeName, toEntry, hydrate }: RecentSource<TEntry, TRow>,
   range: RecentRange,
-  from: RecentCursor | null,
+  start: RecentStart,
 ): Promise<RecentPage<TEntry>> {
   const keyRange = createKeyRange(range)
   if (!keyRange) {
@@ -27,7 +34,7 @@ export async function getRecentPage<TEntry, TRow>(
   }
   const page = await readPage(
     store.index(CREATED_AT_INDEX).openCursor(keyRange, 'prev'),
-    from,
+    start,
     toEntry,
   )
   if (!hydrate) {
@@ -58,12 +65,12 @@ interface RecentRowPage<TRow> {
 
 function readPage<TRow>(
   request: IDBRequest<IDBCursorWithValue | null>,
-  from: RecentCursor | null,
-  toEntry: (id: number, stored: unknown) => TRow | null,
+  start: RecentStart,
+  toEntry: (id: number, stored: unknown) => TRow,
 ): Promise<RecentRowPage<TRow>> {
   return new Promise<RecentRowPage<TRow>>((resolve, reject) => {
     const rows: TRow[] = []
-    let pendingJump = from
+    let pendingStart: RecentStart | null = checkNeedsJump(start) ? start : null
 
     request.onsuccess = (): void => {
       const cursor = request.result
@@ -71,25 +78,36 @@ function readPage<TRow>(
         resolve({ rows, nextCursor: null })
         return
       }
-      if (pendingJump) {
-        const { createdAt, id } = pendingJump
-        pendingJump = null
-        cursor.continuePrimaryKey(createdAt, id)
+      if (pendingStart) {
+        jumpToStart(cursor, pendingStart)
+        pendingStart = null
         return
       }
       if (rows.length === RECENT_PAGE_SIZE) {
         resolve({ rows, nextCursor: toCursor(cursor) })
         return
       }
-      const row = toEntry(cursor.primaryKey as number, cursor.value)
-      if (row !== null) {
-        rows.push(row)
-      }
+      rows.push(toEntry(cursor.primaryKey as number, cursor.value))
       cursor.continue()
     }
 
     request.onerror = (): void => reject(request.error)
   })
+}
+
+function checkNeedsJump(start: RecentStart): boolean {
+  if (start.kind === 'cursor') {
+    return true
+  }
+  return !!start.offset
+}
+
+function jumpToStart(cursor: IDBCursorWithValue, start: RecentStart): void {
+  if (start.kind === 'cursor') {
+    cursor.continuePrimaryKey(start.cursor.createdAt, start.cursor.id)
+    return
+  }
+  cursor.advance(start.offset)
 }
 
 function toCursor(cursor: IDBCursorWithValue): RecentCursor {

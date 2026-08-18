@@ -1,6 +1,6 @@
 export interface RecentSource<TEntry = RecentEntry, TRow = TEntry> {
   storeName: string
-  toEntry: (id: number, stored: unknown) => TRow | null
+  toEntry: (id: number, stored: unknown) => TRow
   hydrate?: (rows: TRow[]) => Promise<TEntry[]>
 }
 
@@ -15,6 +15,9 @@ export interface RecentCursor {
   createdAt: Date
   id: number
 }
+
+export type RecentStart =
+  { kind: 'offset'; offset: number } | { kind: 'cursor'; cursor: RecentCursor }
 
 export interface RecentPage<TEntry = RecentEntry> {
   entries: TEntry[]

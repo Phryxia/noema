@@ -66,7 +66,12 @@ export function useRecentPages<TEntry, TRow>({
     isPending,
     error,
     currentPage,
-    pagination: computePagination({ currentPage, loadedPageCount, isEndReached }),
+    pagination: computePagination({
+      currentPage,
+      exploredFrom: 1,
+      exploredTo: loadedPageCount,
+      isEndReached,
+    }),
     goToPage,
     search,
   }

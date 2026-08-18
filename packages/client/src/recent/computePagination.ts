@@ -2,7 +2,8 @@ const PAGE_WINDOW_RADIUS = 2
 
 export interface PaginationInput {
   currentPage: number
-  loadedPageCount: number
+  exploredFrom: number
+  exploredTo: number
   isEndReached: boolean
 }
 
@@ -16,11 +17,12 @@ export interface Pagination {
 
 export function computePagination({
   currentPage,
-  loadedPageCount,
+  exploredFrom,
+  exploredTo,
   isEndReached,
 }: PaginationInput): Pagination {
-  const from = Math.max(1, currentPage - PAGE_WINDOW_RADIUS)
-  const to = Math.min(loadedPageCount, currentPage + PAGE_WINDOW_RADIUS)
+  const from = Math.max(exploredFrom, currentPage - PAGE_WINDOW_RADIUS)
+  const to = Math.min(exploredTo, currentPage + PAGE_WINDOW_RADIUS)
   const pages: number[] = []
   for (let page = from; page <= to; page += 1) {
     pages.push(page)
@@ -29,8 +31,8 @@ export function computePagination({
   return {
     pages,
     hasLeadingEllipsis: from > 1,
-    hasTrailingEllipsis: to < loadedPageCount || !isEndReached,
+    hasTrailingEllipsis: to < exploredTo || !isEndReached,
     canGoPrevious: currentPage > 1,
-    canGoNext: currentPage < loadedPageCount || !isEndReached,
+    canGoNext: currentPage < exploredTo || !isEndReached,
   }
 }

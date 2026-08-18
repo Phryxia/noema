@@ -21,7 +21,8 @@ export function useExploredPagination(totalPages: number): ExploredPagination {
     currentPage,
     pagination: computePagination({
       currentPage,
-      loadedPageCount,
+      exploredFrom: 1,
+      exploredTo: loadedPageCount,
       isEndReached: loadedPageCount >= totalPages,
     }),
     goToPage,

@@ -15,15 +15,24 @@ export function RecentListSection<TEntry, TRow>({
   queryKeyPrefix,
   Table,
 }: RecentListSectionProps<TEntry, TRow>): ReactElement {
-  const { range, entries, isPending, error, currentPage, pagination, goToPage, search } =
-    useRecentPages({
-      source,
-      queryKeyPrefix,
-    })
+  const {
+    range,
+    rangeKey,
+    entries,
+    isPending,
+    error,
+    currentPage,
+    pagination,
+    goToPage,
+    search,
+  } = useRecentPages({
+    source,
+    queryKeyPrefix,
+  })
 
   return (
     <>
-      <RangeSearchForm range={range} onSearch={search} />
+      <RangeSearchForm key={rangeKey} range={range} onSearch={search} />
       <RecentContent isPending={isPending} error={error} entries={entries} Table={Table} />
       <PageNavigator currentPage={currentPage} pagination={pagination} onChange={goToPage} />
     </>

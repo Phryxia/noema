@@ -15,11 +15,11 @@ export function RelationsPage(): ReactElement {
   const query = q ?? ''
 
   function search(nextQuery: string): void {
-    navigate({ search: { q: nextQuery } })
+    navigate({ search: (previous) => ({ ...previous, q: nextQuery }) })
   }
 
   function cancel(): void {
-    navigate({ search: {} })
+    navigate({ search: (previous) => ({ ...previous, q: undefined }) })
   }
 
   return (

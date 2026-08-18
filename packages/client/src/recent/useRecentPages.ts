@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { computePagination } from './computePagination'
 import { PAGE_CACHE_MS } from './consts'
 import type { Pagination } from './computePagination'
 import { createPageQueryKey, ensureRecentPage } from './ensureRecentPage'
 import type { RecentRange, RecentSource } from './types'
-import { toInclusiveMinuteEnd } from './utils'
+import { useExploredRange } from './useExploredRange'
+import { useRangePageParams } from './useRangePageParams'
 
 interface UseRecentPagesParams<TEntry, TRow> {
   source: RecentSource<TEntry, TRow>
@@ -14,6 +15,7 @@ interface UseRecentPagesParams<TEntry, TRow> {
 
 interface RecentPages<TEntry> {
   range: RecentRange
+  rangeKey: string
   entries: TEntry[]
   isPending: boolean
   error: Error | null
@@ -28,10 +30,11 @@ export function useRecentPages<TEntry, TRow>({
   queryKeyPrefix,
 }: UseRecentPagesParams<TEntry, TRow>): RecentPages<TEntry> {
   const queryClient = useQueryClient()
-  const [range, setRange] = useState<RecentRange>(createInitialRange)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [loadedPageCount, setLoadedPageCount] = useState(1)
-  const [isEndReached, setIsEndReached] = useState(false)
+  const { range, rangeKey, currentPage, goToPage, search } = useRangePageParams()
+  const { exploredFrom, exploredTo, isEndReached, reportEnd } = useExploredRange(
+    rangeKey,
+    currentPage,
+  )
 
   const { data, isPending, error } = useQuery({
     queryKey: createPageQueryKey(queryKeyPrefix, range, currentPage),
@@ -44,39 +47,19 @@ export function useRecentPages<TEntry, TRow>({
 
   useEffect(() => {
     if (data && !data.nextCursor) {
-      setIsEndReached(true)
+      reportEnd()
     }
   }, [data])
 
-  function goToPage(page: number): void {
-    setCurrentPage(page)
-    setLoadedPageCount((count) => Math.max(count, page))
-  }
-
-  function search(nextRange: RecentRange): void {
-    setRange(nextRange)
-    setCurrentPage(1)
-    setLoadedPageCount(1)
-    setIsEndReached(false)
-  }
-
   return {
     range,
+    rangeKey,
     entries: data?.entries ?? [],
     isPending,
     error,
     currentPage,
-    pagination: computePagination({
-      currentPage,
-      exploredFrom: 1,
-      exploredTo: loadedPageCount,
-      isEndReached,
-    }),
+    pagination: computePagination({ currentPage, exploredFrom, exploredTo, isEndReached }),
     goToPage,
     search,
   }
-}
-
-function createInitialRange(): RecentRange {
-  return { until: toInclusiveMinuteEnd(new Date()) }
 }

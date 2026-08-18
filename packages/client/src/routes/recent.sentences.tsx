@@ -2,6 +2,7 @@ import type { ReactElement } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { SENTENCES_STORE } from '../db/consts'
 import { RECENT_SENTENCE_PAGES_QUERY_KEY } from '../recent/consts'
+import { parseRangePageParams } from '../recent/parseRangePageParams'
 import { toRecentEntry } from '../recent/recent.service'
 import { RecentListPage } from '../recent/RecentListPage/RecentListPage'
 import { RecentTable } from '../recent/RecentListPage/RecentTable'
@@ -11,6 +12,7 @@ import type { RecentEntry, RecentSource } from '../recent/types'
 const SentenceSource: RecentSource = { storeName: SENTENCES_STORE, toEntry: toRecentEntry }
 
 export const Route = createFileRoute('/recent/sentences')({
+  validateSearch: parseRangePageParams,
   component: RecentSentencesPage,
 })
 

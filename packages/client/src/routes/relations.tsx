@@ -1,16 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { parseRangePageParams } from '../recent/parseRangePageParams'
+import type { RangePageParams } from '../recent/parseRangePageParams'
 import { RelationsPage } from '../relations/RelationsPage'
 
-interface RelationSearchParams {
+interface RelationSearchParams extends RangePageParams {
   q?: string
 }
 
 export const Route = createFileRoute('/relations')({
   component: RelationsPage,
   validateSearch: (search: Record<string, unknown>): RelationSearchParams => {
+    const params: RelationSearchParams = parseRangePageParams(search)
     if (typeof search.q === 'string' && search.q) {
-      return { q: search.q }
+      params.q = search.q
     }
-    return {}
+    return params
   },
 })

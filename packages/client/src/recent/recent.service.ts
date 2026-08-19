@@ -1,9 +1,10 @@
 import { CREATED_AT_INDEX } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
-import { RECENT_PAGE_SIZE } from './consts'
+import { createRowJudge } from './createRowJudge'
 import type {
   RecentCursor,
   RecentEntry,
+  RecentFilter,
   RecentPage,
   RecentRange,
   RecentSource,
@@ -20,6 +21,7 @@ export async function getRecentPage<TEntry, TRow>(
   { storeName, toEntry, hydrate }: RecentSource<TEntry, TRow>,
   range: RecentRange,
   start: RecentStart,
+  filter?: RecentFilter<TRow>,
 ): Promise<RecentPage<TEntry>> {
   const keyRange = createKeyRange(range)
   if (!keyRange) {
@@ -36,6 +38,7 @@ export async function getRecentPage<TEntry, TRow>(
     store.index(CREATED_AT_INDEX).openCursor(keyRange, 'prev'),
     start,
     toEntry,
+    filter?.accept,
   )
   if (!hydrate) {
     return { entries: page.rows as unknown as TEntry[], nextCursor: page.nextCursor }
@@ -67,10 +70,12 @@ function readPage<TRow>(
   request: IDBRequest<IDBCursorWithValue | null>,
   start: RecentStart,
   toEntry: (id: number, stored: unknown) => TRow,
+  accept?: (row: TRow) => boolean,
 ): Promise<RecentRowPage<TRow>> {
   return new Promise<RecentRowPage<TRow>>((resolve, reject) => {
     const rows: TRow[] = []
-    let pendingStart: RecentStart | null = checkNeedsJump(start) ? start : null
+    const judge = createRowJudge(start, accept)
+    let pendingStart: RecentStart | null = checkNeedsJump(start, !!accept) ? start : null
 
     request.onsuccess = (): void => {
       const cursor = request.result
@@ -83,11 +88,15 @@ function readPage<TRow>(
         pendingStart = null
         return
       }
-      if (rows.length === RECENT_PAGE_SIZE) {
+      const row = toEntry(cursor.primaryKey as number, cursor.value)
+      const verdict = judge(row, rows.length)
+      if (verdict === 'stop') {
         resolve({ rows, nextCursor: toCursor(cursor) })
         return
       }
-      rows.push(toEntry(cursor.primaryKey as number, cursor.value))
+      if (verdict === 'collect') {
+        rows.push(row)
+      }
       cursor.continue()
     }
 
@@ -95,11 +104,11 @@ function readPage<TRow>(
   })
 }
 
-function checkNeedsJump(start: RecentStart): boolean {
+function checkNeedsJump(start: RecentStart, hasFilter: boolean): boolean {
   if (start.kind === 'cursor') {
     return true
   }
-  return !!start.offset
+  return !hasFilter && !!start.offset
 }
 
 function jumpToStart(cursor: IDBCursorWithValue, start: RecentStart): void {

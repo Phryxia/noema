@@ -14,6 +14,8 @@ interface PagedSectionProps<TEntry> {
   state: PagedState<TEntry>
   isLoaderVisible: boolean
   emptyMessage?: string
+  header?: ReactNode
+  resetKey?: string
   renderTable: (pageEntries: TEntry[]) => ReactNode
 }
 
@@ -22,11 +24,13 @@ export function PagedSection<TEntry>({
   state,
   isLoaderVisible,
   emptyMessage,
+  header,
+  resetKey,
   renderTable,
 }: PagedSectionProps<TEntry>): ReactElement | null {
   const { entries, isPending, error } = state
   const totalPages = Math.max(1, Math.ceil(entries.length / RECENT_PAGE_SIZE))
-  const { currentPage, pagination, goToPage } = useExploredPagination(totalPages)
+  const { currentPage, pagination, goToPage } = useExploredPagination(totalPages, resetKey)
 
   if (isPending) {
     if (!isLoaderVisible) {
@@ -44,6 +48,7 @@ export function PagedSection<TEntry>({
     return (
       <section>
         <h3>{title}</h3>
+        {header}
         <p>{emptyMessage}</p>
       </section>
     )
@@ -56,6 +61,7 @@ export function PagedSection<TEntry>({
   return (
     <section>
       <h3>{title}</h3>
+      {header}
       {renderTable(pageEntries)}
       <PageNavigator currentPage={currentPage} pagination={pagination} onChange={goToPage} />
     </section>

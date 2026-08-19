@@ -1,0 +1,19 @@
+:global(.pico) .root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: var(--pico-spacing);
+
+  .badge,
+  select {
+    width: auto;
+    margin: 0;
+  }
+
+  button {
+    width: auto;
+    margin: 0;
+    --pico-form-element-spacing-horizontal: 0.75rem;
+  }
+}

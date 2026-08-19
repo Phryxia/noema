@@ -8,23 +8,42 @@ interface ExploredPagination {
   goToPage: (page: number) => void
 }
 
-export function useExploredPagination(totalPages: number): ExploredPagination {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [loadedPageCount, setLoadedPageCount] = useState(1)
+interface ExploredState {
+  resetKey: string | undefined
+  currentPage: number
+  loadedPageCount: number
+}
+
+export function useExploredPagination(
+  totalPages: number,
+  resetKey?: string,
+): ExploredPagination {
+  const [state, setState] = useState<ExploredState>(() => createExploredState(resetKey))
+  const adjusted = state.resetKey === resetKey ? state : createExploredState(resetKey)
+  if (adjusted !== state) {
+    setState(adjusted)
+  }
 
   function goToPage(page: number): void {
-    setCurrentPage(page)
-    setLoadedPageCount((count) => Math.max(count, page))
+    setState((previous) => ({
+      ...previous,
+      currentPage: page,
+      loadedPageCount: Math.max(previous.loadedPageCount, page),
+    }))
   }
 
   return {
-    currentPage,
+    currentPage: adjusted.currentPage,
     pagination: computePagination({
-      currentPage,
+      currentPage: adjusted.currentPage,
       exploredFrom: 1,
-      exploredTo: loadedPageCount,
-      isEndReached: loadedPageCount >= totalPages,
+      exploredTo: adjusted.loadedPageCount,
+      isEndReached: adjusted.loadedPageCount >= totalPages,
     }),
     goToPage,
   }
+}
+
+function createExploredState(resetKey: string | undefined): ExploredState {
+  return { resetKey, currentPage: 1, loadedPageCount: 1 }
 }

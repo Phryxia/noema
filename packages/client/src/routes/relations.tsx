@@ -5,6 +5,7 @@ import { RelationsPage } from '../relations/RelationsPage'
 
 interface RelationSearchParams extends RangePageParams {
   q?: string
+  types?: string
 }
 
 export const Route = createFileRoute('/relations')({
@@ -13,6 +14,9 @@ export const Route = createFileRoute('/relations')({
     const params: RelationSearchParams = parseRangePageParams(search)
     if (typeof search.q === 'string' && search.q) {
       params.q = search.q
+    }
+    if (typeof search.types === 'string' && search.types) {
+      params.types = search.types
     }
     return params
   },

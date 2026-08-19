@@ -1,19 +1,23 @@
 import type { ComponentType, ReactElement } from 'react'
 import { PageNavigator } from './PageNavigator'
 import { RangeSearchForm } from './RangeSearchForm'
-import type { RecentSource } from '../types'
+import type { RecentFilter, RecentSource } from '../types'
 import { useRecentPages } from '../useRecentPages'
 
 interface RecentListSectionProps<TEntry, TRow> {
   source: RecentSource<TEntry, TRow>
   queryKeyPrefix: string
   Table: ComponentType<{ entries: TEntry[] }>
+  filter?: RecentFilter<TRow>
+  extraSearch?: Record<string, string | undefined>
 }
 
 export function RecentListSection<TEntry, TRow>({
   source,
   queryKeyPrefix,
   Table,
+  filter,
+  extraSearch,
 }: RecentListSectionProps<TEntry, TRow>): ReactElement {
   const {
     range,
@@ -28,6 +32,8 @@ export function RecentListSection<TEntry, TRow>({
   } = useRecentPages({
     source,
     queryKeyPrefix,
+    filter,
+    extraSearch,
   })
 
   return (

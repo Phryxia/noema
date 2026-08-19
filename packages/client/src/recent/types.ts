@@ -28,3 +28,8 @@ export interface RecentRange {
   since?: Date
   until: Date
 }
+
+export interface RecentFilter<TRow> {
+  key: string
+  accept: (row: TRow) => boolean
+}

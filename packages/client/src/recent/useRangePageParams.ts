@@ -12,7 +12,9 @@ interface RangePageNavigation {
   search: (range: RecentRange) => void
 }
 
-export function useRangePageParams(): RangePageNavigation {
+export function useRangePageParams(
+  extraSearch?: Record<string, string | undefined>,
+): RangePageNavigation {
   const { from, to, page } = parseRangePageParams(useSearch({ strict: false }))
   const navigate = useNavigate()
   const [defaultUntil] = useState(() => toInclusiveMinuteEnd(new Date()))
@@ -35,6 +37,7 @@ export function useRangePageParams(): RangePageNavigation {
         from: nextRange.since?.getTime(),
         to: nextRange.until.getTime(),
         page: undefined,
+        ...extraSearch,
       }),
     })
   }

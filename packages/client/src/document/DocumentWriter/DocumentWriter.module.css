@@ -1,6 +1,7 @@
 .root {
   .textarea {
     min-height: 256px;
+    field-sizing: content;
     resize: vertical;
     font-family: var(--font-mono);
     tab-size: 4;

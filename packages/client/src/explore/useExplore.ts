@@ -24,9 +24,6 @@ const AllQuestionTypes: QuestionType[] = QuestionTypeOptions.map(({ value }) => 
 
 export interface ExploreOptions {
   availableTypes?: QuestionType[]
-  checkedTypesStorageKey?: string
-  pickQuestion?: (types: QuestionType[], usageWordCount: number) => Promise<QuestionPick>
-  queryKey?: string
   onSaved?: (params: SubmitAnswerParams) => void
 }
 
@@ -50,9 +47,8 @@ export interface Explore {
 
 export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explore {
   const availableTypes = options?.availableTypes ?? AllQuestionTypes
-  const storageKey = options?.checkedTypesStorageKey ?? CHECKED_TYPES_STORAGE_KEY
   const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(() =>
-    loadCheckedTypes(availableTypes, storageKey),
+    loadCheckedTypes(availableTypes),
   )
   const [usageWordCount, setUsageWordCount] = useState(loadUsageWordCount)
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
@@ -68,12 +64,8 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: [options?.queryKey ?? EXPLORE_QUESTION_QUERY_KEY],
-    queryFn: () =>
-      (options?.pickQuestion ?? pickQuestion)(
-        appliedTypes.current,
-        appliedUsageWordCount.current,
-      ),
+    queryKey: [EXPLORE_QUESTION_QUERY_KEY],
+    queryFn: () => pickQuestion(appliedTypes.current, appliedUsageWordCount.current),
     enabled: isEnabled,
     staleTime: Infinity,
     gcTime: 0,
@@ -93,7 +85,7 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
 
   function updateCheckedTypes(types: QuestionType[]): void {
     setCheckedTypes(types)
-    saveCheckedTypes(storageKey, types)
+    saveCheckedTypes(types)
     if (pick?.status === 'ok') {
       return
     }
@@ -159,8 +151,8 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
   }
 }
 
-function loadCheckedTypes(availableTypes: QuestionType[], storageKey: string): QuestionType[] {
-  const raw = localStorage.getItem(storageKey)
+function loadCheckedTypes(availableTypes: QuestionType[]): QuestionType[] {
+  const raw = localStorage.getItem(CHECKED_TYPES_STORAGE_KEY)
   if (!raw) {
     return availableTypes
   }
@@ -175,6 +167,6 @@ function loadCheckedTypes(availableTypes: QuestionType[], storageKey: string): Q
   }
 }
 
-function saveCheckedTypes(storageKey: string, types: QuestionType[]): void {
-  localStorage.setItem(storageKey, JSON.stringify(types))
+function saveCheckedTypes(types: QuestionType[]): void {
+  localStorage.setItem(CHECKED_TYPES_STORAGE_KEY, JSON.stringify(types))
 }

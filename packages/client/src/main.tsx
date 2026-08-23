@@ -5,6 +5,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { toast } from './toast/toast'
 import { getErrorMessage } from './utils/getErrorMessage'
+import { clearLegacyStorage } from './storage/clearLegacyStorage'
 import '@picocss/pico/css/pico.conditional.min.css'
 import './global.css'
 
@@ -16,6 +17,7 @@ declare module '@tanstack/react-router' {
 
 import { routeTree } from './routeTree.gen'
 
+clearLegacyStorage()
 registerSW({ immediate: true })
 
 const router = createRouter({ routeTree, basepath: import.meta.env.BASE_URL })

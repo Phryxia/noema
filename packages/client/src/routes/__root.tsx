@@ -28,9 +28,6 @@ function RootLayout(): ReactElement {
                   <Link to="/tools">도구</Link>
                 </li>
                 <li>
-                  <Link to="/lab/embedding">실험</Link>
-                </li>
-                <li>
                   <Link to="/settings">설정</Link>
                 </li>
               </ul>

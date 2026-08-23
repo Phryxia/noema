@@ -8,19 +8,17 @@ import {
   EmptyAnswer,
   EmptyComment,
   EXPLORE_QUESTION_QUERY_KEY,
-  QuestionTypeOptions,
 } from './consts'
 import { pickQuestion } from './pickQuestion'
 import { submitAnswer } from './submitAnswer'
 import { loadUsageWordCount, saveUsageWordCount } from './usageWordCountStorage'
 import type { SubmitAnswerParams } from './submitAnswer'
 import type { AnswerDraft, CommentDraft, QuestionPick } from './types'
+import { WordRelationTypes } from '../relation/questionSpecs'
 import type { WordRelationType } from '../relation/types'
 import { invalidateSentenceQueries } from '../sentence/utils'
 import { invalidateWordQueries } from '../word/utils'
 import { focusFirstElement } from '../utils/focusFirstElement'
-
-const AllQuestionTypes: WordRelationType[] = QuestionTypeOptions.map(({ value }) => value)
 
 export interface ExploreOptions {
   availableTypes?: WordRelationType[]
@@ -46,7 +44,7 @@ export interface Explore {
 }
 
 export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explore {
-  const availableTypes = options?.availableTypes ?? AllQuestionTypes
+  const availableTypes = options?.availableTypes ?? WordRelationTypes
   const [checkedTypes, setCheckedTypes] = useState<WordRelationType[]>(() =>
     loadCheckedTypes(availableTypes),
   )

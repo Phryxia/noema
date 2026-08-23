@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { QuestionTypeOptions } from '../../explore/consts'
+import { QuestionTypeOptions } from '../../relation/questionSpecs'
 import { QnaTable } from '../../qna/QnaTable'
 import { searchExactQnaEntries } from '../../qna/search/qnaSearch.service'
 import type { QnaEntry } from '../../qna/types'

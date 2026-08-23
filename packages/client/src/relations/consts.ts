@@ -1,4 +1,4 @@
-import { QuestionTypeOptions } from '../explore/consts'
+import { QuestionTypeOptions } from '../relation/questionSpecs'
 import type { Relation } from '../relation/types'
 import type { Option } from '../shared/types'
 

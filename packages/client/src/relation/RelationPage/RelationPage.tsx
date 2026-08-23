@@ -9,7 +9,7 @@ import type { BatchRelationEditor } from '../batch/useBatchRelationEditor'
 import { MetaFields } from '../../meta/MetaFields/MetaFields'
 import type { MetaField } from '../../meta/MetaFields/MetaFields'
 import type { WordRelationType } from '../types'
-import { QuestionTypeOptions } from '../../explore/consts'
+import { QuestionTypeOptions } from '../questionSpecs'
 
 const cx = classnames.bind(styles)
 

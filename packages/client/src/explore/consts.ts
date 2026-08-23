@@ -1,5 +1,4 @@
-import type { Option } from '../shared/types'
-import { QuestionSpecs } from '../relation/questionSpecs'
+import { QuestionSpecs, WordRelationTypes } from '../relation/questionSpecs'
 import type { Similarity, WordRelationType } from '../relation/types'
 import type { AnswerDraft, CommentDraft } from './types'
 
@@ -17,22 +16,9 @@ export const ANSWER_INPUT_SELECTOR = [
   'button:not([disabled])',
 ].join(',')
 
-export const QuestionTypeOptions: Option<WordRelationType>[] = [
-  { value: 'WordExplain', label: '단어 설명' },
-  { value: 'WordsUsage', label: '예문 만들기' },
-  { value: 'UnaryProperty', label: '속성' },
-  { value: 'BinaryCommon', label: '이항 공통점' },
-  { value: 'BinaryDifference', label: '이항 차이점' },
-  { value: 'BinarySimilarity', label: '이항 유사성' },
-  { value: 'BinaryAssociation', label: '연상' },
-  { value: 'TernaryIsolation', label: '삼항 격리' },
-  { value: 'TernaryComposition', label: '삼항 합성' },
-  { value: 'NamedAssociation', label: '관계 짓기' },
-]
-
-export const ExploreQuestionTypes: WordRelationType[] = QuestionTypeOptions.map(
-  ({ value }) => value,
-).filter((type) => QuestionSpecs[type].isExplorable)
+export const ExploreQuestionTypes: WordRelationType[] = WordRelationTypes.filter(
+  (type) => QuestionSpecs[type].isExplorable,
+)
 
 export interface SimilarityLevel {
   label: string

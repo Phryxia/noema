@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { QuestionTypeOptions } from '../consts'
+import { QuestionTypeOptions } from '../../relation/questionSpecs'
 import type { WordRelationType } from '../../relation/types'
 import classnames from 'classnames/bind'
 import styles from './QuestionTypeSelector.module.css'

@@ -5,9 +5,9 @@ import { checkIsAnswerReady } from '../explore/checkIsAnswerReady'
 import { EmptyAnswer, EmptyComment } from '../explore/consts'
 import type { AnswerDraft, CommentDraft, QuestionDraft } from '../explore/types'
 import { checkSubjectWordsReady } from './checkSubjectWordsReady'
-import { SubjectWordSpecs } from './consts'
 import { createEmptyWords } from './createEmptyWords'
 import { createRelationDraft } from './createRelationDraft'
+import { QuestionSpecs } from './questionSpecs'
 import { resizeWords } from './resizeWords'
 import { saveType } from './typeStorage'
 import type { WordRelationType } from './types'
@@ -69,7 +69,7 @@ export function useRelationEditor({
   function updateType(nextType: WordRelationType): void {
     setType(nextType)
     saveType(nextType)
-    setWords(resizeWords(words, SubjectWordSpecs[nextType].count))
+    setWords(resizeWords(words, QuestionSpecs[nextType].subject.count))
     setAnswer(EmptyAnswer)
   }
 

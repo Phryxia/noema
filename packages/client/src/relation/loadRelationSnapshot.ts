@@ -8,11 +8,11 @@ import { getSentence } from '../sentence/sentence.service'
 import { hydrateTagEntries } from '../tag/hydrateTagEntries'
 import type { TagEntry } from '../tag/types'
 import { getWordValues } from '../word/getWordValues'
-import { SubjectWordSpecs } from './consts'
 import { getQuestionWordIds } from './getQuestionWordIds'
 import { getRelation } from './getRelation'
 import { getRelationAnswer } from './getRelationAnswer'
 import { getRelationAnswerWordIds } from './getRelationAnswerWordIds'
+import { QuestionSpecs } from './questionSpecs'
 import { resizeWords } from './resizeWords'
 import type {
   DocumentToSentenceRelation,
@@ -74,7 +74,10 @@ export async function loadRelationSnapshot(
   return {
     kind: 'word',
     relation,
-    words: resizeWords(values, Math.max(values.length, SubjectWordSpecs[relation.type].count)),
+    words: resizeWords(
+      values,
+      Math.max(values.length, QuestionSpecs[relation.type].subject.count),
+    ),
     answer: await createAnswerDraft(relation),
     comment: await createTextDraft(relation.comment),
   }

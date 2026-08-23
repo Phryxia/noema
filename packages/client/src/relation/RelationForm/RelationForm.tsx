@@ -2,7 +2,7 @@ import type { FormEvent, ReactElement } from 'react'
 import { FieldEdge, FieldRow } from '../FieldRow/FieldRow'
 import { RelationActions } from '../RelationActions/RelationActions'
 import { SubjectWordFields } from '../SubjectWordFields/SubjectWordFields'
-import { SubjectWordSpecs } from '../consts'
+import { QuestionSpecs } from '../questionSpecs'
 import type { RelationEditor } from '../useRelationEditor'
 import { BatchWordFields } from '../batch/BatchWordFields'
 import type { BatchRelationEditor } from '../batch/useBatchRelationEditor'
@@ -31,13 +31,14 @@ export function RelationForm({
     save()
   }
 
+  const { subject } = QuestionSpecs[type]
   const subjectWordFields = (
     <SubjectWordFields
       words={words}
-      requiredCount={SubjectWordSpecs[type].minCount}
-      isCountAdjustable={SubjectWordSpecs[type].isCountAdjustable}
-      layout={SubjectWordSpecs[type].layout}
-      placeholders={SubjectWordSpecs[type].placeholders}
+      requiredCount={subject.minCount}
+      isCountAdjustable={subject.isCountAdjustable}
+      layout={subject.layout}
+      placeholders={subject.placeholders}
       hasRandomPick={hasRandomPick}
       onChange={editor.setWords}
     />

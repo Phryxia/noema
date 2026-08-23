@@ -1,7 +1,7 @@
 import { SubjectWordSpecs } from './consts'
-import type { QuestionType } from '../question/types'
+import type { WordRelationType } from './types'
 
-export function checkSubjectWordsReady(type: QuestionType, words: string[]): boolean {
+export function checkSubjectWordsReady(type: WordRelationType, words: string[]): boolean {
   const filledWords = words.filter(Boolean)
   if (filledWords.length < SubjectWordSpecs[type].minCount) {
     return false

@@ -1,8 +1,8 @@
 import { findDuplicateTernaryRelationId } from './findDuplicateTernaryRelationId'
-import type { QuestionType, TernaryWords } from '../question/types'
+import type { TernaryWords, WordRelationType } from './types'
 
 export async function assertNotDuplicateTernaryRelation(
-  type: QuestionType,
+  type: WordRelationType,
   words: TernaryWords | null,
   excludeRelationId?: number,
 ): Promise<void> {

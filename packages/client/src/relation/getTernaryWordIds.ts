@@ -1,4 +1,5 @@
-import type { NewQuestion, TernaryWords } from '../question/types'
+import type { TernaryWords } from './types'
+import type { NewQuestion } from '../question/types'
 
 export function getTernaryWordIds(
   question: NewQuestion,

@@ -1,9 +1,8 @@
-import type { QuestionType } from '../question/types'
-import type { Similarity } from '../relation/types'
+import type { Similarity, WordRelationType } from '../relation/types'
 
 export interface QnaRowEntry {
   id: number | null
-  type: QuestionType
+  type: WordRelationType
   createdAt: Date
   words: ResolvedWord[]
   answer: QnaAnswer

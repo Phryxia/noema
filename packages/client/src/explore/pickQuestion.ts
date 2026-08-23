@@ -1,11 +1,12 @@
 import { DEFAULT_USAGE_WORD_COUNT } from './consts'
 import type { QuestionPick } from './types'
-import type { NewQuestion, QuestionType } from '../question/types'
+import type { NewQuestion } from '../question/types'
+import type { WordRelationType } from '../relation/types'
 import { getRandomWords } from '../word/getRandomWords'
 import type { Lexis } from '../word/types'
 
 export async function pickQuestion(
-  types: QuestionType[],
+  types: WordRelationType[],
   usageWordCount: number = DEFAULT_USAGE_WORD_COUNT,
 ): Promise<QuestionPick> {
   if (!types.length) {
@@ -24,7 +25,7 @@ function pickOne<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)]
 }
 
-function pickWordCount(type: QuestionType, usageWordCount: number): number {
+function pickWordCount(type: WordRelationType, usageWordCount: number): number {
   if (
     type === 'WordExplain' ||
     type === 'UnaryProperty' ||
@@ -42,7 +43,7 @@ function pickWordCount(type: QuestionType, usageWordCount: number): number {
   return 2
 }
 
-function createNewQuestion(type: QuestionType, lexes: Lexis[]): NewQuestion {
+function createNewQuestion(type: WordRelationType, lexes: Lexis[]): NewQuestion {
   const [word1, word2, word3] = lexes
   switch (type) {
     case 'WordExplain':

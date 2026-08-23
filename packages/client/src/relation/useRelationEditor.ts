@@ -4,18 +4,18 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { checkIsAnswerReady } from '../explore/checkIsAnswerReady'
 import { EmptyAnswer, EmptyComment } from '../explore/consts'
 import type { AnswerDraft, CommentDraft, QuestionDraft } from '../explore/types'
-import type { QuestionType } from '../question/types'
 import { checkSubjectWordsReady } from './checkSubjectWordsReady'
 import { SubjectWordSpecs } from './consts'
 import { createEmptyWords } from './createEmptyWords'
 import { createRelationDraft } from './createRelationDraft'
 import { resizeWords } from './resizeWords'
 import { saveType } from './typeStorage'
+import type { WordRelationType } from './types'
 import { invalidateRelationQueries } from './utils'
 import { focusFirstElement } from '../utils/focusFirstElement'
 
 export interface RelationValues {
-  type: QuestionType
+  type: WordRelationType
   words: string[]
   answer: AnswerDraft
   comment: CommentDraft
@@ -31,8 +31,8 @@ export interface RelationEditorOptions {
 }
 
 export interface RelationEditor {
-  type: QuestionType
-  setType: (type: QuestionType) => void
+  type: WordRelationType
+  setType: (type: WordRelationType) => void
   words: string[]
   setWords: Dispatch<SetStateAction<string[]>>
   answer: AnswerDraft
@@ -59,14 +59,14 @@ export function useRelationEditor({
   onRemoved,
 }: RelationEditorOptions): RelationEditor {
   const [initial] = useState(getInitial)
-  const [type, setType] = useState<QuestionType>(initial.type)
+  const [type, setType] = useState<WordRelationType>(initial.type)
   const [words, setWords] = useState<string[]>(initial.words)
   const [answer, setAnswer] = useState<AnswerDraft>(initial.answer)
   const [comment, setComment] = useState<CommentDraft>(initial.comment)
   const formRef = useRef<HTMLFormElement>(null)
   const queryClient = useQueryClient()
 
-  function updateType(nextType: QuestionType): void {
+  function updateType(nextType: WordRelationType): void {
     setType(nextType)
     saveType(nextType)
     setWords(resizeWords(words, SubjectWordSpecs[nextType].count))

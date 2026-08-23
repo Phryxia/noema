@@ -2,11 +2,11 @@ import { TEACH_SOURCE_PREFIX } from './consts'
 import { createRelationQuestion } from './createRelationQuestion'
 import { submitAnswer } from '../explore/submitAnswer'
 import type { AnswerDraft, CommentDraft } from '../explore/types'
-import type { QuestionType } from '../question/types'
+import type { WordRelationType } from './types'
 import { createWord } from '../word/word.service'
 
 export interface SubmitRelationParams {
-  type: QuestionType
+  type: WordRelationType
   words: string[]
   answer: AnswerDraft
   comment: CommentDraft

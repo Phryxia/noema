@@ -4,29 +4,22 @@ import type { ExpressionToken, RefToken } from './types'
 import { getSimilarityLabel } from '../qna/labels'
 import { checkIsSentenceTag } from '../tag/checkIsSentenceTag'
 import type {
-  BinaryAssociationRelation,
   BinaryCommonRelation,
   BinaryDifferenceRelation,
+  BinaryRelation,
   BinarySimilarityRelation,
-  NamedAssociationRelation,
   Relation,
   TagRelation,
-  TernaryCompositionRelation,
   TernaryIsolationRelation,
-  UnaryPropertyRelation,
+  TernaryRelation,
   WordOrSentence,
   WordsUsageRelation,
 } from '../relation/types'
 
-type BinaryRelation =
-  | UnaryPropertyRelation
-  | BinaryCommonRelation
-  | BinaryDifferenceRelation
-  | BinarySimilarityRelation
-  | BinaryAssociationRelation
+type BinaryWordsRelation =
+  BinaryRelation | BinaryCommonRelation | BinaryDifferenceRelation | BinarySimilarityRelation
 
-type TernaryRelation =
-  TernaryIsolationRelation | TernaryCompositionRelation | NamedAssociationRelation
+type TernaryWordsRelation = TernaryRelation | TernaryIsolationRelation
 
 export function computeRelationExpression(relation: Relation): ExpressionToken[] {
   if (relation.type === 'DocumentToSentence') {
@@ -75,7 +68,7 @@ function computeUsageExpression(relation: WordsUsageRelation): ExpressionToken[]
   return createUsageFallbackTokens(toAnswerToken(relation.answer), relation.wordIds)
 }
 
-function computeBinaryExpression(relation: BinaryRelation): ExpressionToken[] {
+function computeBinaryExpression(relation: BinaryWordsRelation): ExpressionToken[] {
   const word1 = word(relation.word1Id)
   const word2 = word(relation.word2Id)
   if (relation.type === 'UnaryProperty') {
@@ -100,7 +93,7 @@ function computeBinaryExpression(relation: BinaryRelation): ExpressionToken[] {
   return [word1, text(' ~ '), word2]
 }
 
-function computeTernaryExpression(relation: TernaryRelation): ExpressionToken[] {
+function computeTernaryExpression(relation: TernaryWordsRelation): ExpressionToken[] {
   const word1 = word(relation.word1Id)
   const word2 = word(relation.word2Id)
   const word3 = word(relation.word3Id)

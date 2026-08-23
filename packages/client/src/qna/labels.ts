@@ -1,8 +1,7 @@
 import { QuestionTypeOptions, SimilarityLevels } from '../explore/consts'
-import type { QuestionType } from '../question/types'
-import type { Similarity } from '../relation/types'
+import type { Similarity, WordRelationType } from '../relation/types'
 
-export function getQuestionTypeLabel(type: QuestionType): string {
+export function getQuestionTypeLabel(type: WordRelationType): string {
   return QuestionTypeOptions.find((spec) => spec.value === type)?.label ?? type
 }
 

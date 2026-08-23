@@ -1,6 +1,5 @@
 import type { Option } from '../shared/types'
-import type { QuestionType } from '../question/types'
-import type { Similarity } from '../relation/types'
+import type { Similarity, WordRelationType } from '../relation/types'
 import type { AnswerDraft, CommentDraft } from './types'
 
 export const EXPLORE_QUESTION_QUERY_KEY = 'exploreQuestion'
@@ -17,7 +16,7 @@ export const ANSWER_INPUT_SELECTOR = [
   'button:not([disabled])',
 ].join(',')
 
-export const QuestionTypeOptions: Option<QuestionType>[] = [
+export const QuestionTypeOptions: Option<WordRelationType>[] = [
   { value: 'WordExplain', label: '단어 설명' },
   { value: 'WordsUsage', label: '예문 만들기' },
   { value: 'UnaryProperty', label: '속성' },
@@ -30,7 +29,7 @@ export const QuestionTypeOptions: Option<QuestionType>[] = [
   { value: 'NamedAssociation', label: '관계 짓기' },
 ]
 
-export const ExploreQuestionTypes: QuestionType[] = QuestionTypeOptions.map(
+export const ExploreQuestionTypes: WordRelationType[] = QuestionTypeOptions.map(
   ({ value }) => value,
 ).filter((type) => type !== 'NamedAssociation')
 

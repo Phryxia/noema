@@ -5,7 +5,7 @@ import { QuestionTypeOptions } from '../../explore/consts'
 import { QnaTable } from '../../qna/QnaTable'
 import { searchExactQnaEntries } from '../../qna/search/qnaSearch.service'
 import type { QnaEntry } from '../../qna/types'
-import type { QuestionType } from '../../question/types'
+import type { WordRelationType } from '../../relation/types'
 import { PagedSection } from '../../shared/PagedSection'
 import { TypeFilterField } from '../../shared/TypeFilterField/TypeFilterField'
 import { WORD_RELATIONS_CACHE_MS, WORD_RELATIONS_QUERY_KEY } from '../consts'
@@ -15,7 +15,7 @@ interface WordRelationsProps {
 }
 
 export function WordRelations({ word }: WordRelationsProps): ReactElement {
-  const [types, setTypes] = useState<QuestionType[]>([])
+  const [types, setTypes] = useState<WordRelationType[]>([])
   const { data, isPending, error } = useQuery({
     queryKey: [WORD_RELATIONS_QUERY_KEY, word],
     queryFn: () => searchExactQnaEntries(word),
@@ -46,7 +46,7 @@ export function WordRelations({ word }: WordRelationsProps): ReactElement {
   )
 }
 
-function filterByTypes(entries: QnaEntry[], types: QuestionType[]): QnaEntry[] {
+function filterByTypes(entries: QnaEntry[], types: WordRelationType[]): QnaEntry[] {
   if (!types.length) {
     return entries
   }

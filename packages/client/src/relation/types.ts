@@ -1,5 +1,3 @@
-import type { BinaryWords, TernaryWords } from '../question/types'
-
 export interface WordOrSentence {
   type: 'word' | 'sentence'
   id: number
@@ -17,6 +15,17 @@ export interface WordRelationBase extends RelationBase {
   questionId: number
   comment?: WordOrSentence
 }
+
+export interface BinaryWords {
+  word1Id: number
+  word2Id: number
+}
+
+export interface TernaryWords extends BinaryWords {
+  word3Id: number
+}
+
+export type WordSlot = keyof TernaryWords
 
 export interface DocumentToSentenceRelation extends RelationBase {
   type: 'DocumentToSentence'
@@ -57,13 +66,6 @@ export interface WordsUsageRelation extends WordRelationBase {
   answer: WordOrSentence | null
 }
 
-/**
- * `word1`이 `word2`의 속성을 가짐
- */
-export interface UnaryPropertyRelation extends WordRelationBase, BinaryWords {
-  type: 'UnaryProperty'
-}
-
 export interface BinaryCommonRelation extends WordRelationBase, BinaryWords {
   type: 'BinaryCommon'
   answer: WordOrSentence | null
@@ -79,40 +81,43 @@ export interface BinarySimilarityRelation extends WordRelationBase, BinaryWords 
   similarity: Similarity
 }
 
-export interface BinaryAssociationRelation extends WordRelationBase, BinaryWords {
-  type: 'BinaryAssociation'
-}
-
 export interface TernaryIsolationRelation extends WordRelationBase, TernaryWords {
   type: 'TernaryIsolation'
   selection: 1 | 2 | 3
 }
 
 /**
- * `word3 = word1 + word2` (의미적 또는 문법적 합성)
+ * UnaryProperty: `word1`이 `word2`의 속성을 가짐
+ * BinaryAssociation: `word1`에서 `word2`가 연상됨
  */
-export interface TernaryCompositionRelation extends WordRelationBase, TernaryWords {
-  type: 'TernaryComposition'
+export interface BinaryRelation extends WordRelationBase, BinaryWords {
+  type: 'UnaryProperty' | 'BinaryAssociation'
 }
 
 /**
- * `word1`과 `word2` 사이에 `word3`의 유향관계가 있음
+ * TernaryComposition: `word3 = word1 + word2` (의미적 또는 문법적 합성)
+ * NamedAssociation: `word1`과 `word2` 사이에 `word3`의 유향관계가 있음
  */
-export interface NamedAssociationRelation extends WordRelationBase, TernaryWords {
-  type: 'NamedAssociation'
+export interface TernaryRelation extends WordRelationBase, TernaryWords {
+  type: 'TernaryComposition' | 'NamedAssociation'
 }
 
 export type WordRelation =
   | WordExplainRelation
   | WordsUsageRelation
-  | UnaryPropertyRelation
   | BinaryCommonRelation
   | BinaryDifferenceRelation
   | BinarySimilarityRelation
-  | BinaryAssociationRelation
   | TernaryIsolationRelation
-  | TernaryCompositionRelation
-  | NamedAssociationRelation
+  | BinaryRelation
+  | TernaryRelation
+
+export type WordRelationType = WordRelation['type']
+
+export interface RelationQuestion {
+  type: WordRelationType
+  wordIds: number[]
+}
 
 export type Relation =
   WordRelation | DocumentToSentenceRelation | SentenceToWordRelation | TagRelation

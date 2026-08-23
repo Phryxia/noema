@@ -1,6 +1,7 @@
-import type { NewQuestion, QuestionType } from '../question/types'
+import type { WordRelationType } from './types'
+import type { NewQuestion } from '../question/types'
 
-export function createRelationQuestion(type: QuestionType, wordIds: number[]): NewQuestion {
+export function createRelationQuestion(type: WordRelationType, wordIds: number[]): NewQuestion {
   switch (type) {
     case 'WordExplain':
       return { type, wordId: wordIds[0] }

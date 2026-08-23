@@ -15,21 +15,21 @@ import { submitAnswer } from './submitAnswer'
 import { loadUsageWordCount, saveUsageWordCount } from './usageWordCountStorage'
 import type { SubmitAnswerParams } from './submitAnswer'
 import type { AnswerDraft, CommentDraft, QuestionPick } from './types'
-import type { QuestionType } from '../question/types'
+import type { WordRelationType } from '../relation/types'
 import { invalidateSentenceQueries } from '../sentence/utils'
 import { invalidateWordQueries } from '../word/utils'
 import { focusFirstElement } from '../utils/focusFirstElement'
 
-const AllQuestionTypes: QuestionType[] = QuestionTypeOptions.map(({ value }) => value)
+const AllQuestionTypes: WordRelationType[] = QuestionTypeOptions.map(({ value }) => value)
 
 export interface ExploreOptions {
-  availableTypes?: QuestionType[]
+  availableTypes?: WordRelationType[]
   onSaved?: (params: SubmitAnswerParams) => void
 }
 
 export interface Explore {
-  checkedTypes: QuestionType[]
-  setCheckedTypes: (checkedTypes: QuestionType[]) => void
+  checkedTypes: WordRelationType[]
+  setCheckedTypes: (checkedTypes: WordRelationType[]) => void
   usageWordCount: number
   setUsageWordCount: (count: number) => void
   answer: AnswerDraft
@@ -47,13 +47,13 @@ export interface Explore {
 
 export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explore {
   const availableTypes = options?.availableTypes ?? AllQuestionTypes
-  const [checkedTypes, setCheckedTypes] = useState<QuestionType[]>(() =>
+  const [checkedTypes, setCheckedTypes] = useState<WordRelationType[]>(() =>
     loadCheckedTypes(availableTypes),
   )
   const [usageWordCount, setUsageWordCount] = useState(loadUsageWordCount)
   const [answer, setAnswer] = useState<AnswerDraft>(EmptyAnswer)
   const [comment, setComment] = useState<CommentDraft>(EmptyComment)
-  const appliedTypes = useRef<QuestionType[]>(checkedTypes)
+  const appliedTypes = useRef<WordRelationType[]>(checkedTypes)
   const appliedUsageWordCount = useRef(usageWordCount)
   const answerRef = useRef<HTMLDivElement>(null)
   const isFocusPending = useRef(false)
@@ -71,7 +71,7 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
     gcTime: 0,
   })
 
-  function draw(types: QuestionType[], count: number): void {
+  function draw(types: WordRelationType[], count: number): void {
     setAnswer(EmptyAnswer)
     setComment(EmptyComment)
     appliedTypes.current = types
@@ -83,7 +83,7 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
     draw(checkedTypes, usageWordCount)
   }
 
-  function updateCheckedTypes(types: QuestionType[]): void {
+  function updateCheckedTypes(types: WordRelationType[]): void {
     setCheckedTypes(types)
     saveCheckedTypes(types)
     if (pick?.status === 'ok') {
@@ -151,7 +151,7 @@ export function useExplore(isEnabled: boolean, options?: ExploreOptions): Explor
   }
 }
 
-function loadCheckedTypes(availableTypes: QuestionType[]): QuestionType[] {
+function loadCheckedTypes(availableTypes: WordRelationType[]): WordRelationType[] {
   const raw = localStorage.getItem(CHECKED_TYPES_STORAGE_KEY)
   if (!raw) {
     return availableTypes
@@ -167,6 +167,6 @@ function loadCheckedTypes(availableTypes: QuestionType[]): QuestionType[] {
   }
 }
 
-function saveCheckedTypes(types: QuestionType[]): void {
+function saveCheckedTypes(types: WordRelationType[]): void {
   localStorage.setItem(CHECKED_TYPES_STORAGE_KEY, JSON.stringify(types))
 }

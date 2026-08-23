@@ -1,11 +1,10 @@
 import { RELATIONS_STORE, WORD1_ID_INDEX } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest } from '../db/utils'
-import type { QuestionType, TernaryWords } from '../question/types'
-import type { WordRelation } from './types'
+import type { TernaryWords, WordRelation, WordRelationType } from './types'
 
 export async function findDuplicateTernaryRelationId(
-  type: QuestionType,
+  type: WordRelationType,
   words: TernaryWords,
   excludeRelationId?: number,
 ): Promise<number | null> {

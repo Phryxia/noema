@@ -7,7 +7,7 @@ import {
   WORD_ID_INDEX,
   WORD_IDS_INDEX,
 } from '../db/consts'
-import type { QuestionType } from '../question/types'
+import type { WordRelationType } from './types'
 
 export const RELATION_QUERY_KEY = 'relation'
 
@@ -33,7 +33,7 @@ export interface SubjectWordSpec {
   placeholders?: string[]
 }
 
-export const SubjectWordSpecs: Record<QuestionType, SubjectWordSpec> = {
+export const SubjectWordSpecs: Record<WordRelationType, SubjectWordSpec> = {
   WordExplain: { count: 1, minCount: 1 },
   WordsUsage: { count: 2, minCount: 1, isCountAdjustable: true },
   UnaryProperty: { count: 1, minCount: 1 },

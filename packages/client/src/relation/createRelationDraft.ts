@@ -1,15 +1,15 @@
 import { createRelationQuestion } from './createRelationQuestion'
+import type { WordRelationType } from './types'
 import type { QuestionDraft } from '../explore/types'
-import type { QuestionType } from '../question/types'
 
-export function createRelationDraft(type: QuestionType, words: string[]): QuestionDraft {
+export function createRelationDraft(type: WordRelationType, words: string[]): QuestionDraft {
   return {
     question: createRelationQuestion(type, createPlaceholderIds(type, words)),
     lexes: words.map((value, nodeId) => ({ nodeId, value })),
   }
 }
 
-function createPlaceholderIds(type: QuestionType, words: string[]): number[] {
+function createPlaceholderIds(type: WordRelationType, words: string[]): number[] {
   if (type === 'WordsUsage') {
     return words.filter(Boolean).map((_, index) => index)
   }

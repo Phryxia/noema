@@ -1,27 +1,8 @@
-export type QuestionType =
-  | 'WordExplain'
-  | 'WordsUsage'
-  | 'UnaryProperty'
-  | 'BinaryCommon'
-  | 'BinaryDifference'
-  | 'BinarySimilarity'
-  | 'BinaryAssociation'
-  | 'TernaryIsolation'
-  | 'TernaryComposition'
-  | 'NamedAssociation'
+import type { BinaryWords, TernaryWords } from '../relation/types'
 
 export interface QuestionBase {
   questionId: number
   createdAt: Date
-}
-
-export interface BinaryWords {
-  word1Id: number
-  word2Id: number
-}
-
-export interface TernaryWords extends BinaryWords {
-  word3Id: number
 }
 
 export interface WordExplainQuestion extends QuestionBase {

@@ -8,7 +8,7 @@ import { BatchResultTable } from '../batch/BatchResultTable'
 import type { BatchRelationEditor } from '../batch/useBatchRelationEditor'
 import { MetaFields } from '../../meta/MetaFields/MetaFields'
 import type { MetaField } from '../../meta/MetaFields/MetaFields'
-import type { QuestionType } from '../../question/types'
+import type { WordRelationType } from '../types'
 import { QuestionTypeOptions } from '../../explore/consts'
 
 const cx = classnames.bind(styles)
@@ -32,7 +32,7 @@ export function RelationPage({
     <article>
       <h2>{title}</h2>
       {meta && <MetaFields fields={meta} />}
-      <RadioGroup<QuestionType>
+      <RadioGroup<WordRelationType>
         className={cx('radio-group')}
         name="relationType"
         value={editor.type}

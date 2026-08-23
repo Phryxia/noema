@@ -1,15 +1,15 @@
 import type { ReactElement } from 'react'
 import { QuestionTypeOptions } from '../consts'
-import type { QuestionType } from '../../question/types'
+import type { WordRelationType } from '../../relation/types'
 import classnames from 'classnames/bind'
 import styles from './QuestionTypeSelector.module.css'
 
 const cx = classnames.bind(styles)
 
 interface QuestionTypeSelectorProps {
-  availableTypes?: QuestionType[]
-  checkedTypes: QuestionType[]
-  onChange: (checkedTypes: QuestionType[]) => void
+  availableTypes?: WordRelationType[]
+  checkedTypes: WordRelationType[]
+  onChange: (checkedTypes: WordRelationType[]) => void
 }
 
 export function QuestionTypeSelector({
@@ -21,7 +21,7 @@ export function QuestionTypeSelector({
     ? QuestionTypeOptions.filter(({ value }) => availableTypes.includes(value))
     : QuestionTypeOptions
 
-  function toggle(type: QuestionType): void {
+  function toggle(type: WordRelationType): void {
     if (checkedTypes.includes(type)) {
       onChange(checkedTypes.filter((checked) => checked !== type))
       return

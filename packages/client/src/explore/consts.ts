@@ -1,4 +1,5 @@
 import type { Option } from '../shared/types'
+import { QuestionSpecs } from '../relation/questionSpecs'
 import type { Similarity, WordRelationType } from '../relation/types'
 import type { AnswerDraft, CommentDraft } from './types'
 
@@ -31,7 +32,7 @@ export const QuestionTypeOptions: Option<WordRelationType>[] = [
 
 export const ExploreQuestionTypes: WordRelationType[] = QuestionTypeOptions.map(
   ({ value }) => value,
-).filter((type) => type !== 'NamedAssociation')
+).filter((type) => QuestionSpecs[type].isExplorable)
 
 export interface SimilarityLevel {
   label: string

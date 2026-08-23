@@ -7,6 +7,7 @@ import {
   HOUR_ACC_STORE,
   HOUR_DELTA_STORE,
   LEGACY_QUESTIONS_STORE,
+  QUESTION_REMOVAL_VERSION,
   RECENT_DOCUMENTS_STORE,
   RECENT_SENTENCES_STORE,
   RECENT_WORDS_STORE,
@@ -21,7 +22,6 @@ import { IndexSpecs } from './indexSpecs'
 import { clearAndBackfillCountLogs } from '../statistic/backfillCountLogs'
 
 const RELATION_COUNT_VERSION = 9
-const QUESTION_REMOVAL_VERSION = 11
 
 let dbPromise: Promise<IDBDatabase> | undefined
 

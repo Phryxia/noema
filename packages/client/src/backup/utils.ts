@@ -1,6 +1,7 @@
 import { DB_NAME, DB_VERSION } from '../db/consts'
 import { BACKUP_FILE_PREFIX } from './consts'
 import type { NoemaBackup } from './types'
+import { upgradeBackup } from './upgradeBackup'
 
 export function parseBackup(text: string): NoemaBackup {
   const parsed = readJson(text)
@@ -10,10 +11,10 @@ export function parseBackup(text: string): NoemaBackup {
   if (parsed.dbName !== DB_NAME) {
     throw new Error(`다른 DB(${parsed.dbName})의 백업입니다`)
   }
-  if (parsed.version !== DB_VERSION) {
-    throw new Error(`백업의 DB 버전(${parsed.version})이 현재 버전(${DB_VERSION})과 다릅니다`)
+  if (parsed.version > DB_VERSION) {
+    throw new Error(`백업의 DB 버전(${parsed.version})이 현재 버전(${DB_VERSION})보다 높습니다`)
   }
-  return parsed
+  return upgradeBackup(parsed)
 }
 
 function readJson(text: string): unknown {

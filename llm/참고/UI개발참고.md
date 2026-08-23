@@ -24,18 +24,19 @@ conditional 빌드는 selector 앞에 `.pico`가 붙어 specificity가 한 단�
 | `.pico select`, `.pico fieldset`의 `width: 100%` + `margin-bottom: var(--pico-spacing)` | 0-1-1 | 인라인으로 놓으려 해도 한 줄을 다 차지 |
 | `.pico button[type=submit]` | 0-2-1 | **속성 선택자는 클래스와 같은 자리를 차지한다.** `.actions .action`(0-2-0)이 진다 |
 | `.pico ul li { list-style: square }` | 0-1-2 | `ul`에 건 `list-style: none`이 무효. 마커는 `li`에서 결정된다 |
+| `.pico sub`의 `font-size: .75em` + `vertical-align: baseline` | 0-1-1 | `sub`이 아래첨자로 안 보임. `h1` 안이면 27px 굵은 글씨가 되어 두 번째 제목처럼 읽힌다 |
 | `[role=group] input:focus { z-index: 2 }` | | 포커스 중 겹쳐 놓은 요소가 가려짐 |
 
 대응 규칙:
 
-- 루트 클래스를 `:global(.pico) .root`(0-2-0)로 승격하고, 자식은 `.root button`처럼 그 아래에 적는다. `PageNavigator.module.css`, `TypeFilterField.module.css`가 이 형태다.
+- 루트 클래스를 `:global(.pico) .root`(0-2-0)로 승격하고, 자식은 `.root button`처럼 그 아래에 적는다. `PageNavigator.module.css`, `TypeFilterField.module.css`, `__root.module.css`가 이 형태다.
 - 승격하면 그동안 pico에 지고 있던 값이 실제로 먹으므로, **화면에 보이던 크기**를 기준으로 다시 잡는다(네비게이터 버튼은 보이던 크기의 80%로 재설정했다).
 - specificity 경쟁이 싫으면 pico가 건드리지 않는 속성을 쓴다. 버튼의 세로 꺾임은 `white-space: nowrap`으로, 그룹의 가운데 정렬은 감싸는 요소에 `justify-content: center`로 풀었다.
 - 전역 기본값을 덮을 때는 `:where(.pico ul)`처럼 specificity를 0으로 만들어 어떤 저자 클래스에도 지게 한다(`global.css`). `.pico ul`(0-1-2)로 쓰면 이번엔 그것이 모듈 클래스를 이긴다.
 - 제출 버튼만 full width인 pico 기본 모양은 나쁘지 않아 그대로 둔다. 이기려고 선택자를 꼬지 않는다.
 - CSS 이론만으로 두 번 틀린 기록이 있다. 빌드 산출 CSS나 브라우저 `getComputedStyle`로 확인한다.
 
-출처: [2026-07-22 WordWriter](../일지/2026-07-22-WordWriter-레이아웃-및-공백-에코-수정.md), [2026-07-22 bullet](../일지/2026-07-22-목록-bullet-제거를-전역화.md), [2026-07-22 문장 입력기](../일지/2026-07-22-문장-입력기와-개별-문장-페이지.md), [2026-07-23 네비게이터](../일지/2026-07-23-최근-목록-날짜-표기와-네비게이터-크기.md), [2026-07-29 탐색](../일지/2026-07-29-탐색-페이지.md)
+출처: [2026-07-22 WordWriter](../일지/2026-07-22-WordWriter-레이아웃-및-공백-에코-수정.md), [2026-07-22 bullet](../일지/2026-07-22-목록-bullet-제거를-전역화.md), [2026-07-22 문장 입력기](../일지/2026-07-22-문장-입력기와-개별-문장-페이지.md), [2026-07-23 네비게이터](../일지/2026-07-23-최근-목록-날짜-표기와-네비게이터-크기.md), [2026-07-29 탐색](../일지/2026-07-29-탐색-페이지.md), [2026-08-24 헤더 버전 표기](../일지/2026-08-24-헤더-버전-표기.md)
 
 # 레이아웃 함정
 

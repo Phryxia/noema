@@ -2,6 +2,7 @@ import type { ReactElement } from 'react'
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { ToastStack } from '../toast/ToastStack/ToastStack'
+import styles from './__root.module.css'
 
 function RootLayout(): ReactElement {
   return (
@@ -11,6 +12,7 @@ function RootLayout(): ReactElement {
           <article>
             <h1>
               <Link to="/">NOEMA System</Link>
+              {!!REVISION_LABEL && <sub className={styles.revision}>{REVISION_LABEL}</sub>}
             </h1>
             <p>나만의 말뭉치를 만들자!</p>
             <nav>
@@ -43,5 +45,14 @@ function RootLayout(): ReactElement {
     </>
   )
 }
+
+function getRevisionLabel(): string {
+  if (!import.meta.env.VITE_REVISION_COUNT || !import.meta.env.VITE_COMMIT_HASH) {
+    return ''
+  }
+  return `r${import.meta.env.VITE_REVISION_COUNT}: ${import.meta.env.VITE_COMMIT_HASH}`
+}
+
+const REVISION_LABEL = getRevisionLabel()
 
 export const Route = createRootRoute({ component: RootLayout })

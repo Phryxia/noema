@@ -4,14 +4,21 @@ import dotenv from 'dotenv'
 import { resolve } from 'path'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { getBuildRevision } from './getBuildRevision'
 
 dotenv.config({
   path: '../../.env',
 })
 
+const buildRevision = getBuildRevision()
+
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
+  define: {
+    'import.meta.env.VITE_REVISION_COUNT': JSON.stringify(buildRevision.count),
+    'import.meta.env.VITE_COMMIT_HASH': JSON.stringify(buildRevision.hash),
+  },
   plugins: [
     tanstackRouter({
       target: 'react',

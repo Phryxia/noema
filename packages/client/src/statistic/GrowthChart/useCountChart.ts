@@ -11,8 +11,9 @@ import {
   Tooltip,
 } from 'chart.js'
 import type { ChartDataset, ChartOptions } from 'chart.js'
+import type { ChartMode, CountLog, TimeUnit } from '../../db/countLog/types'
 import { DELETION_COLOR, DELETION_LABEL, INCREASE_LABEL, TOTAL_LABEL } from '../consts'
-import type { ChartMode, CountLog, CountSeries, TimeUnit } from '../types'
+import type { CountSeries } from '../types'
 import { formatBinLabel } from '../utils'
 
 Chart.register(

@@ -19,7 +19,7 @@ import {
   WORD_NODES_STORE,
 } from './consts'
 import { IndexSpecs } from './indexSpecs'
-import { clearAndBackfillCountLogs } from '../statistic/backfillCountLogs'
+import { clearAndBackfillCountLogs } from './countLog/backfill'
 
 const RELATION_COUNT_VERSION = 9
 

@@ -1,16 +1,15 @@
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { ChartModes, TimeUnits } from '../../db/countLog/consts'
+import type { ChartMode, TimeUnit } from '../../db/countLog/types'
 import {
   COUNT_LOGS_QUERY_KEY,
   ChartModeLabels,
-  ChartModes,
   CountSeriesList,
   TimeUnitLabels,
-  TimeUnits,
 } from '../consts'
 import { getCountLogs } from '../statistic.service'
-import type { ChartMode, TimeUnit } from '../types'
 import { CountChart } from './CountChart'
 import classnames from 'classnames/bind'
 import styles from './GrowthChart.module.css'

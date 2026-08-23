@@ -4,12 +4,12 @@ import {
   SENTENCES_STORE,
   WORD_META_STORE,
 } from '../db/consts'
+import { createEmptyLog, createLog, getBinDate } from '../db/countLog/binning'
+import { CountStoreNames, CountStores, TimeUnits } from '../db/countLog/consts'
+import type { ChartMode, CountKind, CountLog, TimeUnit, Totals } from '../db/countLog/types'
 import { openNoemaDB } from '../db/openNoemaDB'
-import { awaitRequest, awaitTransaction } from '../db/utils'
-import { clearAndBackfillCountLogs, SourceStoreNames } from './backfillCountLogs'
-import { CountStoreNames, CountStores, TimeUnits } from './consts'
-import type { ChartMode, CountKind, CountLog, TimeUnit, Totals } from './types'
-import { createBins, createEmptyLog, createLog, getBinDate } from './utils'
+import { awaitRequest } from '../db/utils'
+import { createBins } from './utils'
 
 const TotalStoreNames = [WORD_META_STORE, SENTENCES_STORE, DOCUMENTS_STORE, RELATIONS_STORE]
 
@@ -36,13 +36,6 @@ export async function getCountLogs(unit: TimeUnit, mode: ChartMode): Promise<Cou
     return fillDeltaBins(bins, logs)
   }
   return fillAccBins(bins, logs, await getLastLogBefore(store, bins[0]))
-}
-
-export async function rebuildCountLogs(): Promise<void> {
-  const db = await openNoemaDB()
-  const transaction = db.transaction([...SourceStoreNames, ...CountStoreNames], 'readwrite')
-  await clearAndBackfillCountLogs(transaction)
-  await awaitTransaction(transaction)
 }
 
 function recordCountChange(db: IDBDatabase, kind: CountKind, amount: number): void {

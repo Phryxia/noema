@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react'
-import type { ChartMode, CountLog, CountSeries, TimeUnit } from '../types'
+import type { ChartMode, CountLog, TimeUnit } from '../../db/countLog/types'
+import type { CountSeries } from '../types'
 import { useCountChart } from './useCountChart'
 import classnames from 'classnames/bind'
 import styles from './CountChart.module.css'

@@ -13,6 +13,7 @@ import type {
   RelationQuestion,
   WordRelation,
   WordOrSentence,
+  WordRelationType,
 } from '../relation/types'
 import { createSentence } from '../sentence/sentence.service'
 import { recordCreation } from '../statistic/statistic.service'
@@ -38,32 +39,43 @@ export async function submitAnswer({
     getTernaryWordIds(question, answerWordIds),
   )
 
-  const createdAt = new Date()
-  const relationId = await reserveRelationId(question.type, createdAt)
-  const source = createSource(relationId, sourcePrefix ?? EXPLORE_SOURCE_PREFIX)
-  const answerTarget = await createTarget(
-    getAnswerMode(question.type, answer.mode),
-    answer.text,
-    source,
-  )
-  const commentTarget = await createTarget(comment.mode, comment.text, source)
-  const newRelation = createNewRelation(question, answer, {
-    answer: answerTarget,
-    answerWordIds,
-    comment: commentTarget,
-  })
-  await putRelation({ ...newRelation, relationId, createdAt })
+  const relationId = await reserveRelationId(question.type)
+  try {
+    const source = createSource(relationId, sourcePrefix ?? EXPLORE_SOURCE_PREFIX)
+    const answerTarget = await createTarget(
+      getAnswerMode(question.type, answer.mode),
+      answer.text,
+      source,
+    )
+    const commentTarget = await createTarget(comment.mode, comment.text, source)
+    const newRelation = createNewRelation(question, answer, {
+      answer: answerTarget,
+      answerWordIds,
+      comment: commentTarget,
+    })
+    await putRelation({ ...newRelation, relationId, createdAt: new Date() })
+  } catch (error) {
+    await discardReservedRelation(relationId)
+    throw error
+  }
   return relationId
 }
 
-async function reserveRelationId(type: WordRelation['type'], createdAt: Date): Promise<number> {
+async function reserveRelationId(type: WordRelationType): Promise<number> {
   const db = await openNoemaDB()
   const transaction = db.transaction(RELATIONS_STORE, 'readwrite')
   const relationId = (await awaitRequest<IDBValidKey>(
-    transaction.objectStore(RELATIONS_STORE).add({ type, createdAt }),
+    transaction.objectStore(RELATIONS_STORE).add({ type }),
   )) as number
   await awaitTransaction(transaction)
   return relationId
+}
+
+async function discardReservedRelation(relationId: number): Promise<void> {
+  const db = await openNoemaDB()
+  const transaction = db.transaction(RELATIONS_STORE, 'readwrite')
+  transaction.objectStore(RELATIONS_STORE).delete(relationId)
+  await awaitTransaction(transaction)
 }
 
 async function createTarget(

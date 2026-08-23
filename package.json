@@ -9,7 +9,9 @@
     "build": "npm --workspace=client run build && npm --workspace=server run build",
     "build-gh-page": "npm --workspace=client run build -- --base=/noema/ --outDir ../../docs --emptyOutDir",
     "test": "npm --workspace=client run test && npm --workspace=server run test",
-    "generate-db": "npm --workspace=server run generate-db"
+    "generate-db": "npm --workspace=server run generate-db",
+    "analyze": "npx ts_dependency_graph --start ./packages/client/src/main.tsx | dot -Tsvg -Gsplines=ortho > graph.svg",
+    "analyze-llm": "npx ts_dependency_graph --start ./packages/client/src/main.tsx"
   },
   "license": "GPL-3.0-only",
   "workspaces": [

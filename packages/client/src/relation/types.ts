@@ -12,7 +12,6 @@ export interface RelationBase {
 }
 
 export interface WordRelationBase extends RelationBase {
-  questionId: number
   comment?: WordOrSentence
 }
 

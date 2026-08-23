@@ -3,7 +3,7 @@ import { createAnswerWordIds } from './createAnswerWordIds'
 import { createSource, EXPLORE_SOURCE_PREFIX } from './createSource'
 import { getAnswerMode } from './getAnswerModes'
 import type { AnswerDraft, CommentDraft } from './types'
-import { QUESTIONS_STORE, RELATIONS_STORE } from '../db/consts'
+import { RELATIONS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { assertNotDuplicateTernaryRelation } from '../relation/assertNotDuplicateTernaryRelation'
@@ -39,8 +39,8 @@ export async function submitAnswer({
   )
 
   const createdAt = new Date()
-  const questionId = await createQuestion(question, createdAt)
-  const source = createSource(questionId, sourcePrefix ?? EXPLORE_SOURCE_PREFIX)
+  const relationId = await reserveRelationId(question.type, createdAt)
+  const source = createSource(relationId, sourcePrefix ?? EXPLORE_SOURCE_PREFIX)
   const answerTarget = await createTarget(
     getAnswerMode(question.type, answer.mode),
     answer.text,
@@ -52,17 +52,18 @@ export async function submitAnswer({
     answerWordIds,
     comment: commentTarget,
   })
-  return createRelation(newRelation, questionId, createdAt)
+  await putRelation({ ...newRelation, relationId, createdAt })
+  return relationId
 }
 
-async function createQuestion(question: RelationQuestion, createdAt: Date): Promise<number> {
+async function reserveRelationId(type: WordRelation['type'], createdAt: Date): Promise<number> {
   const db = await openNoemaDB()
-  const transaction = db.transaction(QUESTIONS_STORE, 'readwrite')
-  const questionId = (await awaitRequest<IDBValidKey>(
-    transaction.objectStore(QUESTIONS_STORE).add({ ...question, createdAt }),
+  const transaction = db.transaction(RELATIONS_STORE, 'readwrite')
+  const relationId = (await awaitRequest<IDBValidKey>(
+    transaction.objectStore(RELATIONS_STORE).add({ type, createdAt }),
   )) as number
   await awaitTransaction(transaction)
-  return questionId
+  return relationId
 }
 
 async function createTarget(
@@ -79,22 +80,12 @@ async function createTarget(
   return { type: 'sentence', id: await createSentence(text, source) }
 }
 
-async function createRelation(
-  newRelation: NewRelation,
-  questionId: number,
-  createdAt: Date,
-): Promise<number> {
+async function putRelation(
+  relation: NewRelation & Pick<WordRelation, 'relationId' | 'createdAt'>,
+): Promise<void> {
   const db = await openNoemaDB()
   const transaction = db.transaction(RELATIONS_STORE, 'readwrite')
-  const relation: NewRelation & Pick<WordRelation, 'questionId' | 'createdAt'> = {
-    ...newRelation,
-    questionId,
-    createdAt,
-  }
-  const relationId = (await awaitRequest<IDBValidKey>(
-    transaction.objectStore(RELATIONS_STORE).add(relation),
-  )) as number
+  transaction.objectStore(RELATIONS_STORE).put(relation)
   await awaitTransaction(transaction)
   recordCreation(db, 'relationCount')
-  return relationId
 }

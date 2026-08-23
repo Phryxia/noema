@@ -4,7 +4,6 @@ import {
   CREATED_AT_INDEX,
   DOCUMENT_ID_INDEX,
   DOCUMENTS_STORE,
-  QUESTIONS_STORE,
   RELATIONS_STORE,
   SENTENCE_ID_INDEX,
   SENTENCES_STORE,
@@ -27,7 +26,6 @@ export const IndexSpecs: IndexSpec[] = [
   { storeName: SENTENCES_STORE, name: CREATED_AT_INDEX, keyPath: CREATED_AT_INDEX },
   { storeName: DOCUMENTS_STORE, name: CREATED_AT_INDEX, keyPath: CREATED_AT_INDEX },
   { storeName: WORD_NODES_STORE, name: CREATED_AT_INDEX, keyPath: CREATED_AT_INDEX },
-  { storeName: QUESTIONS_STORE, name: CREATED_AT_INDEX, keyPath: CREATED_AT_INDEX },
   { storeName: RELATIONS_STORE, name: CREATED_AT_INDEX, keyPath: CREATED_AT_INDEX },
   { storeName: RELATIONS_STORE, name: WORD_ID_INDEX, keyPath: WORD_ID_INDEX },
   {

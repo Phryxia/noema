@@ -6,7 +6,7 @@ import {
   DOCUMENTS_STORE,
   HOUR_ACC_STORE,
   HOUR_DELTA_STORE,
-  QUESTIONS_STORE,
+  LEGACY_QUESTIONS_STORE,
   RECENT_DOCUMENTS_STORE,
   RECENT_SENTENCES_STORE,
   RECENT_WORDS_STORE,
@@ -21,6 +21,7 @@ import { IndexSpecs } from './indexSpecs'
 import { clearAndBackfillCountLogs } from '../statistic/backfillCountLogs'
 
 const RELATION_COUNT_VERSION = 9
+const QUESTION_REMOVAL_VERSION = 11
 
 let dbPromise: Promise<IDBDatabase> | undefined
 
@@ -47,10 +48,12 @@ function createConnection(): Promise<IDBDatabase> {
         case 1:
           createCountLogSchema(db)
       }
-      ensureQuestionsStore(db)
       ensureIndexes(transaction)
       if (event.oldVersion < RELATION_COUNT_VERSION) {
         void clearAndBackfillCountLogs(transaction)
+      }
+      if (event.oldVersion < QUESTION_REMOVAL_VERSION) {
+        removeQuestions(db, transaction)
       }
     }
 
@@ -97,11 +100,23 @@ function createInitialSchema(db: IDBDatabase, transaction: IDBTransaction): void
   transaction.objectStore(RECENT_DOCUMENTS_STORE).put(0, 'next')
 }
 
-function ensureQuestionsStore(db: IDBDatabase): void {
-  if (db.objectStoreNames.contains(QUESTIONS_STORE)) {
-    return
+function removeQuestions(db: IDBDatabase, transaction: IDBTransaction): void {
+  if (db.objectStoreNames.contains(LEGACY_QUESTIONS_STORE)) {
+    db.deleteObjectStore(LEGACY_QUESTIONS_STORE)
   }
-  db.createObjectStore(QUESTIONS_STORE, { keyPath: 'questionId', autoIncrement: true })
+  const relationStore = transaction.objectStore(RELATIONS_STORE)
+  relationStore.openCursor().onsuccess = (event): void => {
+    const cursor = (event.target as IDBRequest<IDBCursorWithValue | null>).result
+    if (!cursor) {
+      return
+    }
+    const relation: unknown = cursor.value
+    if (typeof relation === 'object' && relation !== null && 'questionId' in relation) {
+      delete relation.questionId
+      cursor.update(relation)
+    }
+    cursor.continue()
+  }
 }
 
 function ensureIndexes(transaction: IDBTransaction): void {

@@ -64,7 +64,6 @@ function RelationEditor({ snapshot }: RelationEditorProps): ReactElement {
       editor={editor}
       meta={[
         { label: 'relationId', value: relation.relationId },
-        { label: 'questionId', value: relation.questionId },
         { label: 'createdAt', value: relation.createdAt },
         { label: 'modifiedAt', value: relation.modifiedAt },
       ]}

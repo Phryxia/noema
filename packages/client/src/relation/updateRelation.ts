@@ -1,12 +1,11 @@
-import { QUESTIONS_STORE, RELATIONS_STORE } from '../db/consts'
+import { RELATIONS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
-import { awaitRequest, awaitTransaction } from '../db/utils'
+import { awaitTransaction } from '../db/utils'
 import { createAnswerWordIds } from '../explore/createAnswerWordIds'
 import { createNewRelation } from '../explore/createNewRelation'
 import { createSource } from '../explore/createSource'
 import { getAnswerMode } from '../explore/getAnswerModes'
 import type { AnswerDraft, CommentDraft } from '../explore/types'
-import type { Question } from '../question/types'
 import { createSentence, getSentence } from '../sentence/sentence.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
@@ -17,7 +16,7 @@ import { getTernaryWordIds } from './getTernaryWordIds'
 import type { NewRelation, RelationQuestion, WordRelation, WordOrSentence } from './types'
 
 type StoredRelation = NewRelation &
-  Pick<WordRelation, 'relationId' | 'questionId' | 'createdAt' | 'modifiedAt'>
+  Pick<WordRelation, 'relationId' | 'createdAt' | 'modifiedAt'>
 
 export interface UpdateRelationParams {
   relation: WordRelation
@@ -32,7 +31,7 @@ export async function updateRelation({
   answer,
   comment,
 }: UpdateRelationParams): Promise<void> {
-  const { relationId, questionId, createdAt, type } = relation
+  const { relationId, createdAt, type } = relation
   const wordIds: number[] = []
   for (const word of words.filter(Boolean)) {
     wordIds.push(await createWord(word))
@@ -44,9 +43,8 @@ export async function updateRelation({
     getTernaryWordIds(question, answerWordIds),
     relationId,
   )
-  await putQuestion(question, questionId)
 
-  const source = createSource(questionId, TEACH_SOURCE_PREFIX)
+  const source = createSource(relationId, TEACH_SOURCE_PREFIX)
   const answerTarget = await resolveTarget(
     getRelationAnswer(relation),
     getAnswerMode(type, answer.mode),
@@ -67,22 +65,9 @@ export async function updateRelation({
       comment: commentTarget,
     }),
     relationId,
-    questionId,
     createdAt,
     modifiedAt: new Date(),
   })
-}
-
-async function putQuestion(question: RelationQuestion, questionId: number): Promise<void> {
-  const db = await openNoemaDB()
-  const transaction = db.transaction(QUESTIONS_STORE, 'readwrite')
-  const questionStore = transaction.objectStore(QUESTIONS_STORE)
-
-  const stored = await awaitRequest<Question | undefined>(questionStore.get(questionId))
-  if (stored) {
-    questionStore.put({ ...question, questionId, createdAt: stored.createdAt })
-  }
-  await awaitTransaction(transaction)
 }
 
 async function resolveTarget(

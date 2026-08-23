@@ -9,12 +9,8 @@ const WordMap = new Map([
 ])
 const SentenceMap = new Map([[10, '사과는 빨갛다']])
 
-function createBase(relationId = 1): {
-  relationId: number
-  questionId: number
-  createdAt: Date
-} {
-  return { relationId, questionId: relationId, createdAt: new Date(0) }
+function createBase(relationId = 1): { relationId: number; createdAt: Date } {
+  return { relationId, createdAt: new Date(0) }
 }
 
 describe('collectSearchTargets', () => {

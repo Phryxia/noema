@@ -1,5 +1,4 @@
 import {
-  QUESTIONS_STORE,
   RECENT_WORDS_STORE,
   RELATIONS_STORE,
   WORD_META_STORE,
@@ -13,7 +12,6 @@ export const WordRewriteStoreNames = [
   WORD_NODES_STORE,
   RECENT_WORDS_STORE,
   RELATIONS_STORE,
-  QUESTIONS_STORE,
 ]
 
 export const WORD_SUGGESTION_QUERY_KEY = 'wordSuggestion'

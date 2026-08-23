@@ -8,7 +8,7 @@ export type QuestionAnswer =
   | { kind: 'text'; modes: TextWriterMode[]; isRequired: boolean }
   | { kind: 'similarity' }
   | { kind: 'selection' }
-  | { kind: 'words'; slots: WordSlot[]; layout?: 'composition' }
+  | { kind: 'words'; slots: WordSlot[]; layout?: 'composition'; placeholders?: string[] }
   | { kind: 'none' }
 
 export interface SubjectWordSpec {
@@ -58,12 +58,12 @@ export const QuestionSpecs: Record<WordRelationType, QuestionSpec> = {
   },
   UnaryProperty: {
     given: ['word1Id'],
-    answer: { kind: 'words', slots: ['word2Id'] },
+    answer: { kind: 'words', slots: ['word2Id'], placeholders: ['속성'] },
     subject: { count: 1, minCount: 1 },
   },
   BinaryAssociation: {
     given: ['word1Id'],
-    answer: { kind: 'words', slots: ['word2Id'] },
+    answer: { kind: 'words', slots: ['word2Id'], placeholders: ['연상 단어'] },
     subject: { count: 1, minCount: 1 },
   },
   TernaryComposition: {

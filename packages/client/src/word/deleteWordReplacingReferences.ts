@@ -1,7 +1,6 @@
 import { WORD_NODES_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitTransaction } from '../db/utils'
-import { replaceQuestionWordReferences } from '../question/replaceQuestionWordReferences'
 import { replaceWordReferences } from '../relation/replaceWordReferences'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import { WordRewriteStoreNames } from './consts'
@@ -36,7 +35,6 @@ export async function deleteWordReplacingReferences(
     : await createReplacementWord(transaction, replacementValue)
 
   await replaceWordReferences(transaction, nodeId, replacementNodeId)
-  await replaceQuestionWordReferences(transaction, nodeId, replacementNodeId)
   await unmarkAndPrune(transaction, nodeId)
   await rewriteRecentSlots(transaction, nodeId, null)
 

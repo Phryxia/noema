@@ -1,4 +1,4 @@
-import { DB_NAME, DB_VERSION } from '../db/consts'
+import { DB_NAME, DB_VERSION, RELATIONS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { decodeValue, encodeValue } from './serialize'
@@ -43,9 +43,19 @@ async function readEntries(store: IDBObjectStore): Promise<BackupEntry[]> {
 
 function writeEntry(store: IDBObjectStore, entry: BackupEntry): void {
   const value = decodeValue(entry.value)
+  if (store.name === RELATIONS_STORE) {
+    removeLegacyQuestionId(value)
+  }
   if (!store.keyPath) {
     store.put(value, decodeValue(entry.key) as IDBValidKey)
     return
   }
   store.put(value)
+}
+
+function removeLegacyQuestionId(value: unknown): void {
+  if (typeof value !== 'object' || value === null || !('questionId' in value)) {
+    return
+  }
+  delete value.questionId
 }

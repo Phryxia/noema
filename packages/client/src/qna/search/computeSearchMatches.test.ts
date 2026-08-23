@@ -15,7 +15,6 @@ function createAssociation(
 ): WordRelation {
   return {
     relationId,
-    questionId: relationId,
     createdAt: new Date(createdAt),
     type: 'BinaryAssociation',
     word1Id,
@@ -34,7 +33,6 @@ describe('computeExactMatches', () => {
         createAssociation(1, 2, 1),
         {
           relationId: 2,
-          questionId: 2,
           createdAt: new Date(0),
           type: 'WordExplain',
           wordId: 1,
@@ -52,7 +50,6 @@ describe('computeExactMatches', () => {
   it('단어형 answer 일치가 문장형 answer 일치보다 앞선다', () => {
     const wordAnswer: WordRelation = {
       relationId: 1,
-      questionId: 1,
       createdAt: new Date(0),
       type: 'WordExplain',
       wordId: 2,
@@ -60,7 +57,6 @@ describe('computeExactMatches', () => {
     }
     const sentenceAnswer: WordRelation = {
       relationId: 2,
-      questionId: 2,
       createdAt: new Date(0),
       type: 'WordExplain',
       wordId: 3,

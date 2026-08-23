@@ -52,6 +52,7 @@ export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): 
         words={words}
         requiredCount={spec.slots.length}
         layout={spec.layout}
+        placeholders={spec.placeholders}
         onChange={(update) => onChange({ ...answer, words: resolveWords(update, words) })}
       />
     )

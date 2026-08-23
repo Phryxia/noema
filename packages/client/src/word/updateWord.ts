@@ -1,7 +1,6 @@
 import { WORD_NODES_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
-import { replaceQuestionWordReferences } from '../question/replaceQuestionWordReferences'
 import { replaceWordReferences } from '../relation/replaceWordReferences'
 import { recordDeletion } from '../statistic/statistic.service'
 import { WordRewriteStoreNames } from './consts'
@@ -63,7 +62,6 @@ async function renameWord(
   await markAsWord(transaction, leaf.nodeId, createdAt, new Date())
   await unmarkAndPrune(transaction, sourceNodeId)
   await replaceWordReferences(transaction, sourceNodeId, leaf.nodeId)
-  await replaceQuestionWordReferences(transaction, sourceNodeId, leaf.nodeId)
   await rewriteRecentSlots(transaction, sourceNodeId, {
     nodeId: leaf.nodeId,
     value: newValue,
@@ -82,7 +80,6 @@ async function mergeWord(
   targetCreatedAt: Date,
 ): Promise<UpdateWordResult> {
   await replaceWordReferences(transaction, sourceNodeId, targetNodeId)
-  await replaceQuestionWordReferences(transaction, sourceNodeId, targetNodeId)
 
   const hasTargetSlot = await hasRecentWord(transaction, targetNodeId)
   const replacement = hasTargetSlot

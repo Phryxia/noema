@@ -1,5 +1,5 @@
 export const DB_NAME = 'noema'
-export const DB_VERSION = 10
+export const DB_VERSION = 11
 
 export const CREATED_AT_INDEX = 'createdAt'
 export const WORD_ID_INDEX = 'wordId'
@@ -19,7 +19,7 @@ export const SENTENCES_STORE = 'sentences'
 export const RECENT_SENTENCES_STORE = 'recentSentences'
 export const DOCUMENTS_STORE = 'documents'
 export const RECENT_DOCUMENTS_STORE = 'recentDocuments'
-export const QUESTIONS_STORE = 'questions'
+export const LEGACY_QUESTIONS_STORE = 'questions'
 export const RELATIONS_STORE = 'relations'
 export const HOUR_DELTA_STORE = 'hourDelta'
 export const HOUR_ACC_STORE = 'hourAcc'

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { computeRelationExpression } from './computeRelationExpression'
 import type { ExpressionToken } from './types'
 
-const base = { relationId: 1, questionId: 1, createdAt: new Date(0) }
+const base = { relationId: 1, createdAt: new Date(0) }
 const skip: ExpressionToken = { kind: 'text', value: '(답변 회피)', isMuted: true }
 
 function word(wordId: number): ExpressionToken {

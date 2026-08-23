@@ -5,7 +5,7 @@ import type { TextWriterMode } from '../writer/types'
 export type QuestionGiven = 'wordId' | 'wordIds' | WordKey[]
 
 export type QuestionAnswer =
-  | { kind: 'text'; modes: TextWriterMode[]; isRequired: boolean }
+  | { kind: 'text'; modes: TextWriterMode[]; isRequired?: boolean }
   | { kind: 'similarity' }
   | { kind: 'selection' }
   | { kind: 'words'; keys: WordKey[]; layout?: 'composition'; placeholders?: string[] }
@@ -33,17 +33,17 @@ export const QuestionSpecs: Record<WordRelationType, QuestionSpec> = {
   },
   WordsUsage: {
     given: 'wordIds',
-    answer: { kind: 'text', modes: SentenceOnlyModes, isRequired: false },
+    answer: { kind: 'text', modes: SentenceOnlyModes },
     subject: { count: 2, minCount: 1, isCountAdjustable: true },
   },
   BinaryCommon: {
     given: ['word1Id', 'word2Id'],
-    answer: { kind: 'text', modes: TextWriterModes, isRequired: false },
+    answer: { kind: 'text', modes: TextWriterModes },
     subject: { count: 2, minCount: 2 },
   },
   BinaryDifference: {
     given: ['word1Id', 'word2Id'],
-    answer: { kind: 'text', modes: TextWriterModes, isRequired: false },
+    answer: { kind: 'text', modes: TextWriterModes },
     subject: { count: 2, minCount: 2 },
   },
   BinarySimilarity: {

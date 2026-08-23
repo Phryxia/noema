@@ -1,14 +1,14 @@
-import type { WordRelationType, WordSlot } from './types'
+import type { WordKey, WordRelationType } from './types'
 import { SentenceOnlyModes, TextWriterModes } from '../writer/consts'
 import type { TextWriterMode } from '../writer/types'
 
-export type QuestionGiven = 'wordId' | 'wordIds' | WordSlot[]
+export type QuestionGiven = 'wordId' | 'wordIds' | WordKey[]
 
 export type QuestionAnswer =
   | { kind: 'text'; modes: TextWriterMode[]; isRequired: boolean }
   | { kind: 'similarity' }
   | { kind: 'selection' }
-  | { kind: 'words'; slots: WordSlot[]; layout?: 'composition'; placeholders?: string[] }
+  | { kind: 'words'; keys: WordKey[]; layout?: 'composition'; placeholders?: string[] }
   | { kind: 'none' }
 
 export interface SubjectWordSpec {
@@ -58,17 +58,17 @@ export const QuestionSpecs: Record<WordRelationType, QuestionSpec> = {
   },
   UnaryProperty: {
     given: ['word1Id'],
-    answer: { kind: 'words', slots: ['word2Id'], placeholders: ['속성'] },
+    answer: { kind: 'words', keys: ['word2Id'], placeholders: ['속성'] },
     subject: { count: 1, minCount: 1 },
   },
   BinaryAssociation: {
     given: ['word1Id'],
-    answer: { kind: 'words', slots: ['word2Id'], placeholders: ['연상 단어'] },
+    answer: { kind: 'words', keys: ['word2Id'], placeholders: ['연상 단어'] },
     subject: { count: 1, minCount: 1 },
   },
   TernaryComposition: {
     given: ['word3Id'],
-    answer: { kind: 'words', slots: ['word1Id', 'word2Id'], layout: 'composition' },
+    answer: { kind: 'words', keys: ['word1Id', 'word2Id'], layout: 'composition' },
     subject: { count: 1, minCount: 1, placeholders: ['단어 3'] },
   },
   NamedAssociation: {

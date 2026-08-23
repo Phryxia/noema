@@ -12,7 +12,7 @@ export function checkIsAnswerReady(question: RelationQuestion, answer: AnswerDra
     case 'selection':
       return answer.selection !== null
     case 'words':
-      return spec.slots.every((_, index) => !!answer.words[index])
+      return spec.keys.every((_, index) => !!answer.words[index])
     case 'none':
       return true
   }

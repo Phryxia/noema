@@ -24,7 +24,7 @@ export interface TernaryWords extends BinaryWords {
   word3Id: number
 }
 
-export type WordSlot = keyof TernaryWords
+export type WordKey = keyof TernaryWords
 
 export interface DocumentToSentenceRelation extends RelationBase {
   type: 'DocumentToSentence'

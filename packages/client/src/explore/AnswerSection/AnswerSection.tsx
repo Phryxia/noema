@@ -46,11 +46,11 @@ export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): 
   }
 
   if (spec.kind === 'words') {
-    const words = resizeWords(answer.words, spec.slots.length)
+    const words = resizeWords(answer.words, spec.keys.length)
     return (
       <SubjectWordFields
         words={words}
-        requiredCount={spec.slots.length}
+        requiredCount={spec.keys.length}
         layout={spec.layout}
         placeholders={spec.placeholders}
         onChange={(update) => onChange({ ...answer, words: resolveWords(update, words) })}

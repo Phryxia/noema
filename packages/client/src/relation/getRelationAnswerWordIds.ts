@@ -1,5 +1,5 @@
 import { QuestionSpecs } from './questionSpecs'
-import { readWordSlots } from './readWordSlots'
+import { readWordKeys } from './readWordKeys'
 import type { WordRelation } from './types'
 
 export function getRelationAnswerWordIds(relation: WordRelation): number[] {
@@ -7,5 +7,5 @@ export function getRelationAnswerWordIds(relation: WordRelation): number[] {
   if (answer.kind !== 'words') {
     return []
   }
-  return readWordSlots(relation, answer.slots)
+  return readWordKeys(relation, answer.keys)
 }

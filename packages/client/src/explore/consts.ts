@@ -51,7 +51,7 @@ export const EmptyAnswer: AnswerDraft = {
   text: '',
   similarity: null,
   selection: null,
-  words: ['', ''],
+  words: [],
 }
 
 export const EmptyComment: CommentDraft = { mode: '단어', text: '' }

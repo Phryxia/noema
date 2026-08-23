@@ -1,6 +1,7 @@
 import { getQuestionWordIds } from '../relation/getQuestionWordIds'
 import { getRelationAnswer } from '../relation/getRelationAnswer'
 import { getRelationAnswerWordIds } from '../relation/getRelationAnswerWordIds'
+import { QuestionSpecs } from '../relation/questionSpecs'
 import type { WordRelation, WordOrSentence } from '../relation/types'
 import { resolveSentenceMap } from '../sentence/resolveSentenceMap'
 import { getWordValues } from '../word/getWordValues'
@@ -97,10 +98,12 @@ function buildAnswer(
   if (relation.type === 'NamedAssociation') {
     return { kind: 'selection', word: words[2] }
   }
-  if (relation.type === 'TernaryComposition') {
+  const spec = QuestionSpecs[relation.type].answer
+  if (spec.kind === 'words') {
     return {
-      kind: 'composition',
+      kind: 'words',
       words: getRelationAnswerWordIds(relation).map((id) => toResolvedWord(id, wordMap)),
+      separator: spec.layout === 'composition' ? ' + ' : ', ',
     }
   }
   const answer = getRelationAnswer(relation)

@@ -7,6 +7,8 @@ import { SimilarityLevels } from '../consts'
 import { getAnswerMode, getAnswerModes } from '../getAnswerModes'
 import type { AnswerDraft, QuestionDraft } from '../types'
 import { SubjectWordFields } from '../../relation/SubjectWordFields/SubjectWordFields'
+import { QuestionSpecs } from '../../relation/questionSpecs'
+import { resizeWords } from '../../relation/resizeWords'
 import type { Similarity } from '../../relation/types'
 import { focusNextElement } from '../../utils/focusNextElement'
 
@@ -18,8 +20,10 @@ interface AnswerSectionProps {
 
 export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): ReactElement {
   const rootRef = useRef<HTMLDivElement>(null)
+  const { type } = draft.question
+  const spec = QuestionSpecs[type].answer
 
-  if (draft.question.type === 'BinarySimilarity') {
+  if (spec.kind === 'similarity') {
     return (
       <ChoiceGroup
         choices={SimilarityLevels}
@@ -30,7 +34,7 @@ export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): 
     )
   }
 
-  if (draft.question.type === 'TernaryIsolation') {
+  if (spec.kind === 'selection') {
     return (
       <ChoiceGroup
         choices={createSelectionChoices(draft)}
@@ -41,15 +45,14 @@ export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): 
     )
   }
 
-  if (draft.question.type === 'TernaryComposition') {
+  if (spec.kind === 'words') {
+    const words = resizeWords(answer.words, spec.slots.length)
     return (
       <SubjectWordFields
-        words={answer.words}
-        requiredCount={2}
-        layout="composition"
-        onChange={(update) =>
-          onChange({ ...answer, words: resolveWords(update, answer.words) })
-        }
+        words={words}
+        requiredCount={spec.slots.length}
+        layout={spec.layout}
+        onChange={(update) => onChange({ ...answer, words: resolveWords(update, words) })}
       />
     )
   }
@@ -58,8 +61,8 @@ export function AnswerSection({ draft, answer, onChange }: AnswerSectionProps): 
     <div ref={rootRef}>
       <TextWriterField
         name="answerMode"
-        modes={getAnswerModes(draft.question.type)}
-        mode={getAnswerMode(draft.question.type, answer.mode)}
+        modes={getAnswerModes(type)}
+        mode={getAnswerMode(type, answer.mode)}
         value={answer.text}
         onModeChange={(mode) => onChange({ ...answer, mode })}
         onChange={(text) => onChange({ ...answer, text })}

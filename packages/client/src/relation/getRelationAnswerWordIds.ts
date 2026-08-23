@@ -1,8 +1,11 @@
+import { QuestionSpecs } from './questionSpecs'
+import { readWordSlots } from './readWordSlots'
 import type { WordRelation } from './types'
 
 export function getRelationAnswerWordIds(relation: WordRelation): number[] {
-  if (relation.type === 'TernaryComposition') {
-    return [relation.word1Id, relation.word2Id]
+  const { answer } = QuestionSpecs[relation.type]
+  if (answer.kind !== 'words') {
+    return []
   }
-  return []
+  return readWordSlots(relation, answer.slots)
 }

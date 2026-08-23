@@ -90,7 +90,7 @@ async function createAnswerDraft(relation: WordRelation): Promise<AnswerDraft> {
   if (relation.type === 'TernaryIsolation') {
     return { ...EmptyAnswer, selection: relation.selection }
   }
-  if (relation.type === 'TernaryComposition') {
+  if (QuestionSpecs[relation.type].answer.kind === 'words') {
     return { ...EmptyAnswer, words: await getWordValues(getRelationAnswerWordIds(relation)) }
   }
   return { ...EmptyAnswer, ...(await createTextDraft(getRelationAnswer(relation))) }

@@ -1,6 +1,13 @@
 import type { AnswerDraft } from './types'
-import type { NewQuestion } from '../question/types'
-import type { NewRelation, Similarity, WordOrSentence } from '../relation/types'
+import { QuestionSpecs } from '../relation/questionSpecs'
+import type { QuestionAnswer, QuestionGiven } from '../relation/questionSpecs'
+import type {
+  NewRelation,
+  RelationQuestion,
+  Similarity,
+  WordOrSentence,
+  WordSlot,
+} from '../relation/types'
 
 export interface RelationTargets {
   answer: WordOrSentence | null
@@ -8,107 +15,70 @@ export interface RelationTargets {
   comment: WordOrSentence | null
 }
 
+type RelationFields = Record<string, unknown>
+
 export function createNewRelation(
-  question: NewQuestion,
+  question: RelationQuestion,
   answer: AnswerDraft,
-  { answer: answerTarget, answerWordIds, comment: commentTarget }: RelationTargets,
+  targets: RelationTargets,
 ): NewRelation {
-  const comment = commentTarget ? { comment: commentTarget } : {}
-  switch (question.type) {
-    case 'WordExplain':
-      return {
-        ...comment,
-        type: question.type,
-        wordId: question.wordId,
-        answer: requireTarget(answerTarget),
-      }
-    case 'WordsUsage':
-      return {
-        ...comment,
-        type: question.type,
-        wordIds: question.wordIds,
-        answer: answerTarget,
-      }
-    case 'UnaryProperty':
-      return {
-        ...comment,
-        type: question.type,
-        word1Id: question.wordId,
-        word2Id: requireWordTarget(answerTarget).id,
-      }
-    case 'BinaryCommon':
-      return {
-        ...comment,
-        type: question.type,
-        word1Id: question.word1Id,
-        word2Id: question.word2Id,
-        answer: answerTarget,
-      }
-    case 'BinaryDifference':
-      return {
-        ...comment,
-        type: question.type,
-        word1Id: question.word1Id,
-        word2Id: question.word2Id,
-        answer: answerTarget,
-      }
-    case 'BinarySimilarity':
-      return {
-        ...comment,
-        type: question.type,
-        word1Id: question.word1Id,
-        word2Id: question.word2Id,
-        similarity: requireSimilarity(answer.similarity),
-      }
-    case 'BinaryAssociation':
-      return {
-        ...comment,
-        type: question.type,
-        word1Id: question.wordId,
-        word2Id: requireWordTarget(answerTarget).id,
-      }
-    case 'TernaryIsolation':
-      return {
-        ...comment,
-        type: question.type,
-        word1Id: question.word1Id,
-        word2Id: question.word2Id,
-        word3Id: question.word3Id,
-        selection: requireSelection(answer.selection),
-      }
-    case 'TernaryComposition': {
-      const [word1Id, word2Id] = requireAnswerWordIds(answerWordIds)
-      return { ...comment, type: question.type, word1Id, word2Id, word3Id: question.word3Id }
-    }
-    case 'NamedAssociation':
-      return {
-        ...comment,
-        type: question.type,
-        word1Id: question.word1Id,
-        word2Id: question.word2Id,
-        word3Id: question.word3Id,
-      }
+  const spec = QuestionSpecs[question.type]
+  const fields: RelationFields = {
+    type: question.type,
+    ...placeGivenWords(spec.given, question.wordIds),
+    ...createAnswerFields(spec.answer, answer, targets),
+  }
+  if (targets.comment) {
+    fields.comment = targets.comment
+  }
+  return fields as NewRelation
+}
+
+function placeGivenWords(given: QuestionGiven, wordIds: number[]): RelationFields {
+  if (given === 'wordIds') {
+    return { wordIds }
+  }
+  if (given === 'wordId') {
+    return { wordId: wordIds[0] }
+  }
+  return placeSlots(given, wordIds)
+}
+
+function createAnswerFields(
+  answer: QuestionAnswer,
+  draft: AnswerDraft,
+  targets: RelationTargets,
+): RelationFields {
+  switch (answer.kind) {
+    case 'text':
+      return { answer: answer.isRequired ? requireTarget(targets.answer) : targets.answer }
+    case 'similarity':
+      return { similarity: requireSimilarity(draft.similarity) }
+    case 'selection':
+      return { selection: requireSelection(draft.selection) }
+    case 'words':
+      return placeSlots(answer.slots, requireAnswerWordIds(targets.answerWordIds, answer.slots))
+    case 'none':
+      return {}
   }
 }
 
-function requireAnswerWordIds(wordIds: number[]): [number, number] {
-  const [word1Id, word2Id] = wordIds
-  if (word1Id === undefined || word2Id === undefined) {
-    throw new Error('두 단어를 입력해야 합니다')
+function placeSlots(slots: WordSlot[], wordIds: number[]): RelationFields {
+  return Object.fromEntries(slots.map((slot, index) => [slot, wordIds[index]]))
+}
+
+function requireAnswerWordIds(wordIds: number[], slots: WordSlot[]): number[] {
+  if (wordIds.length < slots.length || wordIds.some((id) => id === undefined)) {
+    throw new Error(
+      slots.length === 1 ? '답 단어를 입력해야 합니다' : '두 단어를 입력해야 합니다',
+    )
   }
-  return [word1Id, word2Id]
+  return wordIds
 }
 
 function requireTarget(target: WordOrSentence | null): WordOrSentence {
   if (!target) {
     throw new Error('답을 입력해야 합니다')
-  }
-  return target
-}
-
-function requireWordTarget(target: WordOrSentence | null): WordOrSentence {
-  if (target?.type !== 'word') {
-    throw new Error('답 단어를 입력해야 합니다')
   }
   return target
 }

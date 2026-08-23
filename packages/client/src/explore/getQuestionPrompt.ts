@@ -1,6 +1,6 @@
-import type { NewQuestion } from '../question/types'
+import type { RelationQuestion } from '../relation/types'
 
-export function getQuestionPrompt(question: NewQuestion): string {
+export function getQuestionPrompt(question: RelationQuestion): string {
   switch (question.type) {
     case 'WordExplain':
       return '다음 단어의 뜻을 적으세요.'

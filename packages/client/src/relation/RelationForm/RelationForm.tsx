@@ -31,7 +31,7 @@ export function RelationForm({
     save()
   }
 
-  const { subject } = QuestionSpecs[type]
+  const { subject, answer: answerSpec } = QuestionSpecs[type]
   const subjectWordFields = (
     <SubjectWordFields
       words={words}
@@ -45,10 +45,10 @@ export function RelationForm({
   )
 
   function renderAnswer(): ReactElement | null {
-    if (type === 'NamedAssociation') {
+    if (answerSpec.kind === 'none') {
       return null
     }
-    if (type === 'TernaryIsolation' && !isWordsReady) {
+    if (answerSpec.kind === 'selection' && !isWordsReady) {
       return <p>대상 단어를 먼저 입력하세요</p>
     }
     return <AnswerSection draft={draft} answer={answer} onChange={editor.setAnswer} />
@@ -64,7 +64,7 @@ export function RelationForm({
         />
       )
     }
-    if (type === 'TernaryComposition') {
+    if (answerSpec.kind === 'words' && answerSpec.layout === 'composition') {
       return (
         <FieldRow>
           {subjectWordFields}

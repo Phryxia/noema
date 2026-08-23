@@ -1,3 +1,5 @@
+import { QuestionSpecs } from './questionSpecs'
+import { readWordSlots } from './readWordSlots'
 import type { WordRelation } from './types'
 
 export function getQuestionWordIds(relation: WordRelation): number[] {
@@ -7,14 +9,9 @@ export function getQuestionWordIds(relation: WordRelation): number[] {
   if (relation.type === 'WordsUsage') {
     return relation.wordIds
   }
-  if (relation.type === 'UnaryProperty' || relation.type === 'BinaryAssociation') {
-    return [relation.word1Id]
+  const { given } = QuestionSpecs[relation.type]
+  if (!Array.isArray(given)) {
+    return []
   }
-  if (relation.type === 'TernaryComposition') {
-    return [relation.word3Id]
-  }
-  if (relation.type === 'TernaryIsolation' || relation.type === 'NamedAssociation') {
-    return [relation.word1Id, relation.word2Id, relation.word3Id]
-  }
-  return [relation.word1Id, relation.word2Id]
+  return readWordSlots(relation, given)
 }

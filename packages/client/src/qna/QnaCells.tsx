@@ -40,12 +40,12 @@ export function AnswerCell({ answer, keyword }: AnswerCellProps): ReactElement {
   if (answer.kind === 'selection') {
     return <WordLink word={answer.word} keyword={keyword} />
   }
-  if (answer.kind === 'composition') {
+  if (answer.kind === 'words') {
     return (
       <>
         {answer.words.map((word, index) => (
           <Fragment key={index}>
-            {index > 0 && ' + '}
+            {index > 0 && answer.separator}
             <WordLink word={word} keyword={keyword} />
           </Fragment>
         ))}

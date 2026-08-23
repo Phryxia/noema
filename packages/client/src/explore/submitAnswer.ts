@@ -6,17 +6,21 @@ import type { AnswerDraft, CommentDraft } from './types'
 import { QUESTIONS_STORE, RELATIONS_STORE } from '../db/consts'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
-import type { NewQuestion } from '../question/types'
 import { assertNotDuplicateTernaryRelation } from '../relation/assertNotDuplicateTernaryRelation'
 import { getTernaryWordIds } from '../relation/getTernaryWordIds'
-import type { NewRelation, WordRelation, WordOrSentence } from '../relation/types'
+import type {
+  NewRelation,
+  RelationQuestion,
+  WordRelation,
+  WordOrSentence,
+} from '../relation/types'
 import { createSentence } from '../sentence/sentence.service'
 import { recordCreation } from '../statistic/statistic.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
 
 export interface SubmitAnswerParams {
-  question: NewQuestion
+  question: RelationQuestion
   answer: AnswerDraft
   comment: CommentDraft
   sourcePrefix?: string
@@ -51,7 +55,7 @@ export async function submitAnswer({
   return createRelation(newRelation, questionId, createdAt)
 }
 
-async function createQuestion(question: NewQuestion, createdAt: Date): Promise<number> {
+async function createQuestion(question: RelationQuestion, createdAt: Date): Promise<number> {
   const db = await openNoemaDB()
   const transaction = db.transaction(QUESTIONS_STORE, 'readwrite')
   const questionId = (await awaitRequest<IDBValidKey>(

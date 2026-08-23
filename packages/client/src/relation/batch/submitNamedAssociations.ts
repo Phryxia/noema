@@ -1,6 +1,5 @@
 import type { BatchResultEntry } from './types'
 import { TEACH_SOURCE_PREFIX } from '../consts'
-import { createRelationQuestion } from '../createRelationQuestion'
 import { findDuplicateTernaryRelationId } from '../findDuplicateTernaryRelationId'
 import { EmptyAnswer, EmptyComment } from '../../explore/consts'
 import { submitAnswer } from '../../explore/submitAnswer'
@@ -51,7 +50,7 @@ async function resolveOutcome(
   }
   try {
     const relationId = await submitAnswer({
-      question: createRelationQuestion(BATCH_TYPE, wordIds),
+      question: { type: BATCH_TYPE, wordIds },
       answer: EmptyAnswer,
       comment: EmptyComment,
       sourcePrefix: TEACH_SOURCE_PREFIX,

@@ -6,16 +6,15 @@ import { createNewRelation } from '../explore/createNewRelation'
 import { createSource } from '../explore/createSource'
 import { getAnswerMode } from '../explore/getAnswerModes'
 import type { AnswerDraft, CommentDraft } from '../explore/types'
-import type { NewQuestion, Question } from '../question/types'
+import type { Question } from '../question/types'
 import { createSentence, getSentence } from '../sentence/sentence.service'
 import { createWord } from '../word/word.service'
 import type { TextWriterMode } from '../writer/types'
 import { assertNotDuplicateTernaryRelation } from './assertNotDuplicateTernaryRelation'
 import { TEACH_SOURCE_PREFIX } from './consts'
-import { createRelationQuestion } from './createRelationQuestion'
 import { getRelationAnswer } from './getRelationAnswer'
 import { getTernaryWordIds } from './getTernaryWordIds'
-import type { NewRelation, WordRelation, WordOrSentence } from './types'
+import type { NewRelation, RelationQuestion, WordRelation, WordOrSentence } from './types'
 
 type StoredRelation = NewRelation &
   Pick<WordRelation, 'relationId' | 'questionId' | 'createdAt' | 'modifiedAt'>
@@ -38,7 +37,7 @@ export async function updateRelation({
   for (const word of words.filter(Boolean)) {
     wordIds.push(await createWord(word))
   }
-  const question = createRelationQuestion(type, wordIds)
+  const question: RelationQuestion = { type, wordIds }
   const answerWordIds = await createAnswerWordIds(answer)
   await assertNotDuplicateTernaryRelation(
     type,
@@ -74,7 +73,7 @@ export async function updateRelation({
   })
 }
 
-async function putQuestion(question: NewQuestion, questionId: number): Promise<void> {
+async function putQuestion(question: RelationQuestion, questionId: number): Promise<void> {
   const db = await openNoemaDB()
   const transaction = db.transaction(QUESTIONS_STORE, 'readwrite')
   const questionStore = transaction.objectStore(QUESTIONS_STORE)

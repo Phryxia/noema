@@ -1,10 +1,9 @@
-import type { NewQuestion } from '../question/types'
-import type { Similarity } from '../relation/types'
+import type { RelationQuestion, Similarity } from '../relation/types'
 import type { Lexis } from '../word/types'
 import type { TextWriterMode } from '../writer/types'
 
 export interface QuestionDraft {
-  question: NewQuestion
+  question: RelationQuestion
   lexes: Lexis[]
 }
 

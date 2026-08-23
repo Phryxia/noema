@@ -1,8 +1,7 @@
 import { TEACH_SOURCE_PREFIX } from './consts'
-import { createRelationQuestion } from './createRelationQuestion'
+import type { WordRelationType } from './types'
 import { submitAnswer } from '../explore/submitAnswer'
 import type { AnswerDraft, CommentDraft } from '../explore/types'
-import type { WordRelationType } from './types'
 import { createWord } from '../word/word.service'
 
 export interface SubmitRelationParams {
@@ -23,7 +22,7 @@ export async function submitRelation({
     wordIds.push(await createWord(word))
   }
   await submitAnswer({
-    question: createRelationQuestion(type, wordIds),
+    question: { type, wordIds },
     answer,
     comment,
     sourcePrefix: TEACH_SOURCE_PREFIX,

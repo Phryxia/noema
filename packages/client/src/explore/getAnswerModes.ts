@@ -1,13 +1,12 @@
+import { QuestionSpecs } from '../relation/questionSpecs'
 import type { WordRelationType } from '../relation/types'
-import { SentenceOnlyModes, TextWriterModes, WordOnlyModes } from '../writer/consts'
+import { TextWriterModes } from '../writer/consts'
 import type { TextWriterMode } from '../writer/types'
 
 export function getAnswerModes(type: WordRelationType): TextWriterMode[] {
-  if (type === 'WordExplain' || type === 'WordsUsage') {
-    return SentenceOnlyModes
-  }
-  if (type === 'UnaryProperty' || type === 'BinaryAssociation') {
-    return WordOnlyModes
+  const { answer } = QuestionSpecs[type]
+  if (answer.kind === 'text') {
+    return answer.modes
   }
   return TextWriterModes
 }

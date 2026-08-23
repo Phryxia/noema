@@ -29,3 +29,4 @@ docs
 corpus.json
 tsconfig.tsbuildinfo
 graph.svg
+routeTree.gen.ts

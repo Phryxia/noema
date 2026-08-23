@@ -15,7 +15,6 @@ import { Route as RelationsRouteImport } from './routes/relations'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as DocumentDocumentIdRouteImport } from './routes/document.$documentId'
-import { Route as LabEmbeddingRouteImport } from './routes/lab.embedding'
 import { Route as RecentDocumentsRouteImport } from './routes/recent.documents'
 import { Route as RecentSentencesRouteImport } from './routes/recent.sentences'
 import { Route as RecentWordsRouteImport } from './routes/recent.words'
@@ -52,11 +51,6 @@ const ToolsRoute = ToolsRouteImport.update({
 const DocumentDocumentIdRoute = DocumentDocumentIdRouteImport.update({
   id: '/document/$documentId',
   path: '/document/$documentId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabEmbeddingRoute = LabEmbeddingRouteImport.update({
-  id: '/lab/embedding',
-  path: '/lab/embedding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecentDocumentsRoute = RecentDocumentsRouteImport.update({
@@ -102,7 +96,6 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
-  '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
@@ -118,7 +111,6 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
-  '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
@@ -135,7 +127,6 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/tools': typeof ToolsRoute
   '/document/$documentId': typeof DocumentDocumentIdRoute
-  '/lab/embedding': typeof LabEmbeddingRoute
   '/recent/documents': typeof RecentDocumentsRoute
   '/recent/sentences': typeof RecentSentencesRoute
   '/recent/words': typeof RecentWordsRoute
@@ -153,7 +144,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tools'
     | '/document/$documentId'
-    | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
@@ -169,7 +159,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tools'
     | '/document/$documentId'
-    | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
@@ -185,7 +174,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tools'
     | '/document/$documentId'
-    | '/lab/embedding'
     | '/recent/documents'
     | '/recent/sentences'
     | '/recent/words'
@@ -202,7 +190,6 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   ToolsRoute: typeof ToolsRoute
   DocumentDocumentIdRoute: typeof DocumentDocumentIdRoute
-  LabEmbeddingRoute: typeof LabEmbeddingRoute
   RecentDocumentsRoute: typeof RecentDocumentsRoute
   RecentSentencesRoute: typeof RecentSentencesRoute
   RecentWordsRoute: typeof RecentWordsRoute
@@ -254,13 +241,6 @@ declare module '@tanstack/react-router' {
       path: '/document/$documentId'
       fullPath: '/document/$documentId'
       preLoaderRoute: typeof DocumentDocumentIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/embedding': {
-      id: '/lab/embedding'
-      path: '/lab/embedding'
-      fullPath: '/lab/embedding'
-      preLoaderRoute: typeof LabEmbeddingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recent/documents': {
@@ -322,7 +302,6 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   ToolsRoute: ToolsRoute,
   DocumentDocumentIdRoute: DocumentDocumentIdRoute,
-  LabEmbeddingRoute: LabEmbeddingRoute,
   RecentDocumentsRoute: RecentDocumentsRoute,
   RecentSentencesRoute: RecentSentencesRoute,
   RecentWordsRoute: RecentWordsRoute,

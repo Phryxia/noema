@@ -16,7 +16,7 @@ const TabChoices: Choice<ToolsTab>[] = [
 export function ToolsPage(): ReactElement {
   const { tab } = routeApi.useSearch()
   const navigate = routeApi.useNavigate()
-  const selectedTab = tab ?? 'order'
+  const selectedTab: ToolsTab = tab === 'i18n' ? 'i18n' : 'order'
 
   function selectTab(value: ToolsTab): void {
     navigate({

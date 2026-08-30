@@ -20,7 +20,7 @@
 | DB 버전, 스키마, 인덱스, 마이그레이션, 트랜잭션 규약, ID | [저장-공통](./기능/저장-공통.md) | `db/`, `storage/` |
 | 단어 저장·추천·개명·삭제, `/word/$word`, Trie | [단어](./기능/단어.md) | `word/` |
 | 문장 저장·수정, `/sentence/$sentenceId` | [문장](./기능/문장.md) | `sentence/` |
-| 문서 저장·수정, 파일 드롭, `/document/$documentId` | [문서](./기능/문서.md) | `document/` |
+| 문서 저장·수정, 문서 제목(`DocumentTitle`, `(제목 없음)`, 제목 이관), 파일 드롭, `/document/$documentId` | [문서](./기능/문서.md) | `document/`, `db/documentTitle/` |
 | 입력 폼 공통(dirty, 이탈 질의, 관계 영향 질의), 출처 칸, 공백 에코, 메타 그리드 | [입력기](./기능/입력기.md) | `writer/`, `meta/` |
 | `/explore`, 출제, 답안란, 건너뛰기, 유형 체크박스 | [탐색](./기능/탐색.md) | `explore/` |
 | 관계 유형 10종, 제출·수정·삭제 절차, `/relation/new`, `/relation/$relationId` | [관계](./기능/관계.md) | `relation/` |

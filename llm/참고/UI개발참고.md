@@ -44,6 +44,8 @@ conditional 빌드는 selector 앞에 `.pico`가 붙어 specificity가 한 단�
 - **flex 컨테이너는 익명 텍스트 노드의 앞뒤 공백을 지운다.** 기호는 `white-space: pre`인 `span`에 담는다(`RelationExpression`).
 - **표의 좁은 폭 대응은 `table-layout: fixed`를 쓰지 않는다.** 날짜 열 폭을 `em`으로 어림해야 하고 폰트가 바뀌면 어긋난다. auto 레이아웃에서 잘려도 되는 열에 `max-width: 0`, 온전해야 하는 열에 `width: 1%`, 셋 다 `overflow: hidden; text-overflow: ellipsis`. 576px 이하에서는 pico의 셀 좌우 여백(셀당 2rem)을 줄인다(`RecentTable.module.css`). 셀 안을 flex로 나눠 링크만 줄이는 패턴은 `RelationsTable.module.css`.
 - **오버레이(공백 에코)를 입력칸과 1px도 어긋나지 않게 겹치려면** 양쪽에 `scrollbar-gutter: stable`과 `tab-size: 4`를 명시하고, pico가 `textarea`에 주는 `margin-bottom`을 wrapper로 옮긴다. 안 옮기면 에코 박스가 18px 길어져 다음 줄이 샌다. `␣` 글리프는 폰트에 없으면 폴백 폭이 달라 겹치므로, 실제 공백으로 폭을 잡고 `::before` 테두리로 상자를 그린다. 장식 오버레이에는 `aria-hidden="true"`.
+- **`WordField`를 `[role=group]` 밖에 단독으로 놓으면 pico의 `input { margin-bottom: var(--pico-spacing) }`(0-2-1)이 살아 `.inputWrapper`(flex)가 입력칸보다 1rem 커지고 공백 에코가 아래로 밀린다.** 감싸는 요소에 여백을 주고 `input { margin-bottom: 0 }`으로 되돌린다(`document/DocumentWriter/TitleField.module.css`). 실측으로 input과 에코의 top·height가 같은지 확인한다.
+  출처: [2026-08-30](../일지/2026-08-30-문서-제목-도입.md)
 - **유형에 따라 높이가 바뀌는 영역은 한 덩어리로 묶어 `min-height` + 중앙 정렬을 한 번만 준다.** 두 영역에 각각 주면 여백이 겹쳐 한 문제로 읽히지 않는다. 기준값은 실측한다. `20rem`은 pico root font 때문에 400px이 됐다.
 - **차트 4개를 한 행에**: `flex-wrap` + `flex: 1 1 14rem`, 미디어 쿼리 없음.
   출처: [2026-07-23 통계](../일지/2026-07-23-통계와-총-보유의-불일치-제거.md), [2026-08-16 통합 목록](../일지/2026-08-16-관계-히스토리-통합-페이지-relations.md), [2026-07-23 좁은 폭](../일지/2026-07-23-최근-목록-표의-좁은-폭-대응.md), [2026-07-22 문장 입력기](../일지/2026-07-22-문장-입력기와-개별-문장-페이지.md), [2026-07-29 탐색](../일지/2026-07-29-탐색-페이지.md)

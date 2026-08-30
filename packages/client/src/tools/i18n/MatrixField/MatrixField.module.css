@@ -1,0 +1,28 @@
+:global(.pico) .scroller {
+  overflow-x: auto;
+  margin-bottom: var(--pico-spacing);
+}
+
+:global(.pico) .root {
+  display: grid;
+
+  .cell {
+    min-width: 0;
+
+    input {
+      margin-bottom: 0;
+    }
+  }
+
+  .header input {
+    font-weight: 700;
+  }
+
+  .control {
+    width: auto;
+    margin: 0;
+    padding: 0 0.5rem;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+}

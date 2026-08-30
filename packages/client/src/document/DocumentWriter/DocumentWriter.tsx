@@ -10,7 +10,6 @@ import { TagEditor } from '../../tag/TagEditor/TagEditor'
 import type { TagEntry, TagResult } from '../../tag/types'
 import { useTagResults } from '../../tag/useTagResults'
 import { deleteDocument } from '../document.service'
-import { invalidateDocumentQueries } from '../utils'
 import type { Document, DocumentTitleEntry } from '../types'
 import { submitDocument } from './submitDocument'
 import type { DocumentDraft } from './submitDocument'
@@ -56,10 +55,7 @@ export function DocumentWriter({
     saveSuccessMessage: '문서를 저장했습니다',
     deleteItem: document ? (): Promise<void> => deleteDocument(document.documentId) : undefined,
     deleteSuccessMessage: '문서를 삭제했습니다',
-    invalidateQueries: (queryClient) => {
-      invalidateDocumentQueries(queryClient)
-      invalidateRelationQueries(queryClient)
-    },
+    invalidateQueries: invalidateRelationQueries,
     onSaved: showResults,
     onDeleted: onDelete,
   })

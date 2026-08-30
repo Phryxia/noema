@@ -5,6 +5,7 @@ import { S2W_RELATIONS_QUERY_KEY } from '../consts'
 import { hydrateS2wEntries } from '../hydrateS2wEntries'
 import { getSentenceToWordRelationsBySentence } from '../s2w.service'
 import { S2wTable } from '../S2wTable'
+import { useSentenceWordDeletion } from './useSentenceWordDeletion'
 import { WordExtractor } from '../../extraction/WordExtractor/WordExtractor'
 import { PagedSection } from '../../shared/PagedSection'
 import type { Sentence } from '../../sentence/types'
@@ -22,6 +23,7 @@ export function SentenceWords({ sentence }: SentenceWordsProps): ReactElement {
     retry: false,
   })
   const entries = data ?? []
+  const deleteEntry = useSentenceWordDeletion()
 
   if (isExtracting) {
     return (
@@ -38,7 +40,7 @@ export function SentenceWords({ sentence }: SentenceWordsProps): ReactElement {
         state={{ entries, isPending, error }}
         isLoaderVisible
         renderTable={(pageEntries) => (
-          <S2wTable entries={pageEntries} hiddenColumn="sentence" />
+          <S2wTable entries={pageEntries} hiddenColumn="sentence" onDelete={deleteEntry} />
         )}
       />
     )

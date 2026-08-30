@@ -17,6 +17,11 @@
     text-align: right;
   }
 
+  .action {
+    width: 1%;
+    text-align: right;
+  }
+
   @media (max-width: 576px) {
     font-size: 0.875em;
 
@@ -25,4 +30,13 @@
       padding-inline: calc(var(--pico-spacing) / 4);
     }
   }
+}
+
+:global(.pico) .root .action button {
+  margin: 0;
+  padding: 0 0.5rem;
+  width: auto;
+  background: none;
+  border: none;
+  color: inherit;
 }

@@ -20,11 +20,13 @@ export interface PairColumn<TEntry> {
 interface PairTableProps<TEntry extends PairEntry> {
   entries: TEntry[]
   columns: PairColumn<TEntry>[]
+  renderAction?: (entry: TEntry) => ReactNode
 }
 
 export function PairTable<TEntry extends PairEntry>({
   entries,
   columns,
+  renderAction,
 }: PairTableProps<TEntry>): ReactElement {
   return (
     <table className={cx('root')}>
@@ -36,6 +38,7 @@ export function PairTable<TEntry extends PairEntry>({
             </th>
           ))}
           <th className={cx('date')}>날짜</th>
+          {renderAction && <th className={cx('action')} />}
         </tr>
       </thead>
       <tbody>
@@ -47,6 +50,7 @@ export function PairTable<TEntry extends PairEntry>({
               </td>
             ))}
             <td className={cx('date')}>{formatMinute(entry.createdAt)}</td>
+            {renderAction && <td className={cx('action')}>{renderAction(entry)}</td>}
           </RelationRow>
         ))}
       </tbody>

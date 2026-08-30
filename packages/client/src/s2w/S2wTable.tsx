@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import type { S2wEntry } from './types'
 import { SentenceCell } from '../d2s/D2sCells'
 import { WordLink } from '../qna/QnaCells'
@@ -23,13 +23,28 @@ const Columns: PairColumn<S2wEntry>[] = [
 interface S2wTableProps {
   entries: S2wEntry[]
   hiddenColumn?: S2wColumn
+  onDelete?: (entry: S2wEntry) => void
 }
 
-export function S2wTable({ entries, hiddenColumn }: S2wTableProps): ReactElement {
+export function S2wTable({ entries, hiddenColumn, onDelete }: S2wTableProps): ReactElement {
   return (
     <PairTable
       entries={entries}
       columns={Columns.filter((column) => column.key !== hiddenColumn)}
+      renderAction={createDeleteAction(onDelete)}
     />
+  )
+}
+
+function createDeleteAction(
+  onDelete?: (entry: S2wEntry) => void,
+): ((entry: S2wEntry) => ReactNode) | undefined {
+  if (!onDelete) {
+    return undefined
+  }
+  return (entry) => (
+    <button type="button" onClick={() => onDelete(entry)}>
+      x
+    </button>
   )
 }

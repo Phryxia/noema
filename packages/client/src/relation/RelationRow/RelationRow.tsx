@@ -20,7 +20,7 @@ export function RelationRow({
   const isNavigable = relationId !== null
 
   function handleClick(event: MouseEvent<HTMLTableRowElement>): void {
-    if (!isNavigable || (event.target as HTMLElement).closest('a')) {
+    if (!isNavigable || (event.target as HTMLElement).closest('a, button')) {
       return
     }
     navigate({

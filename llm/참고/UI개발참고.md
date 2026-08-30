@@ -64,7 +64,7 @@ conditional 빌드는 selector 앞에 `.pico`가 붙어 specificity가 한 단�
 - **부분 강조**: `shared/HighlightedText`(`text.split(keyword)` 사이에 `mark`).
 - **결과 대화상자**: `shared/ResultDialog`(`dialog open` + `article` + 값/결과 표). 결과 0건이면 띄우지 않는다.
 - **페이지 단위 목록**: 커서 페이징은 `recent/RecentListPage/RecentListSection`(기간 폼 + 표 + `PageNavigator`, `RecentFilter`로 행 필터), 메모리 페이징은 `shared/PagedSection`(`header`로 제목 아래에 컨트롤을 끼우고 `resetKey`로 1페이지 복귀).
-- **쌍 관계 표/페이지**: `relation/PairTable`(열 주입), `relation/PairRelationPage`(라벨된 참조 줄 주입). 문장 추출·단어 추출·태그가 공유한다.
+- **쌍 관계 표/페이지**: `relation/PairTable`(열 주입, `renderAction`으로 `날짜` 오른쪽에 버튼 열), `relation/PairRelationPage`(라벨된 참조 줄 주입). 문장 추출·단어 추출·태그가 공유한다. 행 클릭 이동(`RelationRow`)은 `closest('a, button')`이면 양보하므로 셀 안 버튼은 `stopPropagation` 없이 둔다. 셀 버튼 스타일은 `PairTable.module.css`의 `.action button`(여백·테두리 없는 `x`).
 - **단어 입력 + 자동완성**: `WordField` + `WordSuggestion` + `useSuggestionFocus`. 규칙은 [입력-포커스참고](./입력-포커스참고.md).
 - **토스트**: mutation의 `meta.successMessage`와 `MutationCache.onError`가 자동으로 띄운다. 컴포넌트에서 직접 성공/실패 문구를 그리지 않는다.
 - **메타 정보**: `meta/MetaFields`(`{ label, value }[]`, `label` + `input[readOnly]` 그리드). 드래그 복사가 되어 `p`보다 낫다.

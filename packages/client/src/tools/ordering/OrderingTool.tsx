@@ -1,6 +1,7 @@
-import type { FormEvent, MouseEvent, ReactElement } from 'react'
+import type { FormEvent, ReactElement } from 'react'
 import { MIN_ORDERING_WORD_COUNT, NEXT_RELATION_NAME } from './consts'
 import { useOrderingTool } from './useOrderingTool'
+import { keepFieldFocus } from '../keepFieldFocus'
 import { SubjectWordFields } from '../../relation/SubjectWordFields/SubjectWordFields'
 import { BatchResultTable } from '../../relation/batch/BatchResultTable'
 
@@ -11,10 +12,6 @@ export function OrderingTool(): ReactElement {
   function handleSubmit(event: FormEvent): void {
     event.preventDefault()
     save()
-  }
-
-  function keepFieldFocus(event: MouseEvent): void {
-    event.preventDefault()
   }
 
   return (

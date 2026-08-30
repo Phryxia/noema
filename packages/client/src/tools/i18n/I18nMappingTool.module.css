@@ -1,0 +1,8 @@
+.actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  margin-top: calc(var(--pico-spacing) * -1);
+  padding-top: var(--pico-spacing);
+  background: var(--pico-card-background-color);
+}

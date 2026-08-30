@@ -22,7 +22,7 @@ type BinaryWordsRelation =
 type TernaryWordsRelation = TernaryRelation | TernaryIsolationRelation
 
 export function computeRelationExpression(relation: Relation): ExpressionToken[] {
-  if (relation.type === 'DocumentToSentence') {
+  if (relation.type === 'DocumentToSentence' || relation.type === 'DocumentTitle') {
     return [
       {
         kind: 'extraction',

@@ -1,19 +1,43 @@
-import { DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE } from '../db/consts'
+import {
+  DOCUMENTS_STORE,
+  RECENT_DOCUMENTS_STORE,
+  RECENT_SENTENCES_STORE,
+  RELATIONS_STORE,
+  SENTENCES_STORE,
+} from '../db/consts'
+import { createTitleSource } from '../db/documentTitle/createTitleSource'
 import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
+import type { DocumentTitleRelation } from '../relation/types'
+import { addSentences } from '../sentence/sentenceTx'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
-import { sliceSafely } from '../utils/sliceSafely'
-import type { Document, RecentDocument } from './types'
+import { resolveDocumentTitleMap } from './resolveDocumentTitleMap'
+import type { Document, RecentDocument, RecentDocumentSlot } from './types'
 
 const RECENT_DOCUMENTS_SIZE = 4
-const PREVIEW_LENGTH = 64
 
-export async function createDocument(value: string, source: string): Promise<number> {
+export async function createDocument(
+  title: string,
+  value: string,
+  source: string,
+): Promise<number> {
+  if (!title) {
+    throw new Error('빈 문자열은 제목이 될 수 없다')
+  }
   if (!value) {
     throw new Error('빈 문자열은 문서가 될 수 없다')
   }
   const db = await openNoemaDB()
-  const transaction = db.transaction([DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE], 'readwrite')
+  const transaction = db.transaction(
+    [
+      DOCUMENTS_STORE,
+      RECENT_DOCUMENTS_STORE,
+      SENTENCES_STORE,
+      RECENT_SENTENCES_STORE,
+      RELATIONS_STORE,
+    ],
+    'readwrite',
+  )
   const documentStore = transaction.objectStore(DOCUMENTS_STORE)
 
   const createdAt = new Date()
@@ -23,16 +47,28 @@ export async function createDocument(value: string, source: string): Promise<num
 
   const recentStore = transaction.objectStore(RECENT_DOCUMENTS_STORE)
   const next = await awaitRequest<number>(recentStore.get('next'))
-  const recentDocument: RecentDocument = {
+  const slot: RecentDocumentSlot = { documentId, createdAt }
+  recentStore.put(slot, next)
+  recentStore.put((next + 1) % RECENT_DOCUMENTS_SIZE, 'next')
+
+  const [sentenceId] = await addSentences(
+    transaction,
+    [title],
+    createTitleSource(documentId),
+    createdAt,
+  )
+  const relation: Omit<DocumentTitleRelation, 'relationId'> = {
+    type: 'DocumentTitle',
     documentId,
-    preview: createPreview(value),
+    sentenceId,
     createdAt,
   }
-  recentStore.put(recentDocument, next)
-  recentStore.put((next + 1) % RECENT_DOCUMENTS_SIZE, 'next')
+  transaction.objectStore(RELATIONS_STORE).add(relation)
 
   await awaitTransaction(transaction)
   recordCreation(db, 'documentCount')
+  recordCreation(db, 'sentenceCount')
+  recordCreation(db, 'relationCount')
   return documentId
 }
 
@@ -45,7 +81,7 @@ export async function updateDocument(
     throw new Error('빈 문자열은 문서가 될 수 없다')
   }
   const db = await openNoemaDB()
-  const transaction = db.transaction([DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE], 'readwrite')
+  const transaction = db.transaction(DOCUMENTS_STORE, 'readwrite')
   const documentStore = transaction.objectStore(DOCUMENTS_STORE)
 
   const target = await awaitRequest<Document | undefined>(documentStore.get(documentId))
@@ -62,11 +98,6 @@ export async function updateDocument(
   }
   documentStore.put(target)
 
-  const recentStore = transaction.objectStore(RECENT_DOCUMENTS_STORE)
-  await forEachRecentSlot(recentStore, documentId, (slot, index) =>
-    recentStore.put({ ...slot, preview: createPreview(value) }, index),
-  )
-
   await awaitTransaction(transaction)
 }
 
@@ -78,9 +109,7 @@ export async function deleteDocument(documentId: number): Promise<void> {
   documentStore.delete(documentId)
 
   const recentStore = transaction.objectStore(RECENT_DOCUMENTS_STORE)
-  await forEachRecentSlot(recentStore, documentId, (_slot, index) =>
-    recentStore.put(null, index),
-  )
+  await forEachRecentSlot(recentStore, documentId, (index) => recentStore.put(null, index))
 
   await awaitTransaction(transaction)
   if (isExisting) {
@@ -99,16 +128,24 @@ export async function getDocument(documentId: number): Promise<Document | null> 
 }
 
 export async function getRecentDocuments(): Promise<RecentDocument[]> {
+  const slots = await readRecentSlots()
+  const titleMap = await resolveDocumentTitleMap(slots.map((slot) => slot.documentId))
+  return slots.map((slot) => ({ ...slot, title: titleMap.get(slot.documentId) || null }))
+}
+
+async function readRecentSlots(): Promise<RecentDocumentSlot[]> {
   const db = await openNoemaDB()
   const transaction = db.transaction([DOCUMENTS_STORE, RECENT_DOCUMENTS_STORE], 'readwrite')
   const documentStore = transaction.objectStore(DOCUMENTS_STORE)
   const recentStore = transaction.objectStore(RECENT_DOCUMENTS_STORE)
   const next = await awaitRequest<number>(recentStore.get('next'))
 
-  const result: RecentDocument[] = []
+  const slots: RecentDocumentSlot[] = []
   for (let offset = 1; offset <= RECENT_DOCUMENTS_SIZE; offset += 1) {
     const index = (next - offset + RECENT_DOCUMENTS_SIZE) % RECENT_DOCUMENTS_SIZE
-    const slot = await awaitRequest<RecentDocument | null | undefined>(recentStore.get(index))
+    const slot = await awaitRequest<RecentDocumentSlot | null | undefined>(
+      recentStore.get(index),
+    )
     if (!slot) {
       continue
     }
@@ -116,26 +153,24 @@ export async function getRecentDocuments(): Promise<RecentDocument[]> {
       recentStore.put(null, index)
       continue
     }
-    result.push(slot)
+    slots.push(slot)
   }
 
   await awaitTransaction(transaction)
-  return result
+  return slots
 }
 
 async function forEachRecentSlot(
   recentStore: IDBObjectStore,
   documentId: number,
-  handle: (slot: RecentDocument, index: number) => void,
+  handle: (index: number) => void,
 ): Promise<void> {
   for (let index = 0; index < RECENT_DOCUMENTS_SIZE; index += 1) {
-    const slot = await awaitRequest<RecentDocument | null | undefined>(recentStore.get(index))
+    const slot = await awaitRequest<RecentDocumentSlot | null | undefined>(
+      recentStore.get(index),
+    )
     if (slot?.documentId === documentId) {
-      handle(slot, index)
+      handle(index)
     }
   }
-}
-
-function createPreview(value: string): string {
-  return sliceSafely(value, PREVIEW_LENGTH)
 }

@@ -32,6 +32,12 @@ export interface DocumentToSentenceRelation extends RelationBase {
   sentenceId: number
 }
 
+export interface DocumentTitleRelation extends RelationBase {
+  type: 'DocumentTitle'
+  documentId: number
+  sentenceId: number
+}
+
 export interface SentenceToWordRelation extends RelationBase {
   type: 'SentenceToWord'
   sentenceId: number
@@ -119,7 +125,11 @@ export interface RelationQuestion {
 }
 
 export type Relation =
-  WordRelation | DocumentToSentenceRelation | SentenceToWordRelation | TagRelation
+  | WordRelation
+  | DocumentToSentenceRelation
+  | DocumentTitleRelation
+  | SentenceToWordRelation
+  | TagRelation
 
 export type NewRelation = DistributiveOmit<
   WordRelation,

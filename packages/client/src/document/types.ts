@@ -1,3 +1,5 @@
+import type { Sentence } from '../sentence/types'
+
 export interface Document {
   documentId: number
   value: string
@@ -6,8 +8,18 @@ export interface Document {
   source?: string
 }
 
-export interface RecentDocument {
+export interface RecentDocumentSlot {
   documentId: number
-  preview: string
   createdAt: Date
 }
+
+export interface RecentDocument extends RecentDocumentSlot {
+  title: string | null
+}
+
+export interface DocumentTitleEntry {
+  relationId: number
+  sentence: Sentence
+}
+
+export type ResolvedTitle = string | null

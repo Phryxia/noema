@@ -1,9 +1,7 @@
 import { checkIsSentenceTag } from './checkIsSentenceTag'
 import type { ResolvedTagTarget, TagEntry } from './types'
-import { resolveDocumentMap } from '../document/resolveDocumentMap'
+import { resolveDocumentTitleMap } from '../document/resolveDocumentTitleMap'
 import { resolveWordMap } from '../qna/hydrateQnaEntries'
-import { VALUE_PREVIEW_LENGTH } from '../recent/consts'
-import { createPreview } from '../recent/utils'
 import type { TagRelation } from '../relation/types'
 import { resolveSentenceMap } from '../sentence/resolveSentenceMap'
 
@@ -19,10 +17,10 @@ export async function hydrateTagEntries(relations: TagRelation[]): Promise<TagEn
     }
     documentIds.add(relation.documentId)
   }
-  const [wordMap, sentenceMap, documentMap] = await Promise.all([
+  const [wordMap, sentenceMap, titleMap] = await Promise.all([
     resolveWordMap(Array.from(wordIds)),
     resolveSentenceMap(Array.from(sentenceIds)),
-    resolveDocumentMap(Array.from(documentIds)),
+    resolveDocumentTitleMap(Array.from(documentIds)),
   ])
 
   function resolveTarget(relation: TagRelation): ResolvedTagTarget {
@@ -36,7 +34,7 @@ export async function hydrateTagEntries(relations: TagRelation[]): Promise<TagEn
     return {
       type: 'document',
       documentId: relation.documentId,
-      preview: createPreview(documentMap.get(relation.documentId) ?? '', VALUE_PREVIEW_LENGTH),
+      title: titleMap.get(relation.documentId) ?? '',
     }
   }
 

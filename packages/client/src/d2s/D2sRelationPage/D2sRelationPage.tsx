@@ -9,13 +9,14 @@ interface D2sRelationPageProps {
 
 export function D2sRelationPage({ snapshot }: D2sRelationPageProps): ReactElement {
   const { relation, entry } = snapshot
+  const sentenceLabel = relation.type === 'DocumentTitle' ? '제목' : '문장'
 
   return (
     <PairRelationPage
       relation={relation}
       rows={[
         { label: '문서', content: <DocumentCell document={entry.document} /> },
-        { label: '문장', content: <SentenceCell sentence={entry.sentence} /> },
+        { label: sentenceLabel, content: <SentenceCell sentence={entry.sentence} /> },
       ]}
     />
   )

@@ -105,6 +105,24 @@ describe('computeRelationExpression', () => {
     ])
   })
 
+  it('문서 제목은 문장 추출과 같은 extraction 토큰이다', () => {
+    expect(
+      computeRelationExpression({
+        relationId: 1,
+        createdAt: new Date(0),
+        type: 'DocumentTitle',
+        documentId: 4,
+        sentenceId: 7,
+      }),
+    ).toEqual([
+      {
+        kind: 'extraction',
+        child: { kind: 'sentence', id: 7 },
+        parent: { kind: 'document', id: 4 },
+      },
+    ])
+  })
+
   it('단어 추출은 단어를 문장에서 뽑은 extraction 토큰이다', () => {
     expect(
       computeRelationExpression({

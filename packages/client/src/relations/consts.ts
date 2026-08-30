@@ -4,6 +4,7 @@ import type { Option } from '../shared/types'
 
 export const RELATION_PAGES_QUERY_KEY = 'relationPages'
 export const D2S_TYPE_LABEL = '문장 추출'
+export const DOCUMENT_TITLE_TYPE_LABEL = '문서 제목'
 export const S2W_TYPE_LABEL = '단어 추출'
 export const TAG_TYPE_LABEL = '태그'
 export const SKIP_LABEL = '(답변 회피)'
@@ -13,6 +14,7 @@ export const USAGE_WORDS_LABEL = ', 원 단어: '
 export const RelationTypeOptions: Option<Relation['type']>[] = [
   ...QuestionTypeOptions,
   { value: 'DocumentToSentence', label: D2S_TYPE_LABEL },
+  { value: 'DocumentTitle', label: DOCUMENT_TITLE_TYPE_LABEL },
   { value: 'SentenceToWord', label: S2W_TYPE_LABEL },
   { value: 'Tag', label: TAG_TYPE_LABEL },
 ]

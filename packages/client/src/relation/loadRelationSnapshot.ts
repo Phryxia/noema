@@ -15,6 +15,7 @@ import { getRelationAnswerWordIds } from './getRelationAnswerWordIds'
 import { QuestionSpecs } from './questionSpecs'
 import { resizeWords } from './resizeWords'
 import type {
+  DocumentTitleRelation,
   DocumentToSentenceRelation,
   SentenceToWordRelation,
   TagRelation,
@@ -35,7 +36,7 @@ export interface WordRelationSnapshot {
 
 export interface DocumentToSentenceSnapshot {
   kind: 'd2s'
-  relation: DocumentToSentenceRelation
+  relation: DocumentToSentenceRelation | DocumentTitleRelation
   entry: D2sEntry
 }
 
@@ -58,7 +59,7 @@ export async function loadRelationSnapshot(
   if (!relation) {
     return null
   }
-  if (relation.type === 'DocumentToSentence') {
+  if (relation.type === 'DocumentToSentence' || relation.type === 'DocumentTitle') {
     const [entry] = await hydrateD2sEntries([relation])
     return { kind: 'd2s', relation, entry }
   }

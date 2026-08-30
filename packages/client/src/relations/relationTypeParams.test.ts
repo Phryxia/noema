@@ -28,8 +28,9 @@ describe('serializeRelationTypes', () => {
   })
 
   it('파싱과 왕복한다', () => {
-    const serialized = serializeRelationTypes(['SentenceToWord', 'BinaryCommon'])
-    expect(serialized).toBe('SentenceToWord,BinaryCommon')
-    expect(parseRelationTypes(serialized)).toEqual(['SentenceToWord', 'BinaryCommon'])
+    const types = ['SentenceToWord', 'BinaryCommon', 'DocumentTitle'] as const
+    const serialized = serializeRelationTypes(types.slice())
+    expect(serialized).toBe('SentenceToWord,BinaryCommon,DocumentTitle')
+    expect(parseRelationTypes(serialized)).toEqual(types)
   })
 })

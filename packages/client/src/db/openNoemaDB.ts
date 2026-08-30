@@ -3,12 +3,14 @@ import {
   DAY_DELTA_STORE,
   DB_NAME,
   DB_VERSION,
+  DOCUMENT_TITLE_VERSION,
   DOCUMENTS_STORE,
   HOUR_ACC_STORE,
   HOUR_DELTA_STORE,
   LEGACY_QUESTIONS_STORE,
   QUESTION_REMOVAL_VERSION,
   RECENT_DOCUMENTS_STORE,
+  RECENT_TITLE_SENTENCES_VERSION,
   RECENT_SENTENCES_STORE,
   RECENT_WORDS_STORE,
   RELATIONS_STORE,
@@ -19,9 +21,8 @@ import {
   WORD_NODES_STORE,
 } from './consts'
 import { IndexSpecs } from './indexSpecs'
-import { clearAndBackfillCountLogs } from './countLog/backfill'
-
-const RELATION_COUNT_VERSION = 9
+import { mergeTitlesIntoRecentSentences } from './documentTitle/mergeTitlesIntoRecentSentences'
+import { migrateDocumentTitles } from './documentTitle/migrateDocumentTitles'
 
 let dbPromise: Promise<IDBDatabase> | undefined
 
@@ -49,11 +50,13 @@ function createConnection(): Promise<IDBDatabase> {
           createCountLogSchema(db)
       }
       ensureIndexes(transaction)
-      if (event.oldVersion < RELATION_COUNT_VERSION) {
-        void clearAndBackfillCountLogs(transaction)
-      }
       if (event.oldVersion < QUESTION_REMOVAL_VERSION) {
         removeQuestions(db, transaction)
+      }
+      if (event.oldVersion < DOCUMENT_TITLE_VERSION) {
+        void migrateDocumentTitles(transaction)
+      } else if (event.oldVersion < RECENT_TITLE_SENTENCES_VERSION) {
+        void mergeTitlesIntoRecentSentences(transaction)
       }
     }
 

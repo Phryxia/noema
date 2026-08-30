@@ -1,3 +1,5 @@
+import type { ResolvedTitle } from '../document/types'
+
 export interface D2sEntry {
   id: number
   createdAt: Date
@@ -7,7 +9,7 @@ export interface D2sEntry {
 
 export interface ResolvedDocument {
   documentId: number
-  preview: string
+  title: ResolvedTitle
 }
 
 export interface ResolvedSentence {

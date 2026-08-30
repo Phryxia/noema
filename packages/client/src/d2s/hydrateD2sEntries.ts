@@ -1,17 +1,15 @@
 import type { D2sEntry } from './types'
-import { resolveDocumentMap } from '../document/resolveDocumentMap'
-import { VALUE_PREVIEW_LENGTH } from '../recent/consts'
-import { createPreview } from '../recent/utils'
-import type { DocumentToSentenceRelation } from '../relation/types'
+import { resolveDocumentTitleMap } from '../document/resolveDocumentTitleMap'
+import type { DocumentTitleRelation, DocumentToSentenceRelation } from '../relation/types'
 import { resolveSentenceMap } from '../sentence/resolveSentenceMap'
 
 export async function hydrateD2sEntries(
-  relations: DocumentToSentenceRelation[],
+  relations: (DocumentToSentenceRelation | DocumentTitleRelation)[],
 ): Promise<D2sEntry[]> {
   const documentIds = Array.from(new Set(relations.map((relation) => relation.documentId)))
   const sentenceIds = Array.from(new Set(relations.map((relation) => relation.sentenceId)))
-  const [documentMap, sentenceMap] = await Promise.all([
-    resolveDocumentMap(documentIds),
+  const [titleMap, sentenceMap] = await Promise.all([
+    resolveDocumentTitleMap(documentIds),
     resolveSentenceMap(sentenceIds),
   ])
   return relations.map((relation) => ({
@@ -19,7 +17,7 @@ export async function hydrateD2sEntries(
     createdAt: relation.createdAt,
     document: {
       documentId: relation.documentId,
-      preview: createPreview(documentMap.get(relation.documentId) ?? '', VALUE_PREVIEW_LENGTH),
+      title: titleMap.get(relation.documentId) ?? '',
     },
     sentence: {
       sentenceId: relation.sentenceId,

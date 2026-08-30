@@ -1,6 +1,5 @@
-import { RECENT_SENTENCES_STORE, SENTENCES_STORE } from '../db/consts'
+import { RECENT_SENTENCES_SIZE, RECENT_SENTENCES_STORE, SENTENCES_STORE } from '../db/consts'
 import { awaitRequest } from '../db/utils'
-import { RECENT_SENTENCES_SIZE } from './consts'
 import type { RecentSentence } from './types'
 
 export async function addSentences(

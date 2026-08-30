@@ -3,22 +3,28 @@ import { openNoemaDB } from '../db/openNoemaDB'
 import { awaitRequest, awaitTransaction } from '../db/utils'
 import { recordCreation, recordDeletion } from '../statistic/statistic.service'
 import type { Lexis, RecentWord, TrieNode } from './types'
+import type { AddedWord } from './wordTx'
 import { addWord, rewriteRecentSlots, unmarkAndPrune, walkToNode } from './wordTx'
 
 export async function createWord(value: string): Promise<number> {
+  const { nodeId } = await upsertWord(value)
+  return nodeId
+}
+
+export async function upsertWord(value: string): Promise<AddedWord> {
   const db = await openNoemaDB()
   const transaction = db.transaction(
     [WORD_META_STORE, WORD_NODES_STORE, RECENT_WORDS_STORE],
     'readwrite',
   )
 
-  const { nodeId, isCreated } = await addWord(transaction, value, new Date())
+  const added = await addWord(transaction, value, new Date())
 
   await awaitTransaction(transaction)
-  if (isCreated) {
+  if (added.isCreated) {
     recordCreation(db, 'wordCount')
   }
-  return nodeId
+  return added
 }
 
 export async function deleteWord(nodeId: number): Promise<void> {

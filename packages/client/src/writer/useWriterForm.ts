@@ -8,6 +8,7 @@ interface WriterFormOptions<TDraft, TResult> {
   isEditable: boolean
   isEditing: boolean
   initialDraft: TDraft
+  checkIsComplete?: (draft: TDraft) => boolean
   confirmSave?: (draft: TDraft) => Promise<boolean>
   saveDraft: (draft: TDraft) => Promise<TResult>
   saveSuccessMessage: string
@@ -31,6 +32,7 @@ export function useWriterForm<TDraft extends { value: string }, TResult = unknow
   isEditable,
   isEditing,
   initialDraft,
+  checkIsComplete = (target): boolean => !!target.value,
   confirmSave,
   saveDraft,
   saveSuccessMessage,
@@ -72,7 +74,8 @@ export function useWriterForm<TDraft extends { value: string }, TResult = unknow
     },
   })
 
-  const canSave = isEditable && !!draft.value && checkIsDirty(draft, initialDraft) && !isSaving
+  const canSave =
+    isEditable && checkIsComplete(draft) && checkIsDirty(draft, initialDraft) && !isSaving
 
   useBlocker({
     disabled: !isEditing || !canSave || isDeleted,

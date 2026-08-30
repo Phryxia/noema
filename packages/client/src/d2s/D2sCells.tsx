@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react'
 import { Link } from '@tanstack/react-router'
 import type { ResolvedDocument, ResolvedSentence } from './types'
+import { DocumentTitleLabel } from '../document/DocumentTitleLabel/DocumentTitleLabel'
 import { VALUE_PREVIEW_LENGTH } from '../recent/consts'
 import { createPreview } from '../recent/utils'
 
@@ -9,12 +10,12 @@ interface DocumentCellProps {
 }
 
 export function DocumentCell({ document }: DocumentCellProps): ReactElement {
-  if (!document.preview) {
+  if (document.title === '') {
     return <>(삭제됨)</>
   }
   return (
     <Link to="/document/$documentId" params={{ documentId: String(document.documentId) }}>
-      {document.preview}
+      <DocumentTitleLabel title={document.title} />
     </Link>
   )
 }

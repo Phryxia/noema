@@ -9,14 +9,19 @@ import type {
   ResolvedRefToken,
   ResolvedToken,
 } from './types'
-import { resolveDocumentMap } from '../document/resolveDocumentMap'
+import { resolveDocumentTitleMap } from '../document/resolveDocumentTitleMap'
+import type { ResolvedTitle } from '../document/types'
 import { resolveWordMap } from '../qna/hydrateQnaEntries'
 import { VALUE_PREVIEW_LENGTH } from '../recent/consts'
 import { createPreview } from '../recent/utils'
 import type { Relation } from '../relation/types'
 import { resolveSentenceMap } from '../sentence/resolveSentenceMap'
 
-type ResolvedMaps = Record<RefKind, Map<number, string>>
+interface ResolvedMaps {
+  word: Map<number, string>
+  sentence: Map<number, string>
+  document: Map<number, ResolvedTitle>
+}
 
 export async function hydrateRelationEntries(relations: Relation[]): Promise<RelationEntry[]> {
   const expressions = relations.map(computeRelationExpression)
@@ -24,7 +29,7 @@ export async function hydrateRelationEntries(relations: Relation[]): Promise<Rel
   const [word, sentence, document] = await Promise.all([
     resolveWordMap(collectIds(refs, 'word')),
     resolveSentenceMap(collectIds(refs, 'sentence')),
-    resolveDocumentMap(collectIds(refs, 'document')),
+    resolveDocumentTitleMap(collectIds(refs, 'document')),
   ])
   const maps: ResolvedMaps = { word, sentence, document }
   return relations.map((relation, index) => ({
@@ -113,9 +118,12 @@ function resolveTokens(token: ExpressionToken, maps: ResolvedMaps): ResolvedToke
 }
 
 function resolveRef(ref: Ref, maps: ResolvedMaps): ResolvedRefToken {
-  const value = maps[ref.kind].get(ref.id) ?? ''
-  if (ref.kind === 'document') {
-    return { ...ref, value: createPreview(value, VALUE_PREVIEW_LENGTH) }
+  if (ref.kind !== 'document') {
+    return { ...ref, value: maps[ref.kind].get(ref.id) ?? '' }
   }
-  return { ...ref, value }
+  const title = maps.document.get(ref.id)
+  if (title === null) {
+    return { ...ref, value: '', isUntitled: true }
+  }
+  return { ...ref, value: createPreview(title ?? '', VALUE_PREVIEW_LENGTH) }
 }

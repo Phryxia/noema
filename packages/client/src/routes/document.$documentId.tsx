@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { DOCUMENT_QUERY_KEY } from '../document/consts'
 import { getDocument } from '../document/document.service'
+import { getDocumentTitle } from '../document/documentTitle.service'
 import { DocumentSentences } from '../document/DocumentSentences/DocumentSentences'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
 import { MetaFields } from '../meta/MetaFields/MetaFields'
@@ -20,12 +21,17 @@ function DocumentPage(): ReactElement {
     queryKey: [DOCUMENT_QUERY_KEY, documentId],
     queryFn: () => getDocument(Number(documentId)),
   })
+  const { data: title, isPending: isTitlePending } = useQuery({
+    queryKey: [DOCUMENT_QUERY_KEY, documentId, 'title'],
+    queryFn: () => getDocumentTitle(Number(documentId)),
+    gcTime: 0,
+  })
   const { data: tags, isPending: isTagsPending } = useQuery({
     queryKey: [TAG_RELATIONS_QUERY_KEY, 'document', documentId],
     queryFn: () => getTagEntries({ type: 'document', id: Number(documentId) }),
   })
 
-  if (isPending || isTagsPending) {
+  if (isPending || isTitlePending || isTagsPending) {
     return <article aria-busy="true" />
   }
   if (!target) {
@@ -45,6 +51,7 @@ function DocumentPage(): ReactElement {
         key={target.documentId}
         isEditable
         document={target}
+        title={title ?? undefined}
         tags={tags}
         onDelete={() => navigate({ to: '/' })}
       />

@@ -25,6 +25,7 @@ export interface RefToken {
 
 export interface ResolvedRefToken extends RefToken {
   value: string
+  isUntitled?: boolean
 }
 
 export type RefKind = 'word' | 'sentence' | 'document'

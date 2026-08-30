@@ -1,15 +1,13 @@
 import type { ReactElement } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { DOCUMENTS_STORE } from '../db/consts'
+import { DocumentTitleLabel } from '../document/DocumentTitleLabel/DocumentTitleLabel'
+import { RecentDocumentSource } from '../document/RecentDocumentSource'
 import { RECENT_DOCUMENT_PAGES_QUERY_KEY } from '../recent/consts'
 import { parseRangePageParams } from '../recent/parseRangePageParams'
-import { toRecentEntry } from '../recent/recent.service'
 import { RecentListPage } from '../recent/RecentListPage/RecentListPage'
 import { RecentTable } from '../recent/RecentListPage/RecentTable'
 import type { EntryLinkProps } from '../recent/RecentListPage/RecentTable'
-import type { RecentEntry, RecentSource } from '../recent/types'
-
-const DocumentSource: RecentSource = { storeName: DOCUMENTS_STORE, toEntry: toRecentEntry }
+import type { RecentEntry } from '../recent/types'
 
 export const Route = createFileRoute('/recent/documents')({
   validateSearch: parseRangePageParams,
@@ -20,7 +18,7 @@ function RecentDocumentsPage(): ReactElement {
   return (
     <RecentListPage
       title="최근에 추가된 문서"
-      source={DocumentSource}
+      source={RecentDocumentSource}
       queryKeyPrefix={RECENT_DOCUMENT_PAGES_QUERY_KEY}
       Table={DocumentTable}
     />
@@ -34,7 +32,7 @@ function DocumentTable({ entries }: { entries: RecentEntry[] }): ReactElement {
 function DocumentEntryLink({ entry, children }: EntryLinkProps): ReactElement {
   return (
     <Link to="/document/$documentId" params={{ documentId: String(entry.id) }}>
-      {children}
+      {entry.value ? children : <DocumentTitleLabel title={null} />}
     </Link>
   )
 }

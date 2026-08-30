@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import classnames from 'classnames/bind'
 import { DELETED_LABEL } from '../consts'
 import type { ResolvedRefToken } from '../types'
+import { DocumentTitleLabel } from '../../document/DocumentTitleLabel/DocumentTitleLabel'
 import { WordLink } from '../../qna/QnaCells'
 import { HighlightedText } from '../../shared/HighlightedText'
 import styles from './RelationExpression.module.css'
@@ -33,7 +34,7 @@ export function RefItem({ token, keyword }: RefLinkProps): ReactElement {
 }
 
 export function TruncatedLink({ token, keyword }: RefLinkProps): ReactElement {
-  if (!token.value) {
+  if (!token.value && !token.isUntitled) {
     return <span className={cx('text', 'muted')}>{DELETED_LABEL}</span>
   }
   const label = <HighlightedText text={token.value} keyword={keyword} />
@@ -44,7 +45,7 @@ export function TruncatedLink({ token, keyword }: RefLinkProps): ReactElement {
         to="/document/$documentId"
         params={{ documentId: String(token.id) }}
       >
-        {label}
+        {token.isUntitled ? <DocumentTitleLabel title={null} /> : label}
       </Link>
     )
   }

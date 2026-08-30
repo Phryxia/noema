@@ -1,0 +1,10 @@
+:global(.pico) .root {
+  .field {
+    margin-top: calc(var(--pico-spacing) * 0.25);
+    margin-bottom: var(--pico-spacing);
+
+    input {
+      margin-bottom: 0;
+    }
+  }
+}

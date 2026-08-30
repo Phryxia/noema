@@ -3,17 +3,18 @@ import { useCallback } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
 import { SourceField } from '../../writer/SourceField/SourceField'
-import { checkIsBodyChanged } from '../../writer/checkIsBodyChanged'
 import { insertTabIfPressed } from '../../writer/insertTabIfPressed'
 import { invalidateRelationQueries } from '../../relation/utils'
 import { createInitialTagValues } from '../../tag/createInitialTagValues'
-import { submitTags } from '../../tag/submitTags'
 import { TagEditor } from '../../tag/TagEditor/TagEditor'
 import type { TagEntry, TagResult } from '../../tag/types'
 import { useTagResults } from '../../tag/useTagResults'
-import { createDocument, deleteDocument, updateDocument } from '../document.service'
+import { deleteDocument } from '../document.service'
 import { invalidateDocumentQueries } from '../utils'
-import type { Document } from '../types'
+import type { Document, DocumentTitleEntry } from '../types'
+import { submitDocument } from './submitDocument'
+import type { DocumentDraft } from './submitDocument'
+import { TitleField } from './TitleField'
 import classnames from 'classnames/bind'
 import styles from './DocumentWriter.module.css'
 
@@ -22,22 +23,19 @@ const cx = classnames.bind(styles)
 interface DocumentWriterProps {
   isEditable: boolean
   document?: Document
+  title?: DocumentTitleEntry
   tags?: TagEntry[]
   onDelete?: () => void
-}
-
-interface DocumentDraft {
-  value: string
-  source: string
-  tags: string[]
 }
 
 export function DocumentWriter({
   isEditable,
   document,
+  title,
   tags = [],
   onDelete,
 }: DocumentWriterProps): ReactElement {
+  const initialTitle = title?.sentence.value ?? ''
   const initialTags = createInitialTagValues(tags)
   const { showResults, dialog } = useTagResults()
   const { draft, setDraft, resetKey, canSave, save, remove } = useWriterForm<
@@ -47,11 +45,14 @@ export function DocumentWriter({
     isEditable,
     isEditing: !!document,
     initialDraft: {
+      title: initialTitle,
       value: document?.value ?? '',
       source: document?.source ?? '',
       tags: initialTags,
     },
-    saveDraft: (next): Promise<TagResult[]> => submitDocument(document, tags, next),
+    checkIsComplete: (target): boolean => !!target.title && !!target.value,
+    saveDraft: (next): Promise<TagResult[]> =>
+      submitDocument(document, initialTitle, tags, next),
     saveSuccessMessage: '문서를 저장했습니다',
     deleteItem: document ? (): Promise<void> => deleteDocument(document.documentId) : undefined,
     deleteSuccessMessage: '문서를 삭제했습니다',
@@ -94,6 +95,12 @@ export function DocumentWriter({
 
   return (
     <form className={cx('root')} onSubmit={handleSubmit}>
+      <TitleField
+        value={draft.title}
+        isEditable={isEditable}
+        onChange={(nextTitle) => setDraft({ ...draft, title: nextTitle })}
+        onSubmit={save}
+      />
       <SourceField
         value={draft.source}
         isEditable={isEditable}
@@ -120,26 +127,4 @@ export function DocumentWriter({
       {dialog}
     </form>
   )
-}
-
-async function submitDocument(
-  document: Document | undefined,
-  tags: TagEntry[],
-  draft: DocumentDraft,
-): Promise<TagResult[]> {
-  const documentId = await saveDocument(document, draft)
-  return submitTags({ type: 'document', id: documentId }, tags, draft.tags)
-}
-
-async function saveDocument(
-  document: Document | undefined,
-  draft: DocumentDraft,
-): Promise<number> {
-  if (!document) {
-    return createDocument(draft.value, draft.source)
-  }
-  if (checkIsBodyChanged(draft, document)) {
-    await updateDocument(document.documentId, draft.value, draft.source)
-  }
-  return document.documentId
 }

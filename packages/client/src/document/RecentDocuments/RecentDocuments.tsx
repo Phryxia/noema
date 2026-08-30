@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { RecentLines } from '../../recent/RecentLines/RecentLines'
 import { RECENT_DOCUMENTS_QUERY_KEY } from '../consts'
 import { getRecentDocuments } from '../document.service'
+import { DocumentTitleLabel } from '../DocumentTitleLabel/DocumentTitleLabel'
 
 export function RecentDocuments(): ReactElement {
   const { data: recentDocuments } = useQuery({
@@ -16,7 +17,7 @@ export function RecentDocuments(): ReactElement {
       {recentDocuments?.map((document) => (
         <li key={document.documentId}>
           <Link to="/document/$documentId" params={{ documentId: String(document.documentId) }}>
-            {document.preview}
+            <DocumentTitleLabel title={document.title} />
           </Link>
         </li>
       ))}

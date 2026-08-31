@@ -3,6 +3,10 @@
   margin-bottom: var(--pico-spacing);
 }
 
+:global(.pico) .scroller:focus-within {
+  overflow-x: visible;
+}
+
 :global(.pico) .root {
   display: grid;
 

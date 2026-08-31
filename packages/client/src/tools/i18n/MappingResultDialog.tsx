@@ -2,18 +2,20 @@ import type { ReactElement } from 'react'
 import type { I18nMappingResult } from './submitI18nMapping'
 
 interface MappingResultDialogProps {
+  title: string
   result: I18nMappingResult
   onClose: () => void
 }
 
 export function MappingResultDialog({
+  title,
   result,
   onClose,
 }: MappingResultDialogProps): ReactElement {
   return (
     <dialog open>
       <article>
-        <h3>다국어 매핑 결과</h3>
+        <h3>{title}</h3>
         <p>
           {result.newWords.length ? `새 단어: ${result.newWords.join(', ')}` : '새 단어 없음'}
         </p>

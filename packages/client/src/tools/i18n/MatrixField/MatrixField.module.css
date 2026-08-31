@@ -18,6 +18,15 @@
     font-weight: 700;
   }
 
+  .headerLabel {
+    display: block;
+    padding: var(--pico-form-element-spacing-vertical)
+      var(--pico-form-element-spacing-horizontal);
+    border: var(--pico-border-width) solid transparent;
+    line-height: var(--pico-line-height);
+    overflow-wrap: anywhere;
+  }
+
   .control {
     width: auto;
     margin: 0;

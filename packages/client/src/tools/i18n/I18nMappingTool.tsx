@@ -1,16 +1,29 @@
 import type { FormEvent, ReactElement } from 'react'
 import classnames from 'classnames/bind'
+import { createInitialMatrix } from './createInitialMatrix'
 import { MatrixField } from './MatrixField/MatrixField'
+import type { MatrixHeaderOption } from './MatrixField/types'
 import { MappingResultDialog } from './MappingResultDialog'
+import type { MappingToolOptions } from './useI18nMappingTool'
 import { useI18nMappingTool } from './useI18nMappingTool'
 import { keepFieldFocus } from '../keepFieldFocus'
 import styles from './I18nMappingTool.module.css'
 
 const cx = classnames.bind(styles)
 
+const I18nHeaderOption: MatrixHeaderOption = {
+  isEditable: true,
+  createPlaceholder: (columnIndex) => `언어${columnIndex + 1}`,
+}
+
+const I18nMappingOptions: MappingToolOptions = {
+  createInitialMatrix,
+  columnPairs: null,
+}
+
 export function I18nMappingTool(): ReactElement {
   const { formRef, matrix, setMatrix, result, isSubmitting, isSubmittable, save, closeResult } =
-    useI18nMappingTool()
+    useI18nMappingTool(I18nMappingOptions)
 
   function handleSubmit(event: FormEvent): void {
     event.preventDefault()
@@ -25,11 +38,7 @@ export function I18nMappingTool(): ReactElement {
         서로 연결합니다.
       </p>
       <form ref={formRef} onSubmit={handleSubmit}>
-        <MatrixField
-          value={matrix}
-          createHeaderPlaceholder={(columnIndex) => `언어${columnIndex + 1}`}
-          onChange={setMatrix}
-        />
+        <MatrixField value={matrix} header={I18nHeaderOption} onChange={setMatrix} />
         <div className={cx('actions')}>
           <button
             type="submit"
@@ -41,7 +50,9 @@ export function I18nMappingTool(): ReactElement {
           </button>
         </div>
       </form>
-      {result && <MappingResultDialog result={result} onClose={closeResult} />}
+      {result && (
+        <MappingResultDialog title="다국어 매핑 결과" result={result} onClose={closeResult} />
+      )}
     </section>
   )
 }

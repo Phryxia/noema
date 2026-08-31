@@ -1,3 +1,4 @@
+import type { ColumnPair } from './computeMappingTuples'
 import { computeMappingTuples } from './computeMappingTuples'
 import { submitNamedAssociation } from '../../relation/batch/submitNamedAssociation'
 import type { ResolvedWord } from '../../qna/types'
@@ -8,10 +9,13 @@ export interface I18nMappingResult {
   relationCount: number
 }
 
-export async function submitI18nMapping(matrix: string[][]): Promise<I18nMappingResult> {
+export async function submitI18nMapping(
+  matrix: string[][],
+  columnPairs?: ColumnPair[] | null,
+): Promise<I18nMappingResult> {
   const { resolvedWords, newWords } = await resolveMatrixWords(matrix)
   let relationCount = 0
-  for (const tuple of computeMappingTuples(matrix)) {
+  for (const tuple of computeMappingTuples(matrix, columnPairs)) {
     const entry = await submitNamedAssociation(tuple.map((value) => resolvedWords.get(value)!))
     if (entry.outcome.kind === 'success') {
       relationCount += 1

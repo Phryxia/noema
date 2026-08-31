@@ -55,6 +55,7 @@ export function TagEditor({
             key={card.id}
             id={card.id}
             value={card.value}
+            hasSuggestion
             onChange={updateCard}
             onSplit={splitCard}
             onMergeWithPrevious={mergeWithPrevious}

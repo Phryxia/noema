@@ -1,6 +1,8 @@
 import type { KeyboardEvent, ReactElement } from 'react'
 import { memo, useRef } from 'react'
 import { WordField } from '../../word/WordField/WordField'
+import { WordSuggestion } from '../../word/WordSuggestion/WordSuggestion'
+import { useSuggestionFocus } from '../../word/useSuggestionFocus'
 import { computeHorizontalNavigation } from '../arrowNavigation'
 import type { ArrowNavigation } from '../arrowNavigation'
 import { computePendingBackspace } from '../computePendingBackspace'
@@ -9,6 +11,7 @@ import type { PendingBackspace } from '../computePendingBackspace'
 interface WordCardProps {
   id: number
   value: string
+  hasSuggestion?: boolean
   onChange: (id: number, value: string) => void
   onSplit: (id: number, pieces: string[]) => void
   onMergeWithPrevious: (id: number) => void
@@ -20,6 +23,7 @@ interface WordCardProps {
 export const WordCard = memo(function WordCard({
   id,
   value,
+  hasSuggestion,
   onChange,
   onSplit,
   onMergeWithPrevious,
@@ -28,6 +32,15 @@ export const WordCard = memo(function WordCard({
   onRegister,
 }: WordCardProps): ReactElement {
   const pendingBackspace = useRef<PendingBackspace>(null)
+  const {
+    rootRef,
+    suggestionRef,
+    isFocused,
+    handleFocus,
+    handleBlur,
+    focusSuggestion,
+    focusField,
+  } = useSuggestionFocus()
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
     if (event.nativeEvent.isComposing) {
@@ -63,16 +76,41 @@ export const WordCard = memo(function WordCard({
     }
   }
 
-  return (
+  function selectSuggestion(word: string): void {
+    focusField()
+    onChange(id, word)
+  }
+
+  const wordField = (
     <WordField
       value={value}
       isEditable
       isInline
       inputRef={(element) => onRegister(id, element)}
       onChange={(next) => onChange(id, next)}
+      onArrowDown={hasSuggestion ? focusSuggestion : undefined}
       onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
     />
+  )
+
+  if (!hasSuggestion) {
+    return wordField
+  }
+
+  return (
+    <div ref={rootRef} onFocus={handleFocus} onBlur={handleBlur}>
+      {wordField}
+      <WordSuggestion
+        ref={suggestionRef}
+        keyword={isFocused ? value : ''}
+        n={8}
+        isVisible={isFocused}
+        isDeletable={false}
+        onSelect={selectSuggestion}
+        onExitUp={focusField}
+      />
+    </div>
   )
 })
 

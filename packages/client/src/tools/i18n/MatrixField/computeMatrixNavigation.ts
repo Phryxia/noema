@@ -25,6 +25,7 @@ export function computeMatrixNavigation(
   position: MatrixCellPosition,
   selection: MatrixCellSelection,
   matrix: string[][],
+  firstRow: number = 0,
 ): MatrixCellCaret | null {
   if (input.shiftKey || input.ctrlKey || input.altKey || input.metaKey) {
     return null
@@ -42,12 +43,12 @@ export function computeMatrixNavigation(
         ? moveForward(position, matrix)
         : null
     case 'ArrowLeft':
-      return !caret ? moveBackward(position, matrix) : null
+      return !caret ? moveBackward(position, matrix, firstRow) : null
     case 'ArrowUp':
-      return moveVertical(position, matrix, -1, caret)
+      return moveVertical(position, matrix, -1, caret, firstRow)
     case 'ArrowDown':
     case 'Enter':
-      return moveVertical(position, matrix, 1, caret)
+      return moveVertical(position, matrix, 1, caret, firstRow)
     default:
       return null
   }
@@ -66,12 +67,13 @@ function moveForward(position: MatrixCellPosition, matrix: string[][]): MatrixCe
 function moveBackward(
   position: MatrixCellPosition,
   matrix: string[][],
+  firstRow: number,
 ): MatrixCellCaret | null {
   if (position.column > 0) {
     const column = position.column - 1
     return { row: position.row, column, caret: matrix[position.row][column].length }
   }
-  if (position.row > 0) {
+  if (position.row > firstRow) {
     const row = position.row - 1
     const column = matrix[row].length - 1
     return { row, column, caret: matrix[row][column].length }
@@ -84,9 +86,10 @@ function moveVertical(
   matrix: string[][],
   delta: number,
   caret: number,
+  firstRow: number,
 ): MatrixCellCaret | null {
   const row = position.row + delta
-  if (row < 0 || row >= matrix.length) {
+  if (row < firstRow || row >= matrix.length) {
     return null
   }
   return {

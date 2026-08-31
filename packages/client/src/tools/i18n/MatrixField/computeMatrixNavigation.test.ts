@@ -1,27 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { MatrixKeyInput } from './computeMatrixNavigation'
 import { computeMatrixNavigation } from './computeMatrixNavigation'
-
-const Matrix = [
-  ['한국어', '영어'],
-  ['사과', 'apple'],
-  ['배', ''],
-]
-
-function createInput(key: string, modifiers?: Partial<MatrixKeyInput>): MatrixKeyInput {
-  return {
-    key,
-    shiftKey: false,
-    ctrlKey: false,
-    altKey: false,
-    metaKey: false,
-    ...modifiers,
-  }
-}
-
-function createSelection(caret: number): { selectionStart: number; selectionEnd: number } {
-  return { selectionStart: caret, selectionEnd: caret }
-}
+import { Matrix, createInput, createSelection } from './matrixNavigationFixture'
 
 describe('computeMatrixNavigation', () => {
   it('끝 커서에서 ArrowRight는 다음 열의 처음으로 간다', () => {

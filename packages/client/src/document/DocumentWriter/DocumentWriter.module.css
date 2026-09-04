@@ -6,4 +6,20 @@
     font-family: var(--font-mono);
     tab-size: 4;
   }
+
+  .bodyRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--pico-spacing);
+
+    > * {
+      min-width: 0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .root .bodyRow {
+    grid-template-columns: 1fr;
+  }
 }

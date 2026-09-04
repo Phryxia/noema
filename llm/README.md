@@ -32,6 +32,7 @@
 | `tags:` 카드, `Tag` 관계, `태그된 문장/문서` | [태그](./기능/태그.md) | `tag/` |
 | `/` 입력 구역, 최근에 추가된 것들 | [대시보드](./기능/대시보드.md) | `routes/index.tsx`, `recent/RecentCreations` |
 | 총 보유 수, 추이 차트, `CountLog`, 백필 | [통계](./기능/통계.md) | `statistic/`, `db/countLog/` |
+| `/diary`, 마크다운 프리뷰, KaTeX 수식 | [다이어리](./기능/다이어리.md) | `diary/` |
 | `/tools`, 순서화, 다국어 매핑, 가변행렬 | [도구](./기능/도구.md) | `tools/` |
 | `/settings`, 내보내기·가져오기, 백업 형식 | [설정-백업](./기능/설정-백업.md) | `backup/` |
 | 헤더·nav, 라우트 목록, 토스트, PWA·SW, gh-page 배포 | [앱-셸](./기능/앱-셸.md) | `routes/__root.tsx`, `toast/`, `main.tsx` |

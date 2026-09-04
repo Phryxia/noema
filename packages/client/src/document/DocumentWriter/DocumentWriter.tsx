@@ -1,4 +1,4 @@
-import type { DragEvent, FormEvent, KeyboardEvent, ReactElement } from 'react'
+import type { DragEvent, FormEvent, KeyboardEvent, ReactElement, ReactNode } from 'react'
 import { useCallback } from 'react'
 import { useWriterForm } from '../../writer/useWriterForm'
 import { WriterActions } from '../../writer/WriterActions/WriterActions'
@@ -25,6 +25,7 @@ interface DocumentWriterProps {
   title?: DocumentTitleEntry
   tags?: TagEntry[]
   onDelete?: () => void
+  renderPreview?: (value: string) => ReactNode
 }
 
 export function DocumentWriter({
@@ -33,6 +34,7 @@ export function DocumentWriter({
   title,
   tags = [],
   onDelete,
+  renderPreview,
 }: DocumentWriterProps): ReactElement {
   const initialTitle = title?.sentence.value ?? ''
   const initialTags = createInitialTagValues(tags)
@@ -89,6 +91,20 @@ export function DocumentWriter({
     setDraft({ ...draft, value: await file.text(), source: file.name })
   }
 
+  function renderBodyField(): ReactElement {
+    return (
+      <textarea
+        className={cx('textarea')}
+        value={draft.value}
+        readOnly={!isEditable}
+        onChange={(event) => setDraft({ ...draft, value: event.target.value })}
+        onKeyDown={handleKeyDown}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={handleDrop}
+      />
+    )
+  }
+
   return (
     <form className={cx('root')} onSubmit={handleSubmit}>
       <TitleField
@@ -102,15 +118,14 @@ export function DocumentWriter({
         isEditable={isEditable}
         onChange={(source) => setDraft({ ...draft, source })}
       />
-      <textarea
-        className={cx('textarea')}
-        value={draft.value}
-        readOnly={!isEditable}
-        onChange={(event) => setDraft({ ...draft, value: event.target.value })}
-        onKeyDown={handleKeyDown}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={handleDrop}
-      />
+      {renderPreview ? (
+        <div className={cx('bodyRow')}>
+          {renderBodyField()}
+          <div className={cx('preview')}>{renderPreview(draft.value)}</div>
+        </div>
+      ) : (
+        renderBodyField()
+      )}
       <TagEditor
         key={resetKey}
         initialValues={initialTags}

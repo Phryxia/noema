@@ -27,6 +27,9 @@ function RootLayout(): ReactElement {
                   <Link to="/relations">관계</Link>
                 </li>
                 <li>
+                  <Link to="/diary">다이어리</Link>
+                </li>
+                <li>
                   <Link to="/tools">도구</Link>
                 </li>
                 <li>

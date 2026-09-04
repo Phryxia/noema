@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
-import { MarkdownPreview } from './MarkdownPreview'
+import { MarkdownPreview } from '../shared/MarkdownPreview'
 
 export function DiaryPage(): ReactElement {
   return (

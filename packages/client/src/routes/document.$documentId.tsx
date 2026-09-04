@@ -7,6 +7,7 @@ import { getDocumentTitle } from '../document/documentTitle.service'
 import { DocumentSentences } from '../document/DocumentSentences/DocumentSentences'
 import { DocumentWriter } from '../document/DocumentWriter/DocumentWriter'
 import { MetaFields } from '../meta/MetaFields/MetaFields'
+import { MarkdownPreview } from '../shared/MarkdownPreview'
 import { TAG_RELATIONS_QUERY_KEY } from '../tag/consts'
 import { getTagEntries } from '../tag/tag.service'
 
@@ -54,6 +55,7 @@ function DocumentPage(): ReactElement {
         title={title ?? undefined}
         tags={tags}
         onDelete={() => navigate({ to: '/' })}
+        renderPreview={(value) => <MarkdownPreview value={value} />}
       />
       <DocumentSentences key={target.documentId} document={target} />
     </article>

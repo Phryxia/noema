@@ -72,7 +72,7 @@ conditional 빌드는 selector 앞에 `.pico`가 붙어 specificity가 한 단�
 
 # 공용 컴포넌트 위치
 
-`shared/`에는 `HighlightedText`, `PagedSection`, `RadioGroup`, `ResultDialog`, `TypeFilterField`, `getRowToneClassName`, `RowTone.module.css`, `types.ts`(`Option<T>`)가 있다.
+`shared/`에는 `HighlightedText`, `MarkdownPreview`(markdown-it + KaTeX, [다이어리](../기능/다이어리.md)), `PagedSection`, `RadioGroup`, `ResultDialog`, `TypeFilterField`, `getRowToneClassName`, `RowTone.module.css`, `types.ts`(`Option<T>`)가 있다.
 `utils/`에는 `focusFirstElement`, `focusNextElement`, `consts.ts`(`FOCUSABLE_SELECTOR`), `useThrottledValue`, `getErrorMessage`, `sliceSafely`, `computeCartesianProduct`가 있다.
 `writer/`에는 `WhitespaceEcho`, `SourceField`, `WriterActions`, `insertTabIfPressed`, `useWriterForm`이 있다.
 `Badge`/`Chip` 같은 범용 뱃지 컴포넌트는 없다. 뱃지 모양이 필요하면 `fieldset[role=group]` 조합을 쓴다.
